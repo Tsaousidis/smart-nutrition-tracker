@@ -32,6 +32,9 @@ export default function SignupForm() {
       }
 
       setMessage("Account created successfully. You can now log in.");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);      
       setEmail("");
       setPassword("");
     } catch (err) {
