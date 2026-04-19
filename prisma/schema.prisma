@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Sex {
+  MALE
+  FEMALE
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHT
+  MODERATE
+  VERY_ACTIVE
+  EXTRA_ACTIVE
+}
+
+enum GoalType {
+  MAINTAIN
+  LOSE_WEIGHT
+  LOSE_FAT
+  GAIN_MUSCLE
+  RECOMP
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile   Profile?
+  goal      Goal?
+  meals     Meal[]
+}
+
+model Profile {
+  id            String        @id @default(cuid())
+  userId        String        @unique
+  sex           Sex
+  age           Int
+  heightCm      Float
+  weightKg      Float
+  activityLevel ActivityLevel
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Goal {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  goalType       GoalType
+  dailyCalories  Float
+  proteinTarget  Float
+  carbsTarget    Float
+  fatTarget      Float
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Meal {
+  id         String      @id @default(cuid())
+  userId     String
+  title      String?
+  mealDate   DateTime
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items      MealItem[]
+}
+
+model MealItem {
+  id         String    @id @default(cuid())
+  mealId     String
+  name       String
+  quantity   Float
+  unit       String
+  calories   Float
+  protein    Float
+  carbs      Float
+  fat        Float
+  createdAt  DateTime  @default(now())
+
+  meal       Meal      @relation(fields: [mealId], references: [id], onDelete: Cascade)
+}
