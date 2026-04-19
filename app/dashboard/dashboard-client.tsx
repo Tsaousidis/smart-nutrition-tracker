@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import MacroCard from "@/components/dashboard/macro-card";
 import DailySummary from "@/components/dashboard/daily-summary";
+import Insights from "@/components/dashboard/insights";
+import { generateInsights } from "@/lib/insights";
 import { signOut } from "next-auth/react";
 
 type DashboardResponse = {
@@ -84,6 +86,14 @@ export default function DashboardClient() {
     loadDashboard();
   }, []);
 
+  const insights = dashboardData
+  ? generateInsights({
+      totals: dashboardData.totals,
+      targets: dashboardData.targets,
+      remaining: dashboardData.remaining,
+    })
+  : [];
+
   return (
     <main className="min-h-screen px-4 py-10">
       <div className="mx-auto max-w-6xl">
@@ -161,6 +171,8 @@ export default function DashboardClient() {
               />
 
             </div>
+
+            <Insights insights={insights} />
 
             <DailySummary meals={dashboardData.meals} />
           </div>
