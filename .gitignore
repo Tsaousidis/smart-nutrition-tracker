@@ -1,0 +1,44 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+
+# production / build
+dist/
+build/
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# env files / secrets
+.env
+.env.*
+!.env.example
+
+# typescript
+*.tsbuildinfo
+
+# caches
+.npm/
+.turbo/
+coverage/
+.nyc_output/
+
+# prisma generated client (only if you use custom output path)
+generated/
+
+# editor / OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# optional local test artifacts
+playwright-report/
+test-results/
