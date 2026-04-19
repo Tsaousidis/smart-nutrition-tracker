@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import NutritionChart from "@/components/charts/nutrition-chart";
 
 type HistoryItem = {
   id: string;
@@ -52,6 +53,16 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [historyDays, setHistoryDays] = useState<HistoryDay[]>([]);
+  
+  const chartData = historyDays
+    .slice()
+    .reverse()
+    .map((day) => ({
+      date: day.date.slice(5), // MM-DD
+      calories: day.totals.calories,
+      protein: day.totals.protein,
+    }));
+
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   async function loadHistory() {
@@ -119,6 +130,7 @@ export default function HistoryPage() {
           </div>
         )}
 
+        {chartData.length > 0 && <NutritionChart data={chartData} />}
         <div className="space-y-6">
           {historyDays.map((day) => (
             <div key={day.date} className="rounded-2xl border p-6 shadow-sm">
