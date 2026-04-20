@@ -1,0 +1,26 @@
+{
+  "Navbar": {
+    "brand": "Nutrition Tracker",
+    "dashboard": "Dashboard",
+    "meals": "Meals",
+    "history": "History",
+    "profile": "Profile",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "logout": "Log Out"
+  },
+  "HomePage": {
+    "title": "AI-Powered Nutrition Tracking",
+    "description": "Track your meals with natural language, let AI estimate your nutrition, and monitor your daily and weekly progress effortlessly.",
+    "getStarted": "Get Started",
+    "goToDashboard": "Go to Dashboard",
+    "addMeal": "Add Meal",
+    "login": "Log In",
+    "feature1Title": "AI Meal Parsing",
+    "feature1Text": "Describe your meal in plain English and let AI break it down into calories and macros.",
+    "feature2Title": "Daily Targets",
+    "feature2Text": "Automatically calculated calorie and macro goals based on your profile and fitness objective.",
+    "feature3Title": "Progress Tracking",
+    "feature3Text": "Monitor your daily and weekly nutrition with clear insights and structured data."
+  }
+}
