@@ -42,9 +42,17 @@ export default auth((req) => {
     return Response.redirect(new URL(`/${locale}/dashboard`, req.nextUrl));
   }
 
-  return intlMiddleware(req);
+  const response = intlMiddleware(req);
+
+  // inject pathname header
+  response.headers.set("x-pathname", req.nextUrl.pathname);
+
+  return response;
 });
 
 export const config = {
-  matcher: "/((?!api|trpc|_next|_vercel|.*\\..*).*)"
+  matcher: [
+    "/",
+    "/(el|en)/:path*"
+  ]
 };

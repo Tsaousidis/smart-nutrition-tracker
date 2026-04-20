@@ -1,13 +1,24 @@
 import {auth, signOut} from "@/auth";
 import {getTranslations, getLocale} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
+import {headers} from "next/headers";
 
 export default async function Navbar() {
   const session = await auth();
   const t = await getTranslations("Navbar");
   const locale = await getLocale();
+  
 
   const switchTo = locale === "en" ? "el" : "en";
+  const headersList = await headers();
+  let pathname = headersList.get("x-pathname") || "/";
+
+  // remove locale prefix (/en or /el)
+  if (pathname.startsWith("/en")) {
+    pathname = pathname.replace(/^\/en/, "") || "/";
+  } else if (pathname.startsWith("/el")) {
+    pathname = pathname.replace(/^\/el/, "") || "/";
+  }
 
   return (
     <header className="border-b bg-white">
@@ -30,17 +41,22 @@ export default async function Navbar() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Link
-              href="/"
+              href={pathname}
               locale="en"
-              className={`rounded border px-2 py-1 text-sm ${locale === "en" ? "bg-gray-100" : ""}`}
+              className={`rounded border px-2 py-1 text-sm ${
+                locale === "en" ? "bg-gray-100" : ""
+              }`}
               aria-label="Switch to English"
             >
               🇬🇧
             </Link>
+
             <Link
-              href="/"
+              href={pathname}
               locale="el"
-              className={`rounded border px-2 py-1 text-sm ${locale === "el" ? "bg-gray-100" : ""}`}
+              className={`rounded border px-2 py-1 text-sm ${
+                locale === "el" ? "bg-gray-100" : ""
+              }`}
               aria-label="Αλλαγή στα Ελληνικά"
             >
               🇬🇷
