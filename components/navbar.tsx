@@ -1,24 +1,14 @@
 import {auth, signOut} from "@/auth";
 import {getTranslations, getLocale} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
-import {headers} from "next/headers";
+import NavbarClient from "./navbar-client";
 
 export default async function Navbar() {
   const session = await auth();
   const t = await getTranslations("Navbar");
   const locale = await getLocale();
-  
 
   const switchTo = locale === "en" ? "el" : "en";
-  const headersList = await headers();
-  let pathname = headersList.get("x-pathname") || "/";
-
-  // remove locale prefix (/en or /el)
-  if (pathname.startsWith("/en")) {
-    pathname = pathname.replace(/^\/en/, "") || "/";
-  } else if (pathname.startsWith("/el")) {
-    pathname = pathname.replace(/^\/el/, "") || "/";
-  }
 
   return (
     <header className="border-b bg-white">
@@ -39,59 +29,21 @@ export default async function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <Link
-              href={pathname}
-              locale="en"
-              className={`rounded border px-2 py-1 text-sm ${
-                locale === "en" ? "bg-gray-100" : ""
-              }`}
-              aria-label="Switch to English"
+          <NavbarClient session={session} />
+
+          {session?.user && (
+            <form
+              action={async () => {
+                "use server";
+                await signOut({
+                  redirectTo: `/${switchTo}/login`,
+                });
+              }}
             >
-              🇬🇧
-            </Link>
-
-            <Link
-              href={pathname}
-              locale="el"
-              className={`rounded border px-2 py-1 text-sm ${
-                locale === "el" ? "bg-gray-100" : ""
-              }`}
-              aria-label="Αλλαγή στα Ελληνικά"
-            >
-              🇬🇷
-            </Link>
-          </div>
-
-          {session?.user ? (
-            <>
-              <span className="hidden text-sm text-gray-500 md:inline">
-                {session.user.email}
-              </span>
-
-              <form
-                action={async () => {
-                  "use server";
-                  await signOut({redirectTo: `/${switchTo === "en" ? "el" : "en"}/login`});
-                }}
-              >
-                <button
-                  type="submit"
-                  className="rounded-lg bg-black px-4 py-2 text-sm text-white"
-                >
-                  {t("logout")}
-                </button>
-              </form>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="rounded-lg border px-4 py-2 text-sm">
-                {t("login")}
-              </Link>
-              <Link href="/signup" className="rounded-lg bg-black px-4 py-2 text-sm text-white">
-                {t("signup")}
-              </Link>
-            </>
+              <button className="rounded-lg bg-black px-4 py-2 text-sm text-white">
+                {t("logout")}
+              </button>
+            </form>
           )}
         </div>
       </div>
