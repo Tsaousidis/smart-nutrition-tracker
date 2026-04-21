@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 export default function SignupForm() {
   const t = useTranslations("Signup");
+  const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +33,7 @@ export default function SignupForm() {
       if (!res.ok) throw new Error(data.message || "Failed to sign up");
 
       setMessage(t("success"));
-      setTimeout(() => { window.location.href = "/login"; }, 1000);
+      setTimeout(() => { router.push(`/${locale}/login`); }, 1000);
       setEmail("");
       setPassword("");
     } catch (err) {
