@@ -10,13 +10,16 @@ const { auth } = NextAuth(authConfig);
 export default auth((req) => {
   // CSRF validation for state-changing requests
   if (["POST", "PUT", "DELETE", "PATCH"].includes(req.method)) {
-    // Skip CSRF check for NextAuth endpoints and health checks
+    // Skip CSRF check for NextAuth endpoints, health checks, and server actions (which have their own token)
     const isAuthOrHealthPath = req.nextUrl.pathname.startsWith("/api/auth") ||
       req.nextUrl.pathname === "/api/health/db" ||
       req.nextUrl.pathname.startsWith("/api/webhook") ||
       req.nextUrl.pathname === "/api/csrf";
 
-    if (!isAuthOrHealthPath) {
+    // Skip CSRF for server actions (they use RSC tokens, not our custom CSRF tokens)
+    const isServerAction = !req.headers.get("content-type")?.includes("application/json");
+
+    if (!isAuthOrHealthPath && !isServerAction) {
       const csrfToken = req.headers.get("x-csrf-token");
       const cookieToken = req.cookies.get("csrf-token")?.value;
 
