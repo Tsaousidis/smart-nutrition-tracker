@@ -1,11 +1,9 @@
-import NextAuth from "next-auth";
+import { auth } from "@/auth";
 import createMiddleware from "next-intl/middleware";
-import authConfig from "@/auth.config";
 import { routing } from "@/i18n/routing";
 import { validateCsrfToken } from "@/lib/csrf";
 
 const intlMiddleware = createMiddleware(routing);
-const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   // CSRF validation for state-changing requests

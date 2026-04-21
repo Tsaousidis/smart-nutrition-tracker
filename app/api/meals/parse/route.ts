@@ -219,13 +219,11 @@ export async function POST(req: NextRequest) {
 
     const errorMessage = getErrorMessage(error);
 
-    if (
-      errorMessage.includes("Το ημερήσιο quota/credits του Gemini φαίνεται να έχει εξαντληθεί")
-    ) {
+    if (isQuotaError(errorMessage)) {
       return NextResponse.json(
         {
           ok: false,
-          message: errorMessage,
+          message: "The daily Gemini quota/credits appear to be exhausted. Please try again later or tomorrow.",
         },
         { status: 429 }
       );
