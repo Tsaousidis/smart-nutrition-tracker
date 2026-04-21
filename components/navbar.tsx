@@ -36,7 +36,7 @@ export default async function Navbar() {
               action={async () => {
                 "use server";
                 await signOut({
-                  redirectTo: `/${switchTo}/login`,
+                  redirectTo: `/${locale}/login`,
                 });
               }}
             >
