@@ -2,12 +2,15 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import DashboardClient from "./dashboard-client";
+import { getLocale } from "next-intl/server";
 
 export default async function DashboardPage() {
   const session = await auth();
+  const locale = await getLocale();
 
+  // ❗ not logged in
   if (!session?.user?.email) {
-    redirect("/login");
+    redirect(`/${locale}/login`);
   }
 
   const user = await prisma.user.findUnique({
@@ -20,12 +23,14 @@ export default async function DashboardPage() {
     },
   });
 
+  // ❗ user not found
   if (!user) {
-    redirect("/login");
+    redirect(`/${locale}/login`);
   }
 
+  // ❗ onboarding incomplete
   if (!user.profile || !user.goal) {
-    redirect("/onboarding");
+    redirect(`/${locale}/onboarding`);
   }
 
   return <DashboardClient />;

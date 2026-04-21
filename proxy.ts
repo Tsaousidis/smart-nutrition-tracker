@@ -10,35 +10,29 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const pathname = req.nextUrl.pathname;
 
-  const isProtectedRoute =
-    pathname.startsWith("/dashboard") ||
-    pathname.startsWith("/meals") ||
-    pathname.startsWith("/history") ||
-    pathname.startsWith("/onboarding") ||
-    pathname.startsWith("/en/dashboard") ||
-    pathname.startsWith("/en/meals") ||
-    pathname.startsWith("/en/history") ||
-    pathname.startsWith("/en/onboarding") ||
-    pathname.startsWith("/el/dashboard") ||
-    pathname.startsWith("/el/meals") ||
-    pathname.startsWith("/el/history") ||
-    pathname.startsWith("/el/onboarding");
+  const isProtectedRoute = pathname.match(/^\/(en|el)\/(dashboard|meals|history|onboarding)/);
 
-  const isAuthRoute =
-    pathname === "/login" ||
-    pathname === "/signup" ||
-    pathname === "/en/login" ||
-    pathname === "/en/signup" ||
-    pathname === "/el/login" ||
-    pathname === "/el/signup";
+  if (pathname === "/") {
+    return Response.redirect(new URL("/en", req.nextUrl));
+  }
+
+  if (!pathname.match(/^\/(en|el)/)) {
+    return Response.redirect(new URL(`/en${pathname}`, req.nextUrl));
+  }
+
+  const isAuthRoute = pathname.match(
+    /^\/(en|el)\/(login|signup)/
+  );
 
   if (isProtectedRoute && !isLoggedIn) {
-    const locale = pathname.startsWith("/el") ? "el" : "en";
+    const localeMatch = pathname.match(/^\/(en|el)/);
+    const locale = localeMatch ? localeMatch[1] : "en";
     return Response.redirect(new URL(`/${locale}/login`, req.nextUrl));
   }
 
   if (isAuthRoute && isLoggedIn) {
-    const locale = pathname.startsWith("/el") ? "el" : "en";
+    const localeMatch = pathname.match(/^\/(en|el)/);
+    const locale = localeMatch ? localeMatch[1] : "en";
     return Response.redirect(new URL(`/${locale}/dashboard`, req.nextUrl));
   }
 

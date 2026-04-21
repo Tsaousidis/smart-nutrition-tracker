@@ -4,10 +4,13 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
+
 
 export default function LoginForm() {
   const t = useTranslations("Login");
   const router = useRouter();
+  const locale = useLocale();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +33,7 @@ export default function LoginForm() {
         throw new Error(t("invalidCredentials"));
       }
 
-      router.push("/dashboard");
+      router.push(`/${locale}/dashboard`);
       router.refresh();
     } catch (err) {
       console.error(err);
