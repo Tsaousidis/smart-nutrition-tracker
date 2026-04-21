@@ -106,5 +106,30 @@
     "submit": "Sign Up",
     "loading": "Creating account...",
     "success": "Account created successfully. You can now log in."
-  }  
+  },
+  "Onboarding": {
+    "title": "User Onboarding",
+    "sex": "Sex",
+    "male": "Male",
+    "female": "Female",
+    "age": "Age",
+    "height": "Height (cm)",
+    "weight": "Weight (kg)",
+    "activityLevel": "Activity Level",
+    "sedentary": "Sedentary",
+    "light": "Light",
+    "moderate": "Moderate",
+    "veryActive": "Very Active",
+    "extraActive": "Extra Active",
+    "goalType": "Goal Type",
+    "maintain": "Maintain",
+    "loseWeight": "Lose Weight",
+    "loseFat": "Lose Fat",
+    "gainMuscle": "Gain Muscle",
+    "recomp": "Recomp",
+    "submit": "Save Profile",
+    "saving": "Saving...",
+    "error": "Error",
+    "apiResponse": "API Response"
+  }
 }
