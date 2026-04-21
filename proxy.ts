@@ -1,12 +1,41 @@
 import NextAuth from "next-auth";
 import createMiddleware from "next-intl/middleware";
 import authConfig from "@/auth.config";
-import {routing} from "@/i18n/routing";
+import { routing } from "@/i18n/routing";
+import { validateCsrfToken } from "@/lib/csrf";
 
 const intlMiddleware = createMiddleware(routing);
-const {auth} = NextAuth(authConfig);
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
+  // CSRF validation for state-changing requests
+  if (["POST", "PUT", "DELETE", "PATCH"].includes(req.method)) {
+    // Skip CSRF check for NextAuth endpoints and health checks
+    const isAuthOrHealthPath = req.nextUrl.pathname.startsWith("/api/auth") ||
+      req.nextUrl.pathname === "/api/health/db" ||
+      req.nextUrl.pathname.startsWith("/api/webhook") ||
+      req.nextUrl.pathname === "/api/csrf";
+
+    if (!isAuthOrHealthPath) {
+      const csrfToken = req.headers.get("x-csrf-token");
+      const cookieToken = req.cookies.get("csrf-token")?.value;
+
+      if (!csrfToken || !cookieToken) {
+        return new Response(
+          JSON.stringify({ error: "CSRF token missing", code: "CSRF_MISSING" }),
+          { status: 403, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      if (!validateCsrfToken(csrfToken, cookieToken)) {
+        return new Response(
+          JSON.stringify({ error: "CSRF token invalid", code: "CSRF_INVALID" }),
+          { status: 403, headers: { "Content-Type": "application/json" } }
+        );
+      }
+    }
+  }
+
   const isLoggedIn = !!req.auth;
   const pathname = req.nextUrl.pathname;
 
