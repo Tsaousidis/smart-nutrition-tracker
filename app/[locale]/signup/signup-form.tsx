@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useCsrfToken } from "@/lib/useCsrfToken";
 
 export default function SignupForm() {
   const t = useTranslations("Signup");
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
+  const { csrfToken } = useCsrfToken();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,10 +24,20 @@ export default function SignupForm() {
     setMessage(null);
     setError(null);
 
+    if (!csrfToken) {
+      setError("Security error: CSRF token not available");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+        },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useCsrfToken } from "@/lib/useCsrfToken";
 
 type ProfileFormData = {
   sex: "MALE" | "FEMALE";
@@ -14,6 +15,7 @@ type ProfileFormData = {
 
 export default function ProfileForm() {
   const t = useTranslations("Onboarding");
+  const { csrfToken } = useCsrfToken();
 
   const [formData, setFormData] = useState<ProfileFormData>({
     sex: "MALE",
@@ -42,10 +44,20 @@ export default function ProfileForm() {
     setError(null);
     setResponseData(null);
 
+    if (!csrfToken) {
+      setError("Security error: CSRF token not available");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/profile", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+        },
+        credentials: "include",
         body: JSON.stringify(formData),
       });
 
