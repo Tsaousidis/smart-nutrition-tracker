@@ -11,7 +11,7 @@ CREATE TYPE "GoalType" AS ENUM ('MAINTAIN', 'LOSE_WEIGHT', 'LOSE_FAT', 'GAIN_MUS
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT,
+    "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
