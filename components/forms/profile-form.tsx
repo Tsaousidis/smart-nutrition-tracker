@@ -27,7 +27,7 @@ export default function ProfileForm() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [responseData, setResponseData] = useState<unknown>(null);
+  const [responseData, setResponseData] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
@@ -63,7 +63,7 @@ export default function ProfileForm() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to save profile");
-      setResponseData(data);
+      setResponseData(JSON.stringify(data, null, 2));
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -138,7 +138,7 @@ export default function ProfileForm() {
         <div className="mt-6 rounded-lg border bg-gray-50 p-4">
           <p className="mb-2 font-medium">{t("apiResponse")}</p>
           <pre className="overflow-x-auto text-sm">
-            {JSON.stringify(responseData, null, 2)}
+            {responseData}
           </pre>
         </div>
       )}

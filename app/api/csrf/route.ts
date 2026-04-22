@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { generateCsrfToken, hashCsrfToken } from "@/lib/csrf";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   // Generate a new CSRF token
   const csrfToken = generateCsrfToken();
   const hashedToken = hashCsrfToken(csrfToken);

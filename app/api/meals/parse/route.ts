@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { gemini } from "@/lib/gemini";
 import { mealParseInputSchema, parsedMealSchema } from "@/lib/validators";
+import { sanitizeMealInput } from "@/lib/sanitize";
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 2000;
@@ -156,7 +157,13 @@ ${mealText}
         throw new Error("Gemini returned an empty response");
       }
 
-      const rawJson = JSON.parse(text);
+      let rawJson;
+      try {
+        rawJson = JSON.parse(text);
+      } catch (error) {
+        throw new Error(`Failed to parse Gemini response as JSON: ${getErrorMessage(error)}`);
+      }
+
       const validatedMeal = parsedMealSchema.safeParse(rawJson);
 
       if (!validatedMeal.success) {
@@ -190,7 +197,19 @@ ${mealText}
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "INVALID_JSON",
+          message: "Request body must be valid JSON",
+        },
+        { status: 400 }
+      );
+    }
 
     const parsedInput = mealParseInputSchema.safeParse(body);
 
@@ -198,6 +217,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           ok: false,
+          code: "VALIDATION_ERROR",
           message: "Invalid request body",
           errors: parsedInput.error.flatten(),
         },
@@ -205,12 +225,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { mealText } = parsedInput.data;
+    let { mealText } = parsedInput.data;
+    // Sanitize meal input to prevent XSS
+    mealText = sanitizeMealInput(mealText);
 
     const parsedMeal = await parseMealWithRetry(mealText);
 
     return NextResponse.json({
       ok: true,
+      code: "SUCCESS",
       message: "Meal parsed successfully",
       data: parsedMeal,
     });
@@ -223,6 +246,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           ok: false,
+          code: "QUOTA_EXCEEDED",
           message: "The daily Gemini quota/credits appear to be exhausted. Please try again later or tomorrow.",
         },
         { status: 429 }
@@ -232,6 +256,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         ok: false,
+        code: "PARSING_ERROR",
         message: "Something went wrong while parsing the meal",
         details: errorMessage,
       },

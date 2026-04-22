@@ -34,4 +34,4 @@ export default {
       return true;
     },
   },
-} satisfies NextAuthConfig;
+} satisfies Partial<NextAuthConfig>;
