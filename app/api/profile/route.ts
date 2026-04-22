@@ -12,23 +12,39 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           ok: false,
+          code: "UNAUTHORIZED",
           message: "Unauthorized",
         },
         { status: 401 }
       );
     }
 
-    const body = await req.json();
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch (error) {
+      console.error("Failed to parse request body:", error);
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "INVALID_JSON",
+          message: "Request body must be valid JSON",
+        },
+        { status: 400 }
+      );
+    }
 
-    const parsedBody = profileSchema.safeParse({
-      ...body,
-      email: session.user.email,
-    });
+    const parsedBody = profileSchema.safeParse(
+      body && typeof body === "object"
+        ? { ...body, email: session.user.email }
+        : { email: session.user.email }
+    );
 
     if (!parsedBody.success) {
       return NextResponse.json(
         {
           ok: false,
+          code: "VALIDATION_ERROR",
           message: "Invalid request body",
           errors: parsedBody.error.flatten(),
         },
@@ -58,6 +74,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           ok: false,
+          code: "USER_NOT_FOUND",
           message: "Authenticated user not found",
         },
         { status: 404 }
@@ -104,6 +121,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       ok: true,
+      code: "SUCCESS",
       message: "Profile and goal saved successfully",
       data: {
         user: {
@@ -120,7 +138,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         ok: false,
+        code: "INTERNAL_ERROR",
         message: "Something went wrong while saving profile",
+        details: error instanceof Error ? error.message : undefined,
       },
       { status: 500 }
     );

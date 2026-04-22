@@ -3,6 +3,10 @@ import { compare } from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
 import authConfig from "@/auth.config";
 import { prisma } from "@/lib/prisma";
+import { validateEnv } from "@/lib/env";
+
+// Validate environment variables on import
+validateEnv();
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,

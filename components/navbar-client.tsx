@@ -1,13 +1,13 @@
 "use client";
 
 import {usePathname, useRouter} from "next/navigation";
-import {useLocale, useTranslations} from "next-intl";
+import {useLocale} from "next-intl";
+import type { Session } from "next-auth";
 
-export default function NavbarClient({session}: any) {
+export default function NavbarClient({session}: {session: Session | null}) {
   const router = useRouter();
   const pathname = usePathname();
   const locale = useLocale();
-  const t = useTranslations("Navbar");
 
   const handleSwitch = (newLocale: "en" | "el") => {
     const newPath = pathname.replace(/^\/(en|el)/, "") || "/";

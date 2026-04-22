@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -6,7 +6,7 @@ function formatDateKey(date: Date) {
   return date.toISOString().split("T")[0];
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session = await auth();
 
@@ -14,6 +14,7 @@ export async function GET() {
       return NextResponse.json(
         {
           ok: false,
+          code: "UNAUTHORIZED",
           message: "Unauthorized",
         },
         { status: 401 }
@@ -28,18 +29,59 @@ export async function GET() {
       return NextResponse.json(
         {
           ok: false,
+          code: "USER_NOT_FOUND",
           message: "Authenticated user not found",
         },
         { status: 404 }
       );
     }
 
-    const endDate = new Date();
-    endDate.setHours(23, 59, 59, 999);
+    // Parse pagination parameters
+    const searchParams = req.nextUrl.searchParams;
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(30, Math.max(1, parseInt(searchParams.get("limit") || "7")));
 
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 6);
+    // Parse custom date range or use default (last N days)
+    let startDate = new Date();
+    let endDate = new Date();
+
+    const customStartDate = searchParams.get("startDate");
+    const customEndDate = searchParams.get("endDate");
+
+    if (customStartDate) {
+      try {
+        startDate = new Date(customStartDate);
+      } catch {
+        return NextResponse.json(
+          {
+            ok: false,
+            code: "INVALID_DATE",
+            message: "Invalid startDate format. Use ISO 8601 (YYYY-MM-DD)",
+          },
+          { status: 400 }
+        );
+      }
+    } else {
+      startDate.setDate(startDate.getDate() - (limit - 1));
+    }
+
+    if (customEndDate) {
+      try {
+        endDate = new Date(customEndDate);
+      } catch {
+        return NextResponse.json(
+          {
+            ok: false,
+            code: "INVALID_DATE",
+            message: "Invalid endDate format. Use ISO 8601 (YYYY-MM-DD)",
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
 
     const meals = await prisma.meal.findMany({
       where: {
@@ -133,7 +175,13 @@ export async function GET() {
 
     return NextResponse.json({
       ok: true,
+      code: "SUCCESS",
       message: "History fetched successfully",
+      pagination: {
+        page,
+        limit,
+        total: Object.keys(groupedByDay).length,
+      },
       data: {
         user: {
           id: user.id,
@@ -152,7 +200,9 @@ export async function GET() {
     return NextResponse.json(
       {
         ok: false,
+        code: "INTERNAL_ERROR",
         message: "Something went wrong while fetching history",
+        details: error instanceof Error ? error.message : undefined,
       },
       { status: 500 }
     );
