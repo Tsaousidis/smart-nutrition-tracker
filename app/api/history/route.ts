@@ -2,8 +2,37 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
+type HistoryDay = {
+  date: string;
+  totals: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
+  mealCount: number;
+  meals: Array<{
+    id: string;
+    title: string | null;
+    mealDate: Date;
+    items: Array<{
+      id: string;
+      name: string;
+      quantity: number;
+      unit: string;
+      calories: number;
+      protein: number;
+      carbs: number;
+      fat: number;
+    }>;
+  }>;
+};
+
 function formatDateKey(date: Date) {
-  return date.toISOString().split("T")[0];
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 export async function GET(req: NextRequest) {
@@ -23,6 +52,9 @@ export async function GET(req: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
+      include: {
+        goal: true,
+      },
     });
 
     if (!user) {
@@ -36,103 +68,122 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Parse pagination parameters
     const searchParams = req.nextUrl.searchParams;
-    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-    const limit = Math.min(30, Math.max(1, parseInt(searchParams.get("limit") || "7")));
+    const requestedDate = searchParams.get("date");
 
-    // Parse custom date range or use default (last N days)
-    let startDate = new Date();
-    let endDate = new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    const customStartDate = searchParams.get("startDate");
-    const customEndDate = searchParams.get("endDate");
+    let selectedDate = today;
 
-    if (customStartDate) {
-      try {
-        startDate = new Date(customStartDate);
-      } catch {
+    if (requestedDate) {
+      const parsedDate = new Date(`${requestedDate}T00:00:00`);
+      if (Number.isNaN(parsedDate.getTime())) {
         return NextResponse.json(
           {
             ok: false,
             code: "INVALID_DATE",
-            message: "Invalid startDate format. Use ISO 8601 (YYYY-MM-DD)",
+            message: "Invalid date format. Use ISO 8601 (YYYY-MM-DD)",
           },
           { status: 400 }
         );
       }
-    } else {
-      startDate.setDate(startDate.getDate() - (limit - 1));
+      selectedDate = parsedDate;
     }
 
-    if (customEndDate) {
-      try {
-        endDate = new Date(customEndDate);
-      } catch {
-        return NextResponse.json(
-          {
-            ok: false,
-            code: "INVALID_DATE",
-            message: "Invalid endDate format. Use ISO 8601 (YYYY-MM-DD)",
+    selectedDate.setHours(0, 0, 0, 0);
+
+    const selectedStartDate = new Date(selectedDate);
+    const selectedEndDate = new Date(selectedDate);
+    selectedEndDate.setHours(23, 59, 59, 999);
+
+    const chartEndDate = new Date();
+    chartEndDate.setHours(23, 59, 59, 999);
+    const chartStartDate = new Date(chartEndDate);
+    chartStartDate.setDate(chartStartDate.getDate() - 6);
+    chartStartDate.setHours(0, 0, 0, 0);
+
+    const [chartMeals, selectedMeals] = await Promise.all([
+      prisma.meal.findMany({
+        where: {
+          userId: user.id,
+          mealDate: {
+            gte: chartStartDate,
+            lte: chartEndDate,
           },
-          { status: 400 }
-        );
-      }
-    }
-
-    startDate.setHours(0, 0, 0, 0);
-    endDate.setHours(23, 59, 59, 999);
-
-    const meals = await prisma.meal.findMany({
-      where: {
-        userId: user.id,
-        mealDate: {
-          gte: startDate,
-          lte: endDate,
         },
-      },
-      include: {
-        items: true,
-      },
-      orderBy: {
-        mealDate: "desc",
-      },
-    });
+        include: {
+          items: true,
+        },
+        orderBy: {
+          mealDate: "asc",
+        },
+      }),
+      prisma.meal.findMany({
+        where: {
+          userId: user.id,
+          mealDate: {
+            gte: selectedStartDate,
+            lte: selectedEndDate,
+          },
+        },
+        include: {
+          items: true,
+        },
+        orderBy: {
+          mealDate: "desc",
+        },
+      }),
+    ]);
 
-    const groupedByDay: Record<
-      string,
-      {
-        date: string;
-        totals: {
-          calories: number;
-          protein: number;
-          carbs: number;
-          fat: number;
-        };
-        mealCount: number;
-        meals: Array<{
-          id: string;
-          title: string | null;
-          mealDate: Date;
-          items: Array<{
-            id: string;
-            name: string;
-            quantity: number;
-            unit: string;
-            calories: number;
-            protein: number;
-            carbs: number;
-            fat: number;
-          }>;
-        }>;
-      }
-    > = {};
+    function groupMealsByDay(meals: typeof chartMeals) {
+      return meals.reduce<Record<string, HistoryDay>>((acc, meal) => {
+        const dayKey = formatDateKey(meal.mealDate);
 
-    for (const meal of meals) {
-      const dayKey = formatDateKey(meal.mealDate);
+        if (!acc[dayKey]) {
+          acc[dayKey] = {
+            date: dayKey,
+            totals: {
+              calories: 0,
+              protein: 0,
+              carbs: 0,
+              fat: 0,
+            },
+            mealCount: 0,
+            meals: [],
+          };
+        }
 
-      if (!groupedByDay[dayKey]) {
-        groupedByDay[dayKey] = {
+        acc[dayKey].mealCount += 1;
+        acc[dayKey].meals.push({
+          id: meal.id,
+          title: meal.title,
+          mealDate: meal.mealDate,
+          items: meal.items,
+        });
+
+        for (const item of meal.items) {
+          acc[dayKey].totals.calories += item.calories;
+          acc[dayKey].totals.protein += item.protein;
+          acc[dayKey].totals.carbs += item.carbs;
+          acc[dayKey].totals.fat += item.fat;
+        }
+
+        return acc;
+      }, {});
+    }
+
+    const chartGroups = groupMealsByDay(chartMeals);
+    const selectedGroups = groupMealsByDay(selectedMeals);
+
+    const chartDays: HistoryDay[] = [];
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(chartStartDate);
+      day.setDate(chartStartDate.getDate() + i);
+      const dayKey = formatDateKey(day);
+
+      chartDays.push(
+        chartGroups[dayKey] ?? {
           date: dayKey,
           totals: {
             calories: 0,
@@ -142,56 +193,56 @@ export async function GET(req: NextRequest) {
           },
           mealCount: 0,
           meals: [],
-        };
-      }
-
-      groupedByDay[dayKey].mealCount += 1;
-      groupedByDay[dayKey].meals.push({
-        id: meal.id,
-        title: meal.title,
-        mealDate: meal.mealDate,
-        items: meal.items,
-      });
-
-      for (const item of meal.items) {
-        groupedByDay[dayKey].totals.calories += item.calories;
-        groupedByDay[dayKey].totals.protein += item.protein;
-        groupedByDay[dayKey].totals.carbs += item.carbs;
-        groupedByDay[dayKey].totals.fat += item.fat;
-      }
+        }
+      );
     }
 
-    const days = Object.values(groupedByDay)
-      .map((day) => ({
-        ...day,
-        totals: {
-          calories: Math.round(day.totals.calories * 10) / 10,
-          protein: Math.round(day.totals.protein * 10) / 10,
-          carbs: Math.round(day.totals.carbs * 10) / 10,
-          fat: Math.round(day.totals.fat * 10) / 10,
-        },
-      }))
-      .sort((a, b) => (a.date < b.date ? 1 : -1));
+    const selectedDay = selectedGroups[formatDateKey(selectedDate)] || null;
+
+    const normalizedChartDays = chartDays.map((day) => ({
+      ...day,
+      totals: {
+        calories: Math.round(day.totals.calories * 10) / 10,
+        protein: Math.round(day.totals.protein * 10) / 10,
+        carbs: Math.round(day.totals.carbs * 10) / 10,
+        fat: Math.round(day.totals.fat * 10) / 10,
+      },
+    }));
+
+    const normalizedSelectedDay = selectedDay
+      ? {
+          ...selectedDay,
+          totals: {
+            calories: Math.round(selectedDay.totals.calories * 10) / 10,
+            protein: Math.round(selectedDay.totals.protein * 10) / 10,
+            carbs: Math.round(selectedDay.totals.carbs * 10) / 10,
+            fat: Math.round(selectedDay.totals.fat * 10) / 10,
+          },
+        }
+      : null;
 
     return NextResponse.json({
       ok: true,
       code: "SUCCESS",
       message: "History fetched successfully",
-      pagination: {
-        page,
-        limit,
-        total: Object.keys(groupedByDay).length,
-      },
       data: {
         user: {
           id: user.id,
           email: user.email,
         },
+        selectedDate: formatDateKey(selectedDate),
         range: {
-          start: startDate.toISOString(),
-          end: endDate.toISOString(),
+          start: selectedStartDate.toISOString(),
+          end: selectedEndDate.toISOString(),
         },
-        days,
+        selectedDay: normalizedSelectedDay,
+        chartDays: normalizedChartDays,
+        goals: {
+          dailyCalories: user.goal?.dailyCalories ?? 0,
+          proteinTarget: user.goal?.proteinTarget ?? 0,
+          carbsTarget: user.goal?.carbsTarget ?? 0,
+          fatTarget: user.goal?.fatTarget ?? 0,
+        },
       },
     });
   } catch (error) {

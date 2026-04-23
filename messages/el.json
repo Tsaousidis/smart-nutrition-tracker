@@ -52,13 +52,25 @@
     "loading": "Φόρτωση...",
     "noHistory": "Δεν βρέθηκε ιστορικό για τις τελευταίες 7 μέρες.",
     "nutritionTrends": "Τάσεις Διατροφής (7 μέρες)",
+    "dateLabel": "Επιλογή ημερομηνίας",
+    "today": "Σήμερα",
+    "yesterday": "Χθες",
+    "historyForDate": "Ιστορικό για {date}",
+    "noMealsForDate": "Δεν υπάρχουν γεύματα για αυτή την ημερομηνία.",
     "meals": "γεύμα",
     "mealsPlural": "γεύματα",
     "calories": "Θερμίδες",
     "protein": "Πρωτεΐνη",
     "carbs": "Υδατάνθρακες",
     "fat": "Λιπαρά",
-    "untitledMeal": "Γεύμα χωρίς τίτλο"
+    "untitledMeal": "Γεύμα χωρίς τίτλο",
+    "proteinTarget": "Στόχος Πρωτεΐνης",
+    "caloriesTarget": "Στόχος Θερμίδων",
+    "proteinTargetLabel": "Στόχος πρωτεΐνης: {value}g",
+    "caloriesTargetLabel": "Στόχος θερμίδων: {value} kcal",
+    "deleteMeal": "Διαγραφή",
+    "confirmDeleteMeal": "Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το γεύμα;",
+    "deleting": "Διαγράφεται..."
   },
     "Login": {
     "title": "Σύνδεση",
@@ -102,7 +114,9 @@
     "saving": "Αποθήκευση...",
     "saveError": "Σφάλμα Αποθήκευσης",
     "saveSuccess": "Το γεύμα αποθηκεύτηκε επιτυχώς.",
-    "noItems": "Πρέπει να έχεις τουλάχιστον ένα στοιχείο πριν αποθηκεύσεις."
+    "noItems": "Πρέπει να έχεις τουλάχιστον ένα στοιχείο πριν αποθηκεύσεις.",
+    "mealDate": "Ημερομηνία Γεύματος",
+    "invalidDateFormat": "Μη έγκυρη μορφή ημερομηνίας. Χρησιμοποιήστε DD/MM/YYYY"
   },
   "Signup": {
     "title": "Δημιουργία Λογαριασμού",
@@ -140,6 +154,11 @@
     "submit": "Αποθήκευση Προφίλ",
     "saving": "Αποθήκευση...",
     "error": "Σφάλμα",
-    "apiResponse": "Απάντηση API"
+    "apiResponse": "Απάντηση API",
+    "currentTargetSummary": "Τρέχοντες Στόχοι",
+    "dailyCalories": "Ημερήσιες Θερμίδες",
+    "dailyProtein": "Ημερήσια Πρωτεΐνη",
+    "dailyCarbs": "Ημερήσιοι Υδατάνθρακες",
+    "dailyFat": "Ημερήσια Λιπαρά"
   }
 }

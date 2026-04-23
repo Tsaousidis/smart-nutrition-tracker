@@ -56,18 +56,26 @@ export function calculateDailyCalories(
   const bmr = calculateBMR(profile);
   const tdee = bmr * getActivityMultiplier(profile.activityLevel);
 
+  let targetCalories: number;
   switch (goalType) {
     case "LOSE_WEIGHT":
     case "LOSE_FAT":
-      return Math.round(tdee - 400);
+      targetCalories = Math.round(tdee - 400);
+      break;
     case "GAIN_MUSCLE":
-      return Math.round(tdee + 250);
+      targetCalories = Math.round(tdee + 250);
+      break;
     case "RECOMP":
-      return Math.round(tdee);
+      targetCalories = Math.round(tdee);
+      break;
     case "MAINTAIN":
     default:
-      return Math.round(tdee);
+      targetCalories = Math.round(tdee);
+      break;
   }
+
+  // Reduce by 15% as requested
+  return Math.round(targetCalories * 0.85);
 }
 
 export function calculateMacroTargets(
