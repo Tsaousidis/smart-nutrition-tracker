@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 
 export default function LoginForm() {
@@ -86,6 +87,10 @@ export default function LoginForm() {
             {error}
           </div>
         )}
+
+        <div className="mt-6 text-center text-sm">
+          <p className="text-gray-600">{t("noAccount")} <Link href="/signup" className="font-medium text-blue-600 hover:underline">{t("signupLink")}</Link></p>
+        </div>
       </div>
     </main>
   );

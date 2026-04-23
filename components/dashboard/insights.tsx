@@ -1,11 +1,15 @@
+import { useTranslations } from "next-intl";
+
 type Props = {
   insights: string[];
 };
 
 export default function Insights({ insights }: Props) {
+  const t = useTranslations("Dashboard");
+  
   return (
     <div className="rounded-2xl border p-6 shadow-sm">
-      <h2 className="mb-4 text-xl font-semibold">Insights</h2>
+      <h2 className="mb-4 text-xl font-semibold">{t("insights")}</h2>
 
       <div className="space-y-2">
         {insights.map((text, index) => (

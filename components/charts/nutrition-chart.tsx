@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import {
   LineChart,
   Line,
@@ -20,9 +21,11 @@ type Props = {
 };
 
 export default function NutritionChart({ data }: Props) {
+  const t = useTranslations("History");
+  
   return (
     <div className="rounded-2xl border p-6 shadow-sm">
-      <h2 className="mb-4 text-xl font-semibold">Nutrition Trends (7 days)</h2>
+      <h2 className="mb-4 text-xl font-semibold">{t("nutritionTrends")}</h2>
 
       <div className="h-80 w-full">
         <ResponsiveContainer>
