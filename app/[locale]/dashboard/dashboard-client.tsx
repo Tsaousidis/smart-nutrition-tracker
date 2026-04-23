@@ -93,6 +93,12 @@ export default function DashboardClient() {
       totals: dashboardData.totals,
       targets: dashboardData.targets,
       remaining: dashboardData.remaining,
+    }, {
+      belowProtein: t("belowProtein"),
+      aboveProtein: t("aboveProtein"),
+      remainingCalories: t("remainingCalories"),
+      aboveCalories: t("aboveCalories"),
+      onTrack: t("onTrack"),
     })
   : [];
 

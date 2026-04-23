@@ -56,11 +56,17 @@ export default function HistoryPage() {
   const [error, setError] = useState<string | null>(null);
   const [historyDays, setHistoryDays] = useState<HistoryDay[]>([]);
 
+  // Format date from YYYY-MM-DD to DD/MM/YYYY
+  function formatDateForChart(dateString: string): string {
+    const [year, month, day] = dateString.split("-");
+    return `${day}/${month}/${year}`;
+  }
+
   const chartData = historyDays
     .slice()
     .reverse()
     .map((day) => ({
-      date: day.date.slice(5),
+      date: formatDateForChart(day.date),
       calories: day.totals.calories,
       protein: day.totals.protein,
     }));

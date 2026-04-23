@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCsrfToken } from "@/lib/useCsrfToken";
+import { Link } from "@/i18n/navigation";
 
 export default function SignupForm() {
   const t = useTranslations("Signup");
@@ -105,6 +106,10 @@ export default function SignupForm() {
             {error}
           </div>
         )}
+
+        <div className="mt-6 text-center text-sm">
+          <p className="text-gray-600">{t("haveAccount")} <Link href="/login" className="font-medium text-blue-600 hover:underline">{t("loginLink")}</Link></p>
+        </div>
       </div>
     </main>
   );

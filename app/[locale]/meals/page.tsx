@@ -30,8 +30,8 @@ function roundOne(value: number) {
 export default function MealsPage() {
   const t = useTranslations("Meals");
 
-  const [title, setTitle] = useState("Breakfast");
-  const [mealText, setMealText] = useState("2 eggs and 2 slices of toast");
+  const [title, setTitle] = useState(t("mealTitleDefault"));
+  const [mealText, setMealText] = useState(t("mealDescriptionDefault"));
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [parsedMeal, setParsedMeal] = useState<ParsedMealData | null>(null);

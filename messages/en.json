@@ -39,7 +39,10 @@
     "refresh": "Refresh",
     "logout": "Log Out",
     "belowProtein": "You are {value}g below your protein target",
-    "aboveCalories": "You exceeded your calorie target by {value} kcal"
+    "aboveProtein": "You exceeded your protein target by {value}g",
+    "remainingCalories": "You still have {value} kcal remaining today",
+    "aboveCalories": "You exceeded your calorie target by {value} kcal",
+    "onTrack": "You're on track with your nutrition today"
   },
   "History": {
     "title": "7-Day History",
@@ -48,6 +51,7 @@
     "refresh": "Refresh History",
     "loading": "Loading...",
     "noHistory": "No history found for the last 7 days.",
+    "nutritionTrends": "Nutrition Trends (7 days)",
     "meals": "meal",
     "mealsPlural": "meals",
     "calories": "Calories",
@@ -65,7 +69,9 @@
     "passwordPlaceholder": "Enter your password",
     "submit": "Log In",
     "loading": "Logging in...",
-    "invalidCredentials": "Invalid email or password"
+    "invalidCredentials": "Invalid email or password",
+    "noAccount": "Don't have an account?",
+    "signupLink": "Sign up here"
   },
   "Meals": {
     "title": "Meal Parser",
@@ -74,6 +80,8 @@
     "mealTitlePlaceholder": "Example: Breakfast",
     "mealDescription": "Meal Description",
     "mealDescriptionPlaceholder": "Example: 2 eggs, 1 chicken sandwich, and a banana",
+    "mealTitleDefault": "Breakfast",
+    "mealDescriptionDefault": "2 eggs and 2 slices of toast",
     "parseMeal": "Parse Meal",
     "parsing": "Parsing...",
     "reviewEdit": "Review & Edit Items",
@@ -105,7 +113,9 @@
     "passwordPlaceholder": "Create a password",
     "submit": "Sign Up",
     "loading": "Creating account...",
-    "success": "Account created successfully. You can now log in."
+    "success": "Account created successfully. You can now log in.",
+    "haveAccount": "Already have an account?",
+    "loginLink": "Log in here"
   },
   "Onboarding": {
     "title": "User Onboarding",

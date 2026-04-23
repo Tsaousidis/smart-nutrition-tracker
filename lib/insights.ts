@@ -19,7 +19,18 @@ type DashboardData = {
   };
 };
 
-export function generateInsights(data: DashboardData): string[] {
+type InsightsTranslations = {
+  belowProtein: string;
+  aboveProtein: string;
+  remainingCalories: string;
+  aboveCalories: string;
+  onTrack: string;
+};
+
+export function generateInsights(
+  data: DashboardData,
+  translations: InsightsTranslations
+): string[] {
   const insights: string[] = [];
 
   const { remaining } = data;
@@ -27,32 +38,28 @@ export function generateInsights(data: DashboardData): string[] {
   // Protein insight
   if (remaining.protein > 20) {
     insights.push(
-      `You are ${Math.round(remaining.protein)}g below your protein target`
+      translations.belowProtein.replace("{value}", Math.round(remaining.protein).toString())
     );
   } else if (remaining.protein < -10) {
     insights.push(
-      `You exceeded your protein target by ${Math.abs(
-        Math.round(remaining.protein)
-      )}g`
+      translations.aboveProtein.replace("{value}", Math.abs(Math.round(remaining.protein)).toString())
     );
   }
 
   // Calories insight
   if (remaining.calories > 200) {
     insights.push(
-      `You still have ${Math.round(remaining.calories)} kcal remaining today`
+      translations.remainingCalories.replace("{value}", Math.round(remaining.calories).toString())
     );
   } else if (remaining.calories < -200) {
     insights.push(
-      `You exceeded your calorie target by ${Math.abs(
-        Math.round(remaining.calories)
-      )} kcal`
+      translations.aboveCalories.replace("{value}", Math.abs(Math.round(remaining.calories)).toString())
     );
   }
 
   // Balanced day
   if (insights.length === 0) {
-    insights.push("You're on track with your nutrition today");
+    insights.push(translations.onTrack);
   }
 
   return insights;

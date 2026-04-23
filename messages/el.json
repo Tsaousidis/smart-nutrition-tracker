@@ -39,7 +39,10 @@
     "refresh": "Ανανέωση",
     "logout": "Αποσύνδεση",
     "belowProtein": "Σου λείπουν {value}g πρωτεΐνης",
-    "aboveCalories": "Έχεις ξεπεράσει τον στόχο θερμίδων κατά {value} kcal"
+    "aboveProtein": "Έχεις ξεπεράσει τον στόχο πρωτεΐνης κατά {value}g",
+    "remainingCalories": "Σου απομένουν {value} kcal για σήμερα",
+    "aboveCalories": "Έχεις ξεπεράσει τον στόχο θερμίδων κατά {value} kcal",
+    "onTrack": "Είσαι εντός στόχων με τη διατροφή σου σήμερα"
   },
   "History": {
     "title": "Ιστορικό 7 Ημερών",
@@ -48,6 +51,7 @@
     "refresh": "Ανανέωση Ιστορικού",
     "loading": "Φόρτωση...",
     "noHistory": "Δεν βρέθηκε ιστορικό για τις τελευταίες 7 μέρες.",
+    "nutritionTrends": "Τάσεις Διατροφής (7 μέρες)",
     "meals": "γεύμα",
     "mealsPlural": "γεύματα",
     "calories": "Θερμίδες",
@@ -65,7 +69,9 @@
     "passwordPlaceholder": "Εισάγετε τον κωδικό σας",
     "submit": "Σύνδεση",
     "loading": "Σύνδεση...",
-    "invalidCredentials": "Λάθος email ή κωδικός"
+    "invalidCredentials": "Λάθος email ή κωδικός",
+    "noAccount": "Δεν έχεις λογαριασμό;",
+    "signupLink": "Εγγραφή εδώ"
   },
   "Meals": {
     "title": "Καταχώρηση Γεύματος",
@@ -74,6 +80,8 @@
     "mealTitlePlaceholder": "Παράδειγμα: Πρωινό",
     "mealDescription": "Περιγραφή Γεύματος",
     "mealDescriptionPlaceholder": "Παράδειγμα: 2 αυγά, 1 σάντουιτς κοτόπουλο και μια μπανάνα",
+    "mealTitleDefault": "Πρωινό",
+    "mealDescriptionDefault": "2 αυγά και 2 φέτες ψωμί",
     "parseMeal": "Ανάλυση",
     "parsing": "Ανάλυση...",
     "reviewEdit": "Επεξεργασία Στοιχείων",
@@ -105,7 +113,9 @@
     "passwordPlaceholder": "Δημιουργήστε έναν κωδικό",
     "submit": "Εγγραφή",
     "loading": "Δημιουργία λογαριασμού...",
-    "success": "Ο λογαριασμός δημιουργήθηκε επιτυχώς. Μπορείτε να συνδεθείτε τώρα."
+    "success": "Ο λογαριασμός δημιουργήθηκε επιτυχώς. Μπορείτε να συνδεθείτε τώρα.",
+    "haveAccount": "Έχεις ήδη λογαριασμό;",
+    "loginLink": "Σύνδεση εδώ"
   },
   "Onboarding": {
     "title": "Ρύθμιση Προφίλ",
