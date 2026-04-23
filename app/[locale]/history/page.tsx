@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import NutritionChart from "@/components/charts/nutrition-chart";
+import SingleMetricChart from "@/components/charts/single-metric-chart";
 import { useTranslations } from "next-intl";
 
 type HistoryItem = {
@@ -233,11 +233,24 @@ export default function HistoryPage() {
         )}
 
         {chartData.length > 0 && (
-          <NutritionChart
-            data={chartData}
-            targetCalories={goalTargets?.dailyCalories}
-            targetProtein={goalTargets?.proteinTarget}
-          />
+          <div className="grid gap-4 md:grid-cols-2">
+            <SingleMetricChart
+              data={chartData.map(d => ({ date: d.date, value: d.calories }))}
+              target={goalTargets?.dailyCalories}
+              title={t("calories")}
+              unit="kcal"
+              color="#000000"
+              targetColor="#ef4444"
+            />
+            <SingleMetricChart
+              data={chartData.map(d => ({ date: d.date, value: d.protein }))}
+              target={goalTargets?.proteinTarget}
+              title={t("protein")}
+              unit="g"
+              color="#8884d8"
+              targetColor="#10b981"
+            />
+          </div>
         )}
 
         <div className="space-y-6">
