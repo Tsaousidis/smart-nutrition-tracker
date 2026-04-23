@@ -90,3 +90,84 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(req.url);
+    const mealId = searchParams.get("id");
+
+    if (!mealId) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "Meal ID is required",
+        },
+        { status: 400 }
+      );
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "Authenticated user not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    // Verify the meal belongs to the user
+    const meal = await prisma.meal.findFirst({
+      where: {
+        id: mealId,
+        userId: user.id,
+      },
+    });
+
+    if (!meal) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "Meal not found or does not belong to user",
+        },
+        { status: 404 }
+      );
+    }
+
+    // Delete the meal (cascade will delete items)
+    await prisma.meal.delete({
+      where: { id: mealId },
+    });
+
+    return NextResponse.json({
+      ok: true,
+      message: "Meal deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete meal route error:", error);
+
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Something went wrong while deleting the meal",
+      },
+      { status: 500 }
+    );
+  }
+}

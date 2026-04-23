@@ -26,6 +26,7 @@ export type ProfileRequestBody = z.infer<typeof profileSchema>;
 
 export const mealParseInputSchema = z.object({
   mealText: z.string().min(3),
+  locale: z.enum(["en", "el"]).optional(),
 });
 
 export const parsedMealSchema = z.object({

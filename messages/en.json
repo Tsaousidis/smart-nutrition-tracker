@@ -52,13 +52,25 @@
     "loading": "Loading...",
     "noHistory": "No history found for the last 7 days.",
     "nutritionTrends": "Nutrition Trends (7 days)",
+    "dateLabel": "Select date",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "historyForDate": "History for {date}",
+    "noMealsForDate": "No meals were logged for this date.",
     "meals": "meal",
     "mealsPlural": "meals",
     "calories": "Calories",
     "protein": "Protein",
     "carbs": "Carbs",
     "fat": "Fat",
-    "untitledMeal": "Untitled Meal"
+    "untitledMeal": "Untitled Meal",
+    "proteinTarget": "Protein Target",
+    "caloriesTarget": "Calories Target",
+    "proteinTargetLabel": "Protein target: {value}g",
+    "caloriesTargetLabel": "Calories target: {value} kcal",
+    "deleteMeal": "Delete",
+    "confirmDeleteMeal": "Are you sure you want to delete this meal?",
+    "deleting": "Deleting..."
   },
   "Login": {
     "title": "Log In",
@@ -102,7 +114,9 @@
     "saving": "Saving...",
     "saveError": "Save Error",
     "saveSuccess": "Meal saved successfully.",
-    "noItems": "You must have at least one meal item before saving."
+    "noItems": "You must have at least one meal item before saving.",
+    "mealDate": "Meal Date",
+    "invalidDateFormat": "Invalid date format. Use DD/MM/YYYY"
   },
   "Signup": {
     "title": "Create Account",
@@ -140,6 +154,11 @@
     "submit": "Save Profile",
     "saving": "Saving...",
     "error": "Error",
-    "apiResponse": "API Response"
+    "apiResponse": "API Response",
+    "currentTargetSummary": "Current Target Summary",
+    "dailyCalories": "Daily Calories",
+    "dailyProtein": "Daily Protein",
+    "dailyCarbs": "Daily Carbs",
+    "dailyFat": "Daily Fat"
   }
 }

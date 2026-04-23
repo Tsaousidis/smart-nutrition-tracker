@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 type ParsedMealItem = {
@@ -27,11 +28,35 @@ function roundOne(value: number) {
   return Math.round(value * 10) / 10;
 }
 
+function parseDMYDate(dateString: string): string | null {
+  const match = dateString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!match) return null;
+  const [, day, month, year] = match;
+  const parsed = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed.toISOString();
+}
+
+function formatDateForInput(date: Date): string {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
 export default function MealsPage() {
   const t = useTranslations("Meals");
+  const { locale } = useParams() as { locale?: string };
 
   const [title, setTitle] = useState(t("mealTitleDefault"));
   const [mealText, setMealText] = useState(t("mealDescriptionDefault"));
+  const [mealDate, setMealDate] = useState(() => {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const year = now.getFullYear();
+    return `${day}/${month}/${year}`;
+  });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [parsedMeal, setParsedMeal] = useState<ParsedMealData | null>(null);
@@ -51,7 +76,10 @@ export default function MealsPage() {
       const res = await fetch("/api/meals/parse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mealText }),
+        body: JSON.stringify({
+          mealText,
+          locale: locale === "el" ? "el" : "en",
+        }),
       });
 
       const data = await res.json();
@@ -131,10 +159,19 @@ export default function MealsPage() {
 
       if (cleanedItems.length === 0) throw new Error(t("noItems"));
 
+      const isoDate = parseDMYDate(mealDate);
+      if (!isoDate) {
+        throw new Error(t("invalidDateFormat"));
+      }
+
       const res = await fetch("/api/meals", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, mealDate: new Date().toISOString(), items: cleanedItems }),
+        body: JSON.stringify({
+          title,
+          mealDate: new Date(`${isoDate}T12:00:00`).toISOString(),
+          items: cleanedItems,
+        }),
       });
 
       const data = await res.json();
@@ -164,6 +201,40 @@ export default function MealsPage() {
               className="w-full rounded-lg border px-3 py-2"
               placeholder={t("mealTitlePlaceholder")}
             />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium">{t("mealDate")}</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={mealDate}
+                onChange={(e) => setMealDate(e.target.value)}
+                onBlur={(e) => {
+                  const parsed = parseDMYDate(e.target.value);
+                  if (parsed) {
+                    setMealDate(formatDateForInput(new Date(parsed)));
+                  } else {
+                    setMealDate(formatDateForInput(new Date()));
+                  }
+                }}
+                className="w-full rounded-lg border px-3 py-2"
+                placeholder="DD/MM/YYYY"
+              />
+              <input
+                type="date"
+                value={(function () {
+                  const parsed = parseDMYDate(mealDate);
+                  return parsed ? parsed.slice(0, 10) : "";
+                })()}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    setMealDate(formatDateForInput(new Date(e.target.value)));
+                  }
+                }}
+                className="w-full rounded-lg border px-3 py-2"
+              />
+            </div>
           </div>
 
           <div>

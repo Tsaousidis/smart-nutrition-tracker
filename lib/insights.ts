@@ -20,10 +20,10 @@ type DashboardData = {
 };
 
 type InsightsTranslations = {
-  belowProtein: string;
-  aboveProtein: string;
-  remainingCalories: string;
-  aboveCalories: string;
+  belowProtein: (value: number) => string;
+  aboveProtein: (value: number) => string;
+  remainingCalories: (value: number) => string;
+  aboveCalories: (value: number) => string;
   onTrack: string;
 };
 
@@ -37,24 +37,16 @@ export function generateInsights(
 
   // Protein insight
   if (remaining.protein > 20) {
-    insights.push(
-      translations.belowProtein.replace("{value}", Math.round(remaining.protein).toString())
-    );
+    insights.push(translations.belowProtein(Math.round(remaining.protein)));
   } else if (remaining.protein < -10) {
-    insights.push(
-      translations.aboveProtein.replace("{value}", Math.abs(Math.round(remaining.protein)).toString())
-    );
+    insights.push(translations.aboveProtein(Math.abs(Math.round(remaining.protein))));
   }
 
   // Calories insight
   if (remaining.calories > 200) {
-    insights.push(
-      translations.remainingCalories.replace("{value}", Math.round(remaining.calories).toString())
-    );
+    insights.push(translations.remainingCalories(Math.round(remaining.calories)));
   } else if (remaining.calories < -200) {
-    insights.push(
-      translations.aboveCalories.replace("{value}", Math.abs(Math.round(remaining.calories)).toString())
-    );
+    insights.push(translations.aboveCalories(Math.abs(Math.round(remaining.calories))));
   }
 
   // Balanced day

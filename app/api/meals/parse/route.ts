@@ -54,8 +54,11 @@ function isRetryableError(message: string): boolean {
   );
 }
 
-async function parseMealWithRetry(mealText: string) {
+async function parseMealWithRetry(mealText: string, locale: "en" | "el") {
   let lastError: unknown;
+  const shouldUseGreek =
+    locale === "el" || /[\u0370-\u03FF]/.test(mealText);
+  const targetLanguage = shouldUseGreek ? "Greek" : "English";
 
   for (let attempt = 1; attempt <= MAX_RETRIES + 1; attempt++) {
     try {
@@ -77,6 +80,11 @@ Your task:
 - No explanation text
 - No extra keys
 - Use reasonable nutrition estimates if exact product data is not available
+
+Preferred output language: ${targetLanguage}.
+If the request locale is "el" or the input contains Greek text, return food names in Greek.
+Do not translate Greek food names into English. For example, return "Φέτα 12% λιπαρά" not "Feta cheese 12% fat".
+If the input is not Greek, return food names in English.
 
 Return this exact JSON shape:
 {
@@ -102,7 +110,7 @@ Return this exact JSON shape:
 User meal:
 ${mealText}
                 `.trim(),
-              },
+              }
             ],
           },
         ],
@@ -225,11 +233,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let { mealText } = parsedInput.data;
+    const { mealText, locale = "en" } = parsedInput.data;
     // Sanitize meal input to prevent XSS
-    mealText = sanitizeMealInput(mealText);
+    const sanitizedText = sanitizeMealInput(mealText);
 
-    const parsedMeal = await parseMealWithRetry(mealText);
+    const parsedMeal = await parseMealWithRetry(sanitizedText, locale);
 
     return NextResponse.json({
       ok: true,

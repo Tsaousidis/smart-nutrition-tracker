@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCsrfToken } from "@/lib/useCsrfToken";
+import { calculateMacroTargets } from "@/lib/calculations";
 
 type ProfileFormData = {
   sex: "MALE" | "FEMALE";
@@ -29,6 +30,19 @@ export default function ProfileForm() {
   const [loading, setLoading] = useState(false);
   const [responseData, setResponseData] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const calculatedTargets = useMemo(() => {
+    return calculateMacroTargets(
+      {
+        age: formData.age,
+        sex: formData.sex,
+        heightCm: formData.heightCm,
+        weightKg: formData.weightKg,
+        activityLevel: formData.activityLevel,
+      },
+      formData.goalType
+    );
+  }, [formData.age, formData.sex, formData.heightCm, formData.weightKg, formData.activityLevel, formData.goalType]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = e.target;
@@ -126,6 +140,28 @@ export default function ProfileForm() {
           {loading ? t("saving") : t("submit")}
         </button>
       </form>
+
+      <section className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+        <h2 className="mb-3 text-lg font-semibold">{t("currentTargetSummary")}</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl bg-white p-4 shadow-sm">
+            <p className="text-sm text-slate-500">{t("dailyCalories")}</p>
+            <p className="mt-2 text-2xl font-bold">{calculatedTargets.dailyCalories.toFixed(0)} kcal</p>
+          </div>
+          <div className="rounded-xl bg-white p-4 shadow-sm">
+            <p className="text-sm text-slate-500">{t("dailyProtein")}</p>
+            <p className="mt-2 text-2xl font-bold">{calculatedTargets.proteinTarget.toFixed(0)} g</p>
+          </div>
+          <div className="rounded-xl bg-white p-4 shadow-sm">
+            <p className="text-sm text-slate-500">{t("dailyCarbs")}</p>
+            <p className="mt-2 text-2xl font-bold">{calculatedTargets.carbsTarget.toFixed(0)} g</p>
+          </div>
+          <div className="rounded-xl bg-white p-4 shadow-sm">
+            <p className="text-sm text-slate-500">{t("dailyFat")}</p>
+            <p className="mt-2 text-2xl font-bold">{calculatedTargets.fatTarget.toFixed(0)} g</p>
+          </div>
+        </div>
+      </section>
 
       {error && (
         <div className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
