@@ -74,8 +74,8 @@ export function calculateDailyCalories(
       break;
   }
 
-  // Reduce by 15% as requested
-  return Math.round(targetCalories * 0.85);
+  // Reduce by 25% as requested
+  return Math.round(targetCalories * 0.75);
 }
 
 export function calculateMacroTargets(
