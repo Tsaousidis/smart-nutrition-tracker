@@ -1,4 +1,9 @@
 {
+  "mealTitleBreakfast": "Breakfast",
+  "mealTitleLunch": "Lunch",
+  "mealTitleDinner": "Dinner",
+  "mealTitleSnack": "Snack",
+  "mealTitleOther": "Other",
   "Navbar": {
     "brand": "Nutrition Tracker",
     "dashboard": "Dashboard",
@@ -38,8 +43,8 @@
     "mealsToday": "Today's Meals",
     "refresh": "Refresh",
     "logout": "Log Out",
-    "belowProtein": "You are {value}g below your protein target",
-    "aboveProtein": "You exceeded your protein target by {value}g",
+    "belowProtein": "You are {value}g below your protein target today",
+    "aboveProtein": "You exceeded your protein target by {value}g today",
     "remainingCalories": "You still have {value} kcal remaining today",
     "aboveCalories": "You exceeded your calorie target by {value} kcal",
     "onTrack": "You're on track with your nutrition today",
@@ -132,6 +137,13 @@
     "mealDescription": "Meal Description",
     "mealDescriptionPlaceholder": "Example: 2 eggs, 1 chicken sandwich, and a banana",
     "mealTitleDefault": "Breakfast",
+    "mealTitleBreakfast": "Breakfast",
+    "mealTitleMidMorning": "Mid-Morning",
+    "mealTitleLunch": "Lunch",
+    "mealTitleAfternoon": "Afternoon",
+    "mealTitleDinner": "Dinner",
+    "mealTitleSnack": "Snack",
+    "mealTitleOther": "Other",
     "mealDescriptionDefault": "2 eggs and 2 slices of toast",
     "parseMeal": "Parse Meal",
     "parsing": "Parsing...",
@@ -155,7 +167,8 @@
     "saveSuccess": "Meal saved successfully.",
     "noItems": "You must have at least one meal item before saving.",
     "mealDate": "Meal Date",
-    "invalidDateFormat": "Invalid date format. Use DD/MM/YYYY"
+    "invalidDateFormat": "Invalid date format. Use DD/MM/YYYY",
+    "mealTitleOther": "Other"
   },
   "Signup": {
     "title": "Create Account",

@@ -1,4 +1,9 @@
 {
+  "mealTitleBreakfast": "Πρωινό",
+  "mealTitleLunch": "Μεσημεριανό",
+  "mealTitleDinner": "Βραδινό",
+  "mealTitleSnack": "Σνακ",
+  "mealTitleOther": "Άλλο",
   "Navbar": {
     "brand": "Nutrition Tracker",
     "dashboard": "Επισκόπηση",
@@ -38,8 +43,8 @@
     "mealsToday": "Γεύματα Σήμερα",
     "refresh": "Ανανέωση",
     "logout": "Αποσύνδεση",
-    "belowProtein": "Σου λείπουν {value}g πρωτεΐνης",
-    "aboveProtein": "Έχεις ξεπεράσει τον στόχο πρωτεΐνης κατά {value}g",
+    "belowProtein": "Σου λείπουν {value}g πρωτεΐνης σήμερα",
+    "aboveProtein": "Έχεις ξεπεράσει τον στόχο πρωτεΐνης σήμερα κατά {value}g",
     "remainingCalories": "Σου απομένουν {value} kcal για σήμερα",
     "aboveCalories": "Έχεις ξεπεράσει τον στόχο θερμίδων κατά {value} kcal",
     "onTrack": "Είσαι εντός στόχων με τη διατροφή σου σήμερα",
@@ -132,6 +137,13 @@
     "mealDescription": "Περιγραφή Γεύματος",
     "mealDescriptionPlaceholder": "Παράδειγμα: 2 αυγά, 1 σάντουιτς κοτόπουλο και μια μπανάνα",
     "mealTitleDefault": "Πρωινό",
+    "mealTitleBreakfast": "Πρωινό",
+    "mealTitleMidMorning": "Δεκατιανό",
+    "mealTitleLunch": "Μεσημεριανό",
+    "mealTitleAfternoon": "Απογευματινό",
+    "mealTitleDinner": "Βραδινό",
+    "mealTitleSnack": "Σνακ",
+    "mealTitleOther": "Άλλο",
     "mealDescriptionDefault": "2 αυγά και 2 φέτες ψωμί",
     "parseMeal": "Ανάλυση",
     "parsing": "Ανάλυση...",
@@ -155,7 +167,8 @@
     "saveSuccess": "Το γεύμα αποθηκεύτηκε επιτυχώς.",
     "noItems": "Πρέπει να έχεις τουλάχιστον ένα στοιχείο πριν αποθηκεύσεις.",
     "mealDate": "Ημερομηνία Γεύματος",
-    "invalidDateFormat": "Μη έγκυρη μορφή ημερομηνίας. Χρησιμοποιήστε DD/MM/YYYY"
+    "invalidDateFormat": "Μη έγκυρη μορφή ημερομηνίας. Χρησιμοποιήστε DD/MM/YYYY",
+    "mealTitleOther": "Άλλο"
   },
   "Signup": {
     "title": "Δημιουργία Λογαριασμού",
