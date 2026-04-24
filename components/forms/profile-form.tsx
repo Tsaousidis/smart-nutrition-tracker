@@ -32,6 +32,44 @@ export default function ProfileForm() {
   const [responseData, setResponseData] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Account deletion state
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Handle account deletion
+  async function handleDeleteAccount() {
+    setDeleteLoading(true);
+    setDeleteError(null);
+
+    try {
+      const res = await fetch("/api/account/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: deletePassword }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.message);
+      }
+
+      setDeleteSuccess(true);
+      // Redirect to login after successful deletion
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      setDeleteError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
+
   // Load existing profile on mount
   useEffect(() => {
     async function loadProfile() {
@@ -185,6 +223,75 @@ export default function ProfileForm() {
             <p className="mt-2 text-2xl font-bold">{calculatedTargets.fatTarget.toFixed(0)} g</p>
           </div>
         </div>
+      </section>
+
+      {/* Account Deletion Section - at the bottom */}
+      <section className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-5">
+        {!showDeleteConfirm ? (
+          <>
+            <h2 className="mb-3 text-lg font-semibold text-red-700">{t("deleteAccount")}</h2>
+            <p className="mb-4 text-sm text-gray-600">{t("deleteAccountWarning")}</p>
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="w-full rounded-lg border border-red-300 bg-red-100 px-4 py-2 text-red-700 hover:bg-red-200"
+            >
+              {t("deleteAccountButton")}
+            </button>
+          </>
+        ) : (
+          <>
+            <h2 className="mb-3 text-lg font-semibold text-red-700">{t("deleteAccount")}</h2>
+            <p className="mb-4 text-sm text-gray-600">{t("deleteAccountWarning")}</p>
+            
+            <div className="space-y-3">
+              <div>
+                <label className="mb-1 block text-sm font-medium">{t("confirmPassword")}</label>
+                <input
+                  type="password"
+                  value={deletePassword}
+                  onChange={(e) => setDeletePassword(e.target.value)}
+                  className="w-full rounded-lg border px-3 py-2"
+                  placeholder={t("enterPasswordToDelete")}
+                />
+              </div>
+              
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleDeleteAccount}
+                  disabled={deleteLoading || !deletePassword}
+                  className="flex-1 rounded-lg border border-red-300 bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  {deleteLoading ? t("deleting") : t("confirmDelete")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeletePassword("");
+                    setDeleteError(null);
+                  }}
+                  className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50"
+                >
+                  {t("cancel")}
+                </button>
+              </div>
+            </div>
+
+            {deleteError && (
+              <div className="mt-4 rounded-lg border border-red-300 bg-white p-3 text-red-700">
+                {deleteError}
+              </div>
+            )}
+
+            {deleteSuccess && (
+              <div className="mt-4 rounded-lg border border-green-300 bg-green-50 p-3 text-green-700">
+                {t("accountDeleted")}
+              </div>
+            )}
+          </>
+        )}
       </section>
 
       {error && (

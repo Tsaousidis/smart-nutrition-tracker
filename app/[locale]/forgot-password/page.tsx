@@ -1,47 +1,60 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
-
-export default function LoginForm() {
-  const t = useTranslations("Login");
-  const router = useRouter();
+export default function ForgotPasswordPage() {
+  const t = useTranslations("ForgotPassword");
   const locale = useLocale();
-
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
+      const res = await fetch("/api/password-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
 
-      if (!result || result.error) {
-        throw new Error(t("invalidCredentials"));
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.message);
       }
 
-      router.push(`/${locale}/dashboard`);
-      router.refresh();
+      setSubmitted(true);
     } catch (err) {
       console.error(err);
-      setError(err instanceof Error ? err.message : "Unknown login error");
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
+  }
+
+  if (submitted) {
+    return (
+      <main className="min-h-screen px-4 py-10">
+        <div className="mx-auto max-w-md rounded-2xl border bg-white p-6 shadow-sm">
+          <div className="text-center">
+            <div className="mb-4 text-4xl">✓</div>
+            <h1 className="mb-2 text-2xl font-bold">{t("emailSent")}</h1>
+            <p className="mb-6 text-sm text-gray-600">{t("checkEmail")}</p>
+            <Link href="/login" className="text-sm font-medium text-blue-600 hover:underline">
+              {t("backToLogin")}
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -50,7 +63,7 @@ export default function LoginForm() {
         <h1 className="mb-2 text-2xl font-bold">{t("title")}</h1>
         <p className="mb-6 text-sm text-gray-600">{t("subtitle")}</p>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-medium">{t("email")}</label>
             <input
@@ -59,32 +72,16 @@ export default function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-lg border px-3 py-2"
               placeholder={t("emailPlaceholder")}
+              required
             />
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium">{t("password")}</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border px-3 py-2"
-              placeholder={t("passwordPlaceholder")}
-            />
-          </div>
-
-          <div className="mt-4 text-right">
-          <Link href={`/forgot-password`} className="text-sm font-medium text-blue-600 hover:underline">
-            {t("forgotPassword")}
-          </Link>
-        </div>
-
-        <button
+          <button
             type="submit"
             disabled={loading}
             className="w-full rounded-lg bg-black px-4 py-2 text-white disabled:opacity-50"
           >
-            {loading ? t("loading") : t("submit")}
+            {loading ? t("sending") : t("submit")}
           </button>
         </form>
 
@@ -95,7 +92,9 @@ export default function LoginForm() {
         )}
 
         <div className="mt-6 text-center text-sm">
-          <p className="text-gray-600">{t("noAccount")} <Link href={`/${locale}/signup`} className="font-medium text-blue-600 hover:underline">{t("signupLink")}</Link></p>
+          <Link href="/login" className="font-medium text-blue-600 hover:underline">
+            {t("backToLogin")}
+          </Link>
         </div>
       </div>
     </main>

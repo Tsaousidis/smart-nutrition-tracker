@@ -91,7 +91,36 @@
     "loading": "Σύνδεση...",
     "invalidCredentials": "Λάθος email ή κωδικός",
     "noAccount": "Δεν έχεις λογαριασμό;",
-    "signupLink": "Εγγραφή εδώ"
+    "signupLink": "Εγγράψου εδώ",
+    "forgotPassword": "Ξέχασες τον κωδικό;"
+  },
+  "ForgotPassword": {
+    "title": "Επαναφορά Κωδικού",
+    "subtitle": "Εισαγε το email σου και θα σου στείλουμε έναν σύνδεσμο επαναφοράς.",
+    "email": "Email",
+    "emailPlaceholder": "Εισαγε το email σου",
+    "submit": "Στείλε Σύνδεσμο",
+    "sending": "Αποστολή...",
+    "emailSent": "Ελέγξε το Email σου",
+    "checkEmail": "Αν υπάρχει λογαριασμός, στείλαμε έναν σύνδεσμο επαναφοράς.",
+    "backToLogin": "Επιστροφή στη Σύνδεση"
+  },
+  "ResetPassword": {
+    "title": "Νέος Κωδικός",
+    "subtitle": "Εισαγε τον νέο σου κωδικό παρακάτω.",
+    "newPassword": "Νέος Κωδικός",
+    "passwordPlaceholder": "Εισαγε νέο κωδικό",
+    "confirmPassword": "Επιβεβαίωση Κωδικού",
+    "confirmPasswordPlaceholder": "Επιβεβαίωσε τον κωδικό",
+    "submit": "Επαναφορά Κωδικού",
+    "resetting": "Επαναφορά...",
+    "passwordMismatch": "Οι κωδικοί δεν ταιριάζουν",
+    "invalidToken": "Άκυρος Σύνδεσμός",
+    "tokenExpired": "Αυτός ο σύνδεσμός έχει λήξει ή είναι άκυρος.",
+    "tryAgain": "Δοκίμασε Ξανά",
+    "success": "Επιτυχής Επαναφορά!",
+    "redirecting": "Ανακατεύθυνση στη σύνδεση...",
+    "goToLogin": "Πήγαινε στη Σύνδεση"
   },
   "Meals": {
     "title": "Καταχώρηση Γεύματος",
@@ -167,6 +196,15 @@
     "dailyCalories": "Ημερήσιες Θερμίδες",
     "dailyProtein": "Ημερήσια Πρωτεΐνη",
     "dailyCarbs": "Ημερήσιοι Υδατάνθρακες",
-    "dailyFat": "Ημερήσια Λιπαρά"
+    "dailyFat": "Ημερήσια Λιπαρά",
+    "deleteAccount": "Διαγραφή Λογαριασμού",
+    "deleteAccountWarning": "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Όλα τα δεδομένα σου θα διαγραφούν μόνιμα.",
+    "confirmPassword": "Επιβεβαίωση Κωδικού",
+    "enterPasswordToDelete": "Εισαγε τον κωδικό σου για επιβεβαίωση διαγραφής",
+    "deleteAccountButton": "Διαγραφή του Λογαριασμού μου",
+    "deleting": "Διαγραφή...",
+    "accountDeleted": "Ο λογαριασμός σου διαγράφηκε. Ανακατεύθυνση...",
+    "confirmDelete": "Επιβεβαίωση Διαγραφής",
+    "cancel": "Ακύρωση"
   }
 }
