@@ -91,7 +91,36 @@
     "loading": "Logging in...",
     "invalidCredentials": "Invalid email or password",
     "noAccount": "Don't have an account?",
-    "signupLink": "Sign up here"
+    "signupLink": "Sign up here",
+    "forgotPassword": "Forgot password?"
+  },
+  "ForgotPassword": {
+    "title": "Reset Password",
+    "subtitle": "Enter your email and we'll send you a reset link.",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "submit": "Send Reset Link",
+    "sending": "Sending...",
+    "emailSent": "Check Your Email",
+    "checkEmail": "If an account exists, we've sent a password reset link.",
+    "backToLogin": "Back to Login"
+  },
+  "ResetPassword": {
+    "title": "New Password",
+    "subtitle": "Enter your new password below.",
+    "newPassword": "New Password",
+    "passwordPlaceholder": "Enter new password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "submit": "Reset Password",
+    "resetting": "Resetting...",
+    "passwordMismatch": "Passwords do not match",
+    "invalidToken": "Invalid Reset Link",
+    "tokenExpired": "This reset link has expired or is invalid.",
+    "tryAgain": "Try Again",
+    "success": "Password Reset!",
+    "redirecting": "Redirecting to login...",
+    "goToLogin": "Go to Login"
   },
   "Meals": {
     "title": "Meal Parser",
@@ -167,6 +196,15 @@
     "dailyCalories": "Daily Calories",
     "dailyProtein": "Daily Protein",
     "dailyCarbs": "Daily Carbs",
-    "dailyFat": "Daily Fat"
+    "dailyFat": "Daily Fat",
+    "deleteAccount": "Delete Account",
+    "deleteAccountWarning": "This action cannot be undone. All your data will be permanently deleted.",
+    "confirmPassword": "Confirm Password",
+    "enterPasswordToDelete": "Enter your password to confirm deletion",
+    "deleteAccountButton": "Delete My Account",
+    "deleting": "Deleting...",
+    "accountDeleted": "Your account has been deleted. Redirecting...",
+    "confirmDelete": "Confirm Deletion",
+    "cancel": "Cancel"
   }
 }
