@@ -159,9 +159,13 @@ export async function GET() {
       include: { items: true },
     });
 
+    let weekTotalCalories = 0;
     let weekTotalProtein = 0;
+    let weekTotalCarbs = 0;
+    let weekTotalFat = 0;
     let weekDaysWithMeals = 0;
     const weekDaysSet = new Set<string>();
+
     for (const meal of weekMeals) {
       const dayKey = meal.mealDate.toISOString().slice(0, 10);
       if (!weekDaysSet.has(dayKey)) {
@@ -169,7 +173,10 @@ export async function GET() {
         weekDaysWithMeals++;
       }
       for (const item of meal.items) {
+        weekTotalCalories += item.calories;
         weekTotalProtein += item.protein;
+        weekTotalCarbs += item.carbs;
+        weekTotalFat += item.fat;
       }
     }
 
@@ -179,27 +186,20 @@ export async function GET() {
       ? Math.round(((avgDailyProtein - dailyProteinTarget) / dailyProteinTarget) * 100)
       : 0;
 
-    // Calculate weekly macro distribution (last 7 days)
-    let weekTotalCalories = 0;
-    let weekTotalCarbs = 0;
-    let weekTotalFat = 0;
-    
-    for (const meal of weekMeals) {
-      for (const item of meal.items) {
-        weekTotalCalories += item.calories;
-        weekTotalProtein += item.protein;
-        weekTotalCarbs += item.carbs;
-        weekTotalFat += item.fat;
-      }
-    }
-
     const weeklyMacroDistribution = {
       carbs: Math.round(weekTotalCarbs * 10) / 10,
       protein: Math.round(weekTotalProtein * 10) / 10,
       fat: Math.round(weekTotalFat * 10) / 10,
     };
 
-    // Calculate weekly averages
+    const weeklyTotals = {
+      calories: Math.round(weekTotalCalories * 10) / 10,
+      protein: Math.round(weekTotalProtein * 10) / 10,
+      carbs: Math.round(weekTotalCarbs * 10) / 10,
+      fat: Math.round(weekTotalFat * 10) / 10,
+    };
+
+    // Average intake per active day (last 7 days window)
     const daysWithData = weekDaysSet.size || 1;
     const weeklyAverages = {
       avgCalories: Math.round((weekTotalCalories / daysWithData) * 10) / 10,
@@ -238,6 +238,7 @@ export async function GET() {
           daysWithMeals: weekDaysWithMeals,
         },
         weeklyMacroDistribution,
+        weeklyTotals,
         weeklyAverages,
       },
     });

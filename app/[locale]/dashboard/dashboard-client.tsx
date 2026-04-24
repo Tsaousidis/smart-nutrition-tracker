@@ -66,6 +66,12 @@ type DashboardResponse = {
       protein: number;
       fat: number;
     };
+    weeklyTotals?: {
+      calories: number;
+      protein: number;
+      carbs: number;
+      fat: number;
+    };
     weeklyAverages?: {
       avgCalories: number;
       avgProtein: number;
@@ -176,9 +182,9 @@ export default function DashboardClient() {
             {dashboardData.chartData && dashboardData.chartData.length > 0 && (
               <div className="space-y-6">
                 {/* Weekly Summary */}
-                {dashboardData.weeklyAverages && (
-                  <WeeklySummary 
-                    averages={dashboardData.weeklyAverages}
+                {dashboardData.weeklyTotals && (
+                  <WeeklySummary
+                    totals={dashboardData.weeklyTotals}
                     targets={dashboardData.targets}
                   />
                 )}

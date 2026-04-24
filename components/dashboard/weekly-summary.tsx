@@ -2,11 +2,13 @@
 
 import { useTranslations } from "next-intl";
 
-type WeeklyAverages = {
-  avgCalories: number;
-  avgProtein: number;
-  avgCarbs: number;
-  avgFat: number;
+const DAYS_PER_WEEK = 7;
+
+type WeeklyTotals = {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
 };
 
 type Targets = {
@@ -17,63 +19,64 @@ type Targets = {
 };
 
 type Props = {
-  averages: WeeklyAverages;
+  totals: WeeklyTotals;
   targets: Targets;
 };
 
-export default function WeeklySummary({ averages, targets }: Props) {
+export default function WeeklySummary({ totals, targets }: Props) {
   const t = useTranslations("Dashboard");
 
-  const getDiff = (avg: number, target: number) => {
-    if (target === 0) return 0;
-    return Math.round(((avg - target) / target) * 100);
+  const getDiff = (actual: number, weeklyTarget: number) => {
+    if (weeklyTarget === 0) return 0;
+    return Math.round(((actual - weeklyTarget) / weeklyTarget) * 100);
   };
 
   const metrics = [
     {
       label: t("calories"),
-      avg: averages.avgCalories,
-      target: targets.dailyCalories,
+      actual: totals.calories,
+      weeklyTarget: targets.dailyCalories * DAYS_PER_WEEK,
       unit: "kcal",
-      diff: getDiff(averages.avgCalories, targets.dailyCalories),
+      diff: getDiff(totals.calories, targets.dailyCalories * DAYS_PER_WEEK),
     },
     {
       label: t("protein"),
-      avg: averages.avgProtein,
-      target: targets.proteinTarget,
+      actual: totals.protein,
+      weeklyTarget: targets.proteinTarget * DAYS_PER_WEEK,
       unit: "g",
-      diff: getDiff(averages.avgProtein, targets.proteinTarget),
+      diff: getDiff(totals.protein, targets.proteinTarget * DAYS_PER_WEEK),
     },
     {
       label: t("carbs"),
-      avg: averages.avgCarbs,
-      target: targets.carbsTarget,
+      actual: totals.carbs,
+      weeklyTarget: targets.carbsTarget * DAYS_PER_WEEK,
       unit: "g",
-      diff: getDiff(averages.avgCarbs, targets.carbsTarget),
+      diff: getDiff(totals.carbs, targets.carbsTarget * DAYS_PER_WEEK),
     },
     {
       label: t("fat"),
-      avg: averages.avgFat,
-      target: targets.fatTarget,
+      actual: totals.fat,
+      weeklyTarget: targets.fatTarget * DAYS_PER_WEEK,
       unit: "g",
-      diff: getDiff(averages.avgFat, targets.fatTarget),
+      diff: getDiff(totals.fat, targets.fatTarget * DAYS_PER_WEEK),
     },
   ];
 
   return (
     <div className="rounded-2xl border p-4 shadow-sm">
       <h3 className="mb-3 text-lg font-semibold">{t("weeklySummary")}</h3>
-      
+
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {metrics.map((metric) => (
           <div key={metric.label} className="text-center">
             <div className="text-sm text-slate-600">{metric.label}</div>
             <div className="mt-1 text-xl font-bold">
-              {Math.round(metric.avg).toLocaleString()}
+              {Math.round(metric.actual).toLocaleString()}
               <span className="text-sm font-normal">{metric.unit}</span>
             </div>
             <div className="text-xs text-slate-500">
-              {t("target")}: {metric.target}{metric.unit}
+              {t("weeklyTarget7d")}: {Math.round(metric.weeklyTarget).toLocaleString()}
+              {metric.unit}
             </div>
             <div
               className={`mt-1 text-sm font-medium ${
