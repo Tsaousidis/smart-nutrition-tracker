@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 type ParsedMealItem = {
   name: string;
@@ -26,6 +27,23 @@ type ParsedMealData = {
 
 function roundOne(value: number) {
   return Math.round(value * 10) / 10;
+}
+
+function isMealItemComplete(item: ParsedMealItem): boolean {
+  if (!item.name.trim() || !item.unit.trim()) {
+    return false;
+  }
+  const quantity = Number(item.quantity);
+  if (!Number.isFinite(quantity) || quantity <= 0) {
+    return false;
+  }
+  for (const key of ["calories", "protein", "carbs", "fat"] as const) {
+    const n = Number(item[key]);
+    if (!Number.isFinite(n) || n < 0) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function parseDMYDate(dateString: string): string | null {
@@ -139,6 +157,13 @@ export default function MealsPage() {
     setParsedMeal({ ...parsedMeal, items: [...parsedMeal.items, emptyItem] });
   }
 
+  const allItemsComplete = useMemo(() => {
+    if (!parsedMeal?.items.length) {
+      return false;
+    }
+    return parsedMeal.items.every(isMealItemComplete);
+  }, [parsedMeal]);
+
   const computedTotals = useMemo(() => {
     const items = parsedMeal?.items ?? [];
     const totals = items.reduce(
@@ -166,19 +191,23 @@ export default function MealsPage() {
     setSaveSuccess(null);
 
     try {
-      const cleanedItems = parsedMeal.items
-        .filter((item) => item.name.trim() !== "")
-        .map((item) => ({
-          name: item.name.trim(),
-          quantity: Number(item.quantity),
-          unit: item.unit.trim(),
-          calories: Number(item.calories),
-          protein: Number(item.protein),
-          carbs: Number(item.carbs),
-          fat: Number(item.fat),
-        }));
+      if (parsedMeal.items.length === 0) {
+        throw new Error(t("noItems"));
+      }
 
-      if (cleanedItems.length === 0) throw new Error(t("noItems"));
+      if (!parsedMeal.items.every(isMealItemComplete)) {
+        throw new Error(t("incompleteItemFields"));
+      }
+
+      const cleanedItems = parsedMeal.items.map((item) => ({
+        name: item.name.trim(),
+        quantity: Number(item.quantity),
+        unit: item.unit.trim(),
+        calories: Number(item.calories),
+        protein: Number(item.protein),
+        carbs: Number(item.carbs),
+        fat: Number(item.fat),
+      }));
 
       const isoDate = toISODate(mealDate);
       if (!isoDate) {
@@ -358,9 +387,14 @@ export default function MealsPage() {
                 ))}
               </div>
 
+              {!allItemsComplete && (
+                <p className="mt-3 text-sm text-amber-800">{t("incompleteItemFields")}</p>
+              )}
+
               <button
+                type="button"
                 onClick={handleSaveMeal}
-                disabled={saving}
+                disabled={saving || !allItemsComplete}
                 className="mt-4 rounded-lg bg-green-600 px-4 py-2 text-white disabled:opacity-50"
               >
                 {saving ? t("saving") : t("saveMeal")}
@@ -377,9 +411,18 @@ export default function MealsPage() {
         )}
 
         {saveSuccess && (
-          <div className="mt-6 rounded-lg border border-green-300 bg-green-50 p-4 text-green-700">
+          <div className="mt-6 rounded-lg border border-green-300 bg-green-50 p-4 text-green-800">
             <p className="font-medium">✓</p>
             <p>{saveSuccess}</p>
+            <p className="mt-3 text-sm leading-relaxed">
+              {t.rich("saveSuccessHistoryHint", {
+                link: (chunks) => (
+                  <Link href="/history" className="font-semibold text-green-900 underline underline-offset-2 hover:no-underline">
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </p>
           </div>
         )}
       </div>
