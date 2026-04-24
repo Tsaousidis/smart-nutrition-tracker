@@ -60,7 +60,16 @@ export default function MealsPage() {
   const t = useTranslations("Meals");
   const { locale } = useParams() as { locale?: string };
 
+  const mealTitleOptions = [
+    { value: t.raw("mealTitleBreakfast"), label: t("mealTitleBreakfast") },
+    { value: t.raw("mealTitleMidMorning"), label: t("mealTitleMidMorning") },
+    { value: t.raw("mealTitleLunch"), label: t("mealTitleLunch") },
+    { value: t.raw("mealTitleAfternoon"), label: t("mealTitleAfternoon") },
+    { value: t.raw("mealTitleDinner"), label: t("mealTitleDinner") },
+    { value: t.raw("mealTitleSnack"), label: t("mealTitleSnack") },
+  ];
   const [title, setTitle] = useState(t("mealTitleDefault"));
+  const [selectedTitle, setSelectedTitle] = useState(mealTitleOptions[0].value);
   const [mealText, setMealText] = useState(t("mealDescriptionDefault"));
   const [mealDate, setMealDate] = useState(() => {
     const now = new Date();
@@ -206,13 +215,20 @@ export default function MealsPage() {
         <form onSubmit={handleParseMeal} className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-medium">{t("mealTitle")}</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-lg border px-3 py-2"
-              placeholder={t("mealTitlePlaceholder")}
-            />
+            <select
+              className="w-full rounded-lg border px-3 py-2 mb-2"
+              value={selectedTitle}
+              onChange={(e) => {
+                setSelectedTitle(e.target.value);
+                setTitle(e.target.value);
+              }}
+            >
+              {mealTitleOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>

@@ -11,7 +11,7 @@ type ProfileFormData = {
   heightCm: number;
   weightKg: number;
   activityLevel: "SEDENTARY" | "LIGHT" | "MODERATE" | "VERY_ACTIVE" | "EXTRA_ACTIVE";
-  goalType: "MAINTAIN" | "LOSE_WEIGHT" | "LOSE_FAT" | "GAIN_MUSCLE" | "RECOMP";
+  goalType: "MAINTAIN" | "LOSE_WEIGHT" | "GAIN_MUSCLE";
 };
 
 const defaultFormData: ProfileFormData = {
@@ -20,7 +20,7 @@ const defaultFormData: ProfileFormData = {
   heightCm: 180,
   weightKg: 82,
   activityLevel: "MODERATE",
-  goalType: "LOSE_FAT",
+  goalType: "LOSE_WEIGHT",
 };
 
 export default function ProfileForm() {
@@ -191,10 +191,8 @@ export default function ProfileForm() {
           <label className="mb-1 block text-sm font-medium">{t("goalType")}</label>
           <select name="goalType" value={formData.goalType} onChange={handleChange} className="w-full rounded-lg border px-3 py-2">
             <option value="MAINTAIN">{t("maintain")}</option>
-            <option value="LOSE_WEIGHT">{t("loseWeight")}</option>
-            <option value="LOSE_FAT">{t("loseFat")}</option>
+            <option value="LOSE_WEIGHT">{t("loseWeightFat")}</option>
             <option value="GAIN_MUSCLE">{t("gainMuscle")}</option>
-            <option value="RECOMP">{t("recomp")}</option>
           </select>
         </div>
 
