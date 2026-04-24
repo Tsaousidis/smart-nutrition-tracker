@@ -120,6 +120,7 @@
     "tokenExpired": "This reset link has expired or is invalid.",
     "tryAgain": "Try Again",
     "success": "Password Reset!",
+    "successMessage": "Your password has been changed successfully. You can now login with your new password.",
     "redirecting": "Redirecting to login...",
     "goToLogin": "Go to Login"
   },

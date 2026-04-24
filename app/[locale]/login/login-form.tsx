@@ -74,7 +74,7 @@ export default function LoginForm() {
           </div>
 
           <div className="mt-4 text-right">
-          <Link href={`/forgot-password`} className="text-sm font-medium text-blue-600 hover:underline">
+          <Link href="/forgot-password" className="text-sm font-medium text-blue-600 hover:underline">
             {t("forgotPassword")}
           </Link>
         </div>

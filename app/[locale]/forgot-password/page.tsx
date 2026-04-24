@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useParams } from "next/navigation";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 export default function ForgotPasswordPage() {
   const t = useTranslations("ForgotPassword");
-  const params = useParams();
-  const locale = (params.locale as string) || "en";
+  const locale = useLocale();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);

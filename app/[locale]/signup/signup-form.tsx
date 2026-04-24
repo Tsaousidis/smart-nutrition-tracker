@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { useCsrfToken } from "@/lib/useCsrfToken";
 import { Link } from "@/i18n/navigation";
 
 export default function SignupForm() {
   const t = useTranslations("Signup");
   const router = useRouter();
-  const params = useParams();
-  const locale = params.locale as string;
+  const locale = useLocale();
   const { csrfToken } = useCsrfToken();
 
   const [email, setEmail] = useState("");

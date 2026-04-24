@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 export default function ResetPasswordPage() {
   const t = useTranslations("ResetPassword");
   const searchParams = useSearchParams();
   const router = useRouter();
+  const locale = useLocale();
   const token = searchParams.get("token");
 
   const [password, setPassword] = useState("");
@@ -49,7 +51,7 @@ export default function ResetPasswordPage() {
 
       setSuccess(true);
       setTimeout(() => {
-        router.push("/login");
+        router.push(`/${locale}/login`);
       }, 3000);
     } catch (err) {
       console.error(err);
@@ -80,7 +82,7 @@ export default function ResetPasswordPage() {
           <div className="text-center">
             <div className="mb-4 text-4xl">✓</div>
             <h1 className="mb-2 text-2xl font-bold">{t("success")}</h1>
-            <p className="mb-6 text-sm text-gray-600">{t("redirecting")}</p>
+            <p className="mb-6 text-sm text-gray-600">{t("successMessage")}</p>
             <Link href="/login" className="text-sm font-medium text-blue-600 hover:underline">
               {t("goToLogin")}
             </Link>
