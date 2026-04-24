@@ -30,7 +30,7 @@ export default function ProfileForm() {
   const [formData, setFormData] = useState<ProfileFormData>(defaultFormData);
   const [profileReady, setProfileReady] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [responseData, setResponseData] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Account deletion state
@@ -130,7 +130,7 @@ export default function ProfileForm() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setResponseData(null);
+    setSaveSuccess(false);
 
     if (!csrfToken) {
       setError("Security error: CSRF token not available");
@@ -151,7 +151,7 @@ export default function ProfileForm() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to save profile");
-      setResponseData(JSON.stringify(data, null, 2));
+      setSaveSuccess(true);
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -329,12 +329,9 @@ export default function ProfileForm() {
         </div>
       )}
 
-      {responseData && (
-        <div className="mt-6 rounded-lg border bg-gray-50 p-4">
-          <p className="mb-2 font-medium">{t("apiResponse")}</p>
-          <pre className="overflow-x-auto text-sm">
-            {responseData}
-          </pre>
+      {saveSuccess && (
+        <div className="mt-6 rounded-lg border border-green-300 bg-green-50 p-4 text-green-800">
+          <p className="font-medium">{t("saveProfileSuccess")}</p>
         </div>
       )}
     </div>

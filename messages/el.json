@@ -234,7 +234,7 @@
     "submit": "Αποθήκευση Προφίλ",
     "saving": "Αποθήκευση...",
     "error": "Σφάλμα",
-    "apiResponse": "Απάντηση API",
+    "saveProfileSuccess": "Το προφίλ σου αποθηκεύτηκε επιτυχώς.",
     "currentTargetSummary": "Τρέχοντες Στόχοι",
     "dailyCalories": "Ημερήσιες Θερμίδες",
     "dailyProtein": "Ημερήσια Πρωτεΐνη",
