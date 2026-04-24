@@ -1,8 +1,13 @@
 import {auth} from "@/auth";
-import {getTranslations} from "next-intl/server";
+import {getTranslations, getLocale} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
 
-export default async function HomePage() {
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const session = await auth();
   const t = await getTranslations("HomePage");
 
@@ -19,7 +24,7 @@ export default async function HomePage() {
           {session?.user ? (
             <>
               <Link
-                href="/dashboard"
+                href={`/${locale}/dashboard`}
                 className="rounded-xl bg-black px-6 py-3 text-white"
               >
                 {t("goToDashboard")}
