@@ -6,7 +6,6 @@ import SingleMetricChart from "@/components/charts/single-metric-chart";
 import MacroDonutChart from "@/components/charts/macro-donut-chart";
 import WeeklySummary from "@/components/dashboard/weekly-summary";
 import { generateInsights } from "@/lib/insights";
-import { signOut } from "next-auth/react";
 import {useTranslations} from "next-intl";
 
 type DashboardResponse = {
@@ -141,30 +140,11 @@ export default function DashboardClient() {
     <main className="min-h-screen px-4 py-10">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 rounded-2xl border p-6 shadow-sm">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">{t("title")}</h1>
-              <p className="mt-2 text-sm text-gray-600">
-                {t("subtitle")}
-              </p>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={loadDashboard}
-                disabled={loading}
-                className="rounded-lg border px-4 py-2 disabled:opacity-50"
-              >
-                {loading ? "..." : t("refresh")}
-              </button>
-
-              <button
-                onClick={() => signOut({ callbackUrl: "/login" })}
-                className="rounded-lg bg-black px-4 py-2 text-white"
-              >
-                {t("logout")}
-              </button>
-            </div>
+          <div>
+            <h1 className="text-3xl font-bold">{t("title")}</h1>
+            <p className="mt-2 text-sm text-gray-600">
+              {t("subtitle")}
+            </p>
           </div>
 
           {error && (
