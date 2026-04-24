@@ -166,6 +166,8 @@
     "saving": "Saving...",
     "saveError": "Save Error",
     "saveSuccess": "Meal saved successfully.",
+    "saveSuccessHistoryHint": "If you logged something by mistake, don't worry—go to <link>History</link> to delete it.",
+    "incompleteItemFields": "Fill in every field for each item (name, quantity, unit, calories, protein, carbs, and fat) before saving.",
     "noItems": "You must have at least one meal item before saving.",
     "mealDate": "Meal Date",
     "invalidDateFormat": "Invalid date format. Use DD/MM/YYYY",
