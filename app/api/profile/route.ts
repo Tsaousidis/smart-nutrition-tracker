@@ -4,6 +4,68 @@ import { prisma } from "@/lib/prisma";
 import { calculateMacroTargets } from "@/lib/calculations";
 import { profileSchema } from "@/lib/validators";
 
+export async function GET() {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: {
+        profile: true,
+        goal: true,
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "USER_NOT_FOUND",
+          message: "Authenticated user not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      ok: true,
+      code: "SUCCESS",
+      message: "Profile fetched successfully",
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+        },
+        profile: user.profile,
+        goal: user.goal,
+      },
+    });
+  } catch (error) {
+    console.error("Profile GET route error:", error);
+
+    return NextResponse.json(
+      {
+        ok: false,
+        code: "INTERNAL_ERROR",
+        message: "Something went wrong while fetching profile",
+        details: error instanceof Error ? error.message : undefined,
+      },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();

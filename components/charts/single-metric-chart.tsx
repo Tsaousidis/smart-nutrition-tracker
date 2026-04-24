@@ -38,7 +38,7 @@ export default function SingleMetricChart({ data, target, title, unit, color, ta
         )}
       </div>
 
-      <div className="h-48 w-full">
+      <div className="h-64 w-full">
         <ResponsiveContainer>
           <LineChart data={data}>
             <XAxis dataKey="date" fontSize={12} />

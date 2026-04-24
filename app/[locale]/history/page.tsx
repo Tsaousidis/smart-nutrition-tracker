@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import SingleMetricChart from "@/components/charts/single-metric-chart";
 import { useTranslations } from "next-intl";
 
 type HistoryItem = {
@@ -229,27 +228,6 @@ export default function HistoryPage() {
         {!selectedDay && !loading && !error && (
           <div className="rounded-2xl border p-6 text-sm text-gray-600 shadow-sm">
             {t("noMealsForDate")}
-          </div>
-        )}
-
-        {chartData.length > 0 && (
-          <div className="grid gap-4 md:grid-cols-2">
-            <SingleMetricChart
-              data={chartData.map(d => ({ date: d.date, value: d.calories }))}
-              target={goalTargets?.dailyCalories}
-              title={t("calories")}
-              unit="kcal"
-              color="#000000"
-              targetColor="#ef4444"
-            />
-            <SingleMetricChart
-              data={chartData.map(d => ({ date: d.date, value: d.protein }))}
-              target={goalTargets?.proteinTarget}
-              title={t("protein")}
-              unit="g"
-              color="#8884d8"
-              targetColor="#10b981"
-            />
           </div>
         )}
 

@@ -83,6 +83,66 @@ export async function GET() {
       fat: Math.round((targets.fatTarget - totalFat) * 10) / 10,
     };
 
+    // Get chart data - from first meal date to today
+    const firstMeal = await prisma.meal.findFirst({
+      where: { userId: user.id },
+      orderBy: { mealDate: "asc" },
+      take: 1,
+    });
+
+    let chartStartDate: Date;
+    if (firstMeal) {
+      chartStartDate = new Date(firstMeal.mealDate);
+      chartStartDate.setHours(0, 0, 0, 0);
+    } else {
+      chartStartDate = new Date();
+      chartStartDate.setDate(chartStartDate.getDate() - 6);
+      chartStartDate.setHours(0, 0, 0, 0);
+    }
+
+    const chartEndDate = new Date();
+    chartEndDate.setHours(23, 59, 59, 999);
+
+    const chartMeals = await prisma.meal.findMany({
+      where: {
+        userId: user.id,
+        mealDate: {
+          gte: chartStartDate,
+          lte: chartEndDate,
+        },
+      },
+      include: { items: true },
+      orderBy: { mealDate: "asc" },
+    });
+
+    // Group meals by day
+    const chartGroups = chartMeals.reduce<Record<string, { calories: number; protein: number }>>((acc, meal) => {
+      const dayKey = meal.mealDate.toISOString().slice(0, 10);
+      if (!acc[dayKey]) {
+        acc[dayKey] = { calories: 0, protein: 0 };
+      }
+      for (const item of meal.items) {
+        acc[dayKey].calories += item.calories;
+        acc[dayKey].protein += item.protein;
+      }
+      return acc;
+    }, {});
+
+    // Generate chart days
+    const chartData: Array<{ date: string; calories: number; protein: number }> = [];
+    const currentDate = new Date(chartStartDate);
+    const today = new Date();
+    while (currentDate <= today) {
+      const dayKey = currentDate.toISOString().slice(0, 10);
+      const day = dayKey.slice(8, 10) + "/" + dayKey.slice(5, 7);
+      chartData.push({
+        date: day,
+        calories: Math.round((chartGroups[dayKey]?.calories ?? 0) * 10) / 10,
+        protein: Math.round((chartGroups[dayKey]?.protein ?? 0) * 10) / 10,
+      });
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
     return NextResponse.json({
       ok: true,
       message: "Dashboard data fetched successfully",
@@ -106,6 +166,7 @@ export async function GET() {
           mealDate: meal.mealDate,
           items: meal.items,
         })),
+        chartData,
       },
     });
   } catch (error) {

@@ -32,15 +32,27 @@ function parseDMYDate(dateString: string): string | null {
   const match = dateString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (!match) return null;
   const [, day, month, year] = match;
-  const parsed = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  // Use UTC to avoid timezone shifts - set time to noon UTC
+  const parsed = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day), 12, 0, 0));
   if (Number.isNaN(parsed.getTime())) return null;
   return parsed.toISOString();
 }
 
 function formatDateForInput(date: Date): string {
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const year = date.getUTCFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+function toISODate(dmyDate: string): string | null {
+  const parsed = parseDMYDate(dmyDate);
+  if (!parsed) return null;
+  return parsed.slice(0, 10);
+}
+
+function fromISODate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-");
   return `${day}/${month}/${year}`;
 }
 
@@ -52,9 +64,9 @@ export default function MealsPage() {
   const [mealText, setMealText] = useState(t("mealDescriptionDefault"));
   const [mealDate, setMealDate] = useState(() => {
     const now = new Date();
-    const day = String(now.getDate()).padStart(2, "0");
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const year = now.getFullYear();
+    const day = String(now.getUTCDate()).padStart(2, "0");
+    const month = String(now.getUTCMonth() + 1).padStart(2, "0");
+    const year = now.getUTCFullYear();
     return `${day}/${month}/${year}`;
   });
   const [loading, setLoading] = useState(false);
@@ -159,7 +171,7 @@ export default function MealsPage() {
 
       if (cleanedItems.length === 0) throw new Error(t("noItems"));
 
-      const isoDate = parseDMYDate(mealDate);
+      const isoDate = toISODate(mealDate);
       if (!isoDate) {
         throw new Error(t("invalidDateFormat"));
       }
@@ -205,7 +217,7 @@ export default function MealsPage() {
 
           <div>
             <label className="mb-1 block text-sm font-medium">{t("mealDate")}</label>
-            <div className="flex gap-2">
+            <div className="relative">
               <input
                 type="text"
                 value={mealDate}
@@ -213,26 +225,24 @@ export default function MealsPage() {
                 onBlur={(e) => {
                   const parsed = parseDMYDate(e.target.value);
                   if (parsed) {
-                    setMealDate(formatDateForInput(new Date(parsed)));
+                    setMealDate(fromISODate(parsed.slice(0, 10)));
                   } else {
-                    setMealDate(formatDateForInput(new Date()));
+                    setMealDate(fromISODate(new Date().toISOString().slice(0, 10)));
                   }
                 }}
-                className="w-full rounded-lg border px-3 py-2"
+                className="w-full rounded-lg border px-3 py-2 pr-10"
                 placeholder="DD/MM/YYYY"
               />
               <input
                 type="date"
-                value={(function () {
-                  const parsed = parseDMYDate(mealDate);
-                  return parsed ? parsed.slice(0, 10) : "";
-                })()}
+                value={toISODate(mealDate) ?? ""}
                 onChange={(e) => {
                   if (e.target.value) {
-                    setMealDate(formatDateForInput(new Date(e.target.value)));
+                    setMealDate(fromISODate(e.target.value));
                   }
                 }}
-                className="w-full rounded-lg border px-3 py-2"
+                className="absolute inset-0 w-full opacity-0 cursor-pointer"
+                style={{ }}
               />
             </div>
           </div>
