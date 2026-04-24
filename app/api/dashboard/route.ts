@@ -143,6 +143,71 @@ export async function GET() {
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
+    // Calculate weekly protein stats (last 7 days)
+    const weekStartDate = new Date();
+    weekStartDate.setDate(weekStartDate.getDate() - 6);
+    weekStartDate.setHours(0, 0, 0, 0);
+
+    const weekMeals = await prisma.meal.findMany({
+      where: {
+        userId: user.id,
+        mealDate: {
+          gte: weekStartDate,
+          lte: chartEndDate,
+        },
+      },
+      include: { items: true },
+    });
+
+    let weekTotalProtein = 0;
+    let weekDaysWithMeals = 0;
+    const weekDaysSet = new Set<string>();
+    for (const meal of weekMeals) {
+      const dayKey = meal.mealDate.toISOString().slice(0, 10);
+      if (!weekDaysSet.has(dayKey)) {
+        weekDaysSet.add(dayKey);
+        weekDaysWithMeals++;
+      }
+      for (const item of meal.items) {
+        weekTotalProtein += item.protein;
+      }
+    }
+
+    const avgDailyProtein = weekDaysWithMeals > 0 ? weekTotalProtein / weekDaysWithMeals : 0;
+    const dailyProteinTarget = targets.proteinTarget;
+    const proteinDiffPercent = dailyProteinTarget > 0 
+      ? Math.round(((avgDailyProtein - dailyProteinTarget) / dailyProteinTarget) * 100)
+      : 0;
+
+    // Calculate weekly macro distribution (last 7 days)
+    let weekTotalCalories = 0;
+    let weekTotalCarbs = 0;
+    let weekTotalFat = 0;
+    
+    for (const meal of weekMeals) {
+      for (const item of meal.items) {
+        weekTotalCalories += item.calories;
+        weekTotalProtein += item.protein;
+        weekTotalCarbs += item.carbs;
+        weekTotalFat += item.fat;
+      }
+    }
+
+    const weeklyMacroDistribution = {
+      carbs: Math.round(weekTotalCarbs * 10) / 10,
+      protein: Math.round(weekTotalProtein * 10) / 10,
+      fat: Math.round(weekTotalFat * 10) / 10,
+    };
+
+    // Calculate weekly averages
+    const daysWithData = weekDaysSet.size || 1;
+    const weeklyAverages = {
+      avgCalories: Math.round((weekTotalCalories / daysWithData) * 10) / 10,
+      avgProtein: Math.round((weekTotalProtein / daysWithData) * 10) / 10,
+      avgCarbs: Math.round((weekTotalCarbs / daysWithData) * 10) / 10,
+      avgFat: Math.round((weekTotalFat / daysWithData) * 10) / 10,
+    };
+
     return NextResponse.json({
       ok: true,
       message: "Dashboard data fetched successfully",
@@ -167,6 +232,13 @@ export async function GET() {
           items: meal.items,
         })),
         chartData,
+        weeklyStats: {
+          avgDailyProtein: Math.round(avgDailyProtein * 10) / 10,
+          proteinDiffPercent,
+          daysWithMeals: weekDaysWithMeals,
+        },
+        weeklyMacroDistribution,
+        weeklyAverages,
       },
     });
   } catch (error) {

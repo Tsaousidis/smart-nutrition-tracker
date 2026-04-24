@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import MacroCard from "@/components/dashboard/macro-card";
 import Insights from "@/components/dashboard/insights";
 import SingleMetricChart from "@/components/charts/single-metric-chart";
+import MacroDonutChart from "@/components/charts/macro-donut-chart";
+import WeeklySummary from "@/components/dashboard/weekly-summary";
 import { generateInsights } from "@/lib/insights";
 import { signOut } from "next-auth/react";
 import {useTranslations} from "next-intl";
@@ -55,6 +56,22 @@ type DashboardResponse = {
       calories: number;
       protein: number;
     }>;
+    weeklyStats?: {
+      avgDailyProtein: number;
+      proteinDiffPercent: number;
+      daysWithMeals: number;
+    };
+    weeklyMacroDistribution?: {
+      carbs: number;
+      protein: number;
+      fat: number;
+    };
+    weeklyAverages?: {
+      avgCalories: number;
+      avgProtein: number;
+      avgCarbs: number;
+      avgFat: number;
+    };
   };
 };
 
@@ -98,12 +115,19 @@ export default function DashboardClient() {
       totals: dashboardData.totals,
       targets: dashboardData.targets,
       remaining: dashboardData.remaining,
+      mealCount: dashboardData.meals?.length || 0,
+      weeklyStats: dashboardData.weeklyStats,
     }, {
       belowProtein: (value) => t("belowProtein", { value }),
       aboveProtein: (value) => t("aboveProtein", { value }),
       remainingCalories: (value) => t("remainingCalories", { value }),
       aboveCalories: (value) => t("aboveCalories", { value }),
       onTrack: t("onTrack"),
+      mealCount: (count) => t("mealCount", { count }),
+      avgProteinPerMeal: (value) => t("avgProteinPerMeal", { value }),
+      proteinTargetPerMeal: (value) => t("proteinTargetPerMeal", { value }),
+      weeklyProteinDiff: (value) => t("weeklyProteinDiff", { value }),
+      weeklyProteinOnTrack: t("weeklyProteinOnTrack"),
     })
   : [];
 
@@ -117,11 +141,6 @@ export default function DashboardClient() {
               <p className="mt-2 text-sm text-gray-600">
                 {t("subtitle")}
               </p>
-              {dashboardData?.user?.email && (
-                <p className="mt-2 text-sm text-gray-500">
-                  {t("loggedInAs")} {dashboardData.user.email}
-                </p>
-              )}
             </div>
 
             <div className="flex gap-3">
@@ -152,57 +171,52 @@ export default function DashboardClient() {
 
         {dashboardData && (
           <div className="space-y-8">
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <MacroCard
-                title={t("calories")}
-                total={dashboardData.totals.calories}
-                target={dashboardData.targets.dailyCalories}
-                remaining={dashboardData.remaining.calories}
-                unit="kcal"
-              />
-              <MacroCard
-                title={t("protein")}
-                total={dashboardData.totals.protein}
-                target={dashboardData.targets.proteinTarget}
-                remaining={dashboardData.remaining.protein}
-                unit="g"
-              />
-              <MacroCard
-                title={t("carbs")}
-                total={dashboardData.totals.carbs}
-                target={dashboardData.targets.carbsTarget}
-                remaining={dashboardData.remaining.carbs}
-                unit="g"
-              />
-              <MacroCard
-                title={t("fat")}
-                total={dashboardData.totals.fat}
-                target={dashboardData.targets.fatTarget}
-                remaining={dashboardData.remaining.fat}
-                unit="g"
-              />
-            </div>
-
             <Insights insights={insights} />
 
             {dashboardData.chartData && dashboardData.chartData.length > 0 && (
-              <div className="space-y-4">
-                <SingleMetricChart
-                  data={dashboardData.chartData.map(d => ({ date: d.date, value: d.calories }))}
-                  target={dashboardData.targets.dailyCalories}
-                  title={t("calories")}
-                  unit="kcal"
-                  color="#000000"
-                  targetColor="#ef4444"
-                />
-                <SingleMetricChart
-                  data={dashboardData.chartData.map(d => ({ date: d.date, value: d.protein }))}
-                  target={dashboardData.targets.proteinTarget}
-                  title={t("protein")}
-                  unit="g"
-                  color="#8884d8"
-                  targetColor="#10b981"
-                />
+              <div className="space-y-6">
+                {/* Weekly Summary */}
+                {dashboardData.weeklyAverages && (
+                  <WeeklySummary 
+                    averages={dashboardData.weeklyAverages}
+                    targets={dashboardData.targets}
+                  />
+                )}
+
+                {/* Macro Distribution + Charts side by side on large screens */}
+                <div className="grid gap-6 lg:grid-cols-3">
+                  {/* Macro Donut Chart */}
+                  {dashboardData.weeklyMacroDistribution && (
+                    <div className="lg:col-span-1">
+                      <MacroDonutChart 
+                        data={dashboardData.weeklyMacroDistribution}
+                        title={t("macroDistribution")}
+                      />
+                    </div>
+                  )}
+
+                  {/* Line Charts */}
+                  <div className={dashboardData.weeklyMacroDistribution ? "lg:col-span-2" : "lg:col-span-3"}>
+                    <div className="space-y-4">
+                      <SingleMetricChart
+                        data={dashboardData.chartData.map(d => ({ date: d.date, value: d.calories }))}
+                        target={dashboardData.targets.dailyCalories}
+                        title={t("calories")}
+                        unit="kcal"
+                        color="#000000"
+                        targetColor="#ef4444"
+                      />
+                      <SingleMetricChart
+                        data={dashboardData.chartData.map(d => ({ date: d.date, value: d.protein }))}
+                        target={dashboardData.targets.proteinTarget}
+                        title={t("protein")}
+                        unit="g"
+                        color="#8884d8"
+                        targetColor="#10b981"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
