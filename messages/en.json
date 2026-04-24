@@ -24,7 +24,7 @@
     "feature3Text": "Monitor your daily and weekly nutrition with clear insights and structured data."
   },
   "Dashboard": {
-    "title": "Daily Dashboard",
+    "title": "Dashboard",
     "subtitle": "Today's nutrition totals, targets, remaining macros, and saved meals.",
     "loggedInAs": "Logged in as:",
     "calories": "Calories",
@@ -42,7 +42,15 @@
     "aboveProtein": "You exceeded your protein target by {value}g",
     "remainingCalories": "You still have {value} kcal remaining today",
     "aboveCalories": "You exceeded your calorie target by {value} kcal",
-    "onTrack": "You're on track with your nutrition today"
+    "onTrack": "You're on track with your nutrition today",
+    "mealCount": "You have {count} meals today - aim for 3-4",
+    "avgProteinPerMeal": "Average {value}g protein per meal",
+    "proteinTargetPerMeal": "Aim for at least {value}g protein per meal",
+    "weeklyProteinDiff": "Your protein this week is {value}% above/below target",
+    "weeklyProteinOnTrack": "Your weekly protein is on track",
+    "last7Days": "Last 7 days",
+    "weeklySummary": "Weekly Summary",
+    "macroDistribution": "Macro Distribution"
   },
   "History": {
     "title": "7-Day History",
