@@ -1,6 +1,7 @@
 import {auth} from "@/auth";
 import {getTranslations, getLocale} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
+import {redirect} from "next/navigation";
 
 export default async function HomePage({
   params,
@@ -10,6 +11,11 @@ export default async function HomePage({
   const { locale } = await params;
   const session = await auth();
   const t = await getTranslations("HomePage");
+
+  // Redirect logged-in users to dashboard
+  if (session?.user) {
+    redirect(`/${locale}/dashboard`);
+  }
 
   return (
     <main className="min-h-screen px-4 py-20">

@@ -186,6 +186,7 @@
   },
   "Onboarding": {
     "title": "User Onboarding",
+    "loadingProfile": "Loading your profile…",
     "sex": "Sex",
     "male": "Male",
     "female": "Female",

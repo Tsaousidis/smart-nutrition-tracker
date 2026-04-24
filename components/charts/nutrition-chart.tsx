@@ -41,8 +41,13 @@ export default function NutritionChart({ data, targetCalories, targetProtein }: 
         </div>
       </div>
 
-      <div className="h-80 w-full">
-        <ResponsiveContainer>
+      <div className="h-80 w-full min-w-0">
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+          minWidth={0}
+          initialDimension={{ width: 400, height: 320 }}
+        >
           <LineChart data={data}>
             <XAxis dataKey="date" />
             <YAxis yAxisId="left" orientation="left" stroke="#000" />

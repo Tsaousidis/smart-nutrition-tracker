@@ -31,8 +31,13 @@ export default function MacroDonutChart({ data, title }: Props) {
     <div className="rounded-2xl border p-4 shadow-sm">
       <h3 className="mb-3 text-lg font-semibold">{title}</h3>
       
-      <div className="h-64 w-full">
-        <ResponsiveContainer>
+      <div className="h-64 w-full min-w-0">
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+          minWidth={0}
+          initialDimension={{ width: 400, height: 256 }}
+        >
           <PieChart>
             <Pie
               data={chartData}
