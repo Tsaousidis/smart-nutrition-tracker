@@ -31,13 +31,6 @@ export default function ForgotPasswordPage() {
         throw new Error(data.message);
       }
 
-      // If user already requested a reset, show specific message
-      if (data.alreadyRequested) {
-        setError(t("alreadyRequested"));
-        setLoading(false);
-        return;
-      }
-
       setSubmitted(true);
     } catch (err) {
       console.error(err);

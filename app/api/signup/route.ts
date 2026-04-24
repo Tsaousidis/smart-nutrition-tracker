@@ -101,7 +101,6 @@ export async function POST(req: NextRequest) {
         ok: false,
         code: "INTERNAL_ERROR",
         message: "Something went wrong while creating the user",
-        details: error instanceof Error ? error.message : undefined,
       },
       { status: 500 }
     );

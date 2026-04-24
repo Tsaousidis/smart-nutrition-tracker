@@ -12,13 +12,11 @@ type EmailOptions = {
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   
-  // If no API key is set, log the email (development mode)
+  // If no API key is set, log metadata only — never log HTML (contains verification/reset tokens)
   if (!apiKey) {
-    console.log("=== EMAIL (Development - No API Key) ===");
-    console.log(`To: ${options.to}`);
-    console.log(`Subject: ${options.subject}`);
-    console.log(`Body: ${options.html}`);
-    console.log("===========");
+    console.log("[email] Dev mode: no RESEND_API_KEY — email not sent.");
+    console.log(`[email] To: ${options.to} | Subject: ${options.subject}`);
+    console.log("[email] Body omitted from logs (contains secrets). Set RESEND_API_KEY to send for real.");
     return true;
   }
 

@@ -59,7 +59,6 @@ export async function GET() {
         ok: false,
         code: "INTERNAL_ERROR",
         message: "Something went wrong while fetching profile",
-        details: error instanceof Error ? error.message : undefined,
       },
       { status: 500 }
     );
@@ -202,7 +201,6 @@ export async function POST(req: NextRequest) {
         ok: false,
         code: "INTERNAL_ERROR",
         message: "Something went wrong while saving profile",
-        details: error instanceof Error ? error.message : undefined,
       },
       { status: 500 }
     );

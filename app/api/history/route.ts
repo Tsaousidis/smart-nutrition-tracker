@@ -272,7 +272,6 @@ export async function GET(req: NextRequest) {
         ok: false,
         code: "INTERNAL_ERROR",
         message: "Something went wrong while fetching history",
-        details: error instanceof Error ? error.message : undefined,
       },
       { status: 500 }
     );
