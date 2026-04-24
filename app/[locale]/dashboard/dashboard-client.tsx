@@ -184,10 +184,10 @@ export default function DashboardClient() {
                 )}
 
                 {/* Macro Distribution + Charts side by side on large screens */}
-                <div className="grid gap-6 lg:grid-cols-3">
+                <div className="grid min-w-0 gap-6 lg:grid-cols-3">
                   {/* Macro Donut Chart */}
                   {dashboardData.weeklyMacroDistribution && (
-                    <div className="lg:col-span-1">
+                    <div className="min-w-0 lg:col-span-1">
                       <MacroDonutChart 
                         data={dashboardData.weeklyMacroDistribution}
                         title={t("macroDistribution")}
@@ -196,8 +196,10 @@ export default function DashboardClient() {
                   )}
 
                   {/* Line Charts */}
-                  <div className={dashboardData.weeklyMacroDistribution ? "lg:col-span-2" : "lg:col-span-3"}>
-                    <div className="space-y-4">
+                  <div
+                    className={`min-w-0 ${dashboardData.weeklyMacroDistribution ? "lg:col-span-2" : "lg:col-span-3"}`}
+                  >
+                    <div className="min-w-0 space-y-4">
                       <SingleMetricChart
                         data={dashboardData.chartData.map(d => ({ date: d.date, value: d.calories }))}
                         target={dashboardData.targets.dailyCalories}

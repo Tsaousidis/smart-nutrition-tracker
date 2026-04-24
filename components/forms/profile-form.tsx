@@ -28,6 +28,7 @@ export default function ProfileForm() {
   const { csrfToken } = useCsrfToken();
 
   const [formData, setFormData] = useState<ProfileFormData>(defaultFormData);
+  const [profileReady, setProfileReady] = useState(false);
   const [loading, setLoading] = useState(false);
   const [responseData, setResponseData] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -70,12 +71,15 @@ export default function ProfileForm() {
     }
   }
 
-  // Load existing profile on mount
+  // Load existing profile on mount (defer form UI until fetch completes to avoid default-value flash)
   useEffect(() => {
+    let cancelled = false;
+
     async function loadProfile() {
       try {
         const res = await fetch("/api/profile");
         const data = await res.json();
+        if (cancelled) return;
         if (res.ok && data.ok && data.data?.profile) {
           setFormData({
             sex: data.data.profile.sex ?? defaultFormData.sex,
@@ -88,9 +92,17 @@ export default function ProfileForm() {
         }
       } catch (err) {
         console.error("Failed to load profile:", err);
+      } finally {
+        if (!cancelled) {
+          setProfileReady(true);
+        }
       }
     }
     loadProfile();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const calculatedTargets = useMemo(() => {
@@ -146,6 +158,24 @@ export default function ProfileForm() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (!profileReady) {
+    return (
+      <div className="mx-auto max-w-2xl rounded-2xl border p-6 shadow-sm">
+        <div className="animate-pulse space-y-4" aria-busy="true" aria-live="polite">
+          <div className="h-8 w-48 rounded bg-slate-200" />
+          <div className="h-10 w-full rounded bg-slate-100" />
+          <div className="h-10 w-full rounded bg-slate-100" />
+          <div className="h-10 w-full rounded bg-slate-100" />
+          <div className="h-10 w-full rounded bg-slate-100" />
+          <div className="h-10 w-full rounded bg-slate-100" />
+          <div className="h-10 w-full rounded bg-slate-100" />
+          <div className="h-11 w-full rounded bg-slate-200" />
+        </div>
+        <p className="sr-only">{t("loadingProfile")}</p>
+      </div>
+    );
   }
 
   return (

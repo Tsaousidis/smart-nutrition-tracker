@@ -38,8 +38,13 @@ export default function SingleMetricChart({ data, target, title, unit, color, ta
         )}
       </div>
 
-      <div className="h-64 w-full">
-        <ResponsiveContainer>
+      <div className="h-64 w-full min-w-0">
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+          minWidth={0}
+          initialDimension={{ width: 400, height: 256 }}
+        >
           <LineChart data={data}>
             <XAxis dataKey="date" fontSize={12} />
             <YAxis fontSize={12} />
