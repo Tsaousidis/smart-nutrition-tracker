@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import MacroCard from "@/components/dashboard/macro-card";
-import DailySummary from "@/components/dashboard/daily-summary";
 import Insights from "@/components/dashboard/insights";
+import SingleMetricChart from "@/components/charts/single-metric-chart";
 import { generateInsights } from "@/lib/insights";
 import { signOut } from "next-auth/react";
 import {useTranslations} from "next-intl";
@@ -49,6 +49,11 @@ type DashboardResponse = {
         carbs: number;
         fat: number;
       }>;
+    }>;
+    chartData: Array<{
+      date: string;
+      calories: number;
+      protein: number;
     }>;
   };
 };
@@ -180,7 +185,26 @@ export default function DashboardClient() {
 
             <Insights insights={insights} />
 
-            <DailySummary meals={dashboardData.meals} />
+            {dashboardData.chartData && dashboardData.chartData.length > 0 && (
+              <div className="space-y-4">
+                <SingleMetricChart
+                  data={dashboardData.chartData.map(d => ({ date: d.date, value: d.calories }))}
+                  target={dashboardData.targets.dailyCalories}
+                  title={t("calories")}
+                  unit="kcal"
+                  color="#000000"
+                  targetColor="#ef4444"
+                />
+                <SingleMetricChart
+                  data={dashboardData.chartData.map(d => ({ date: d.date, value: d.protein }))}
+                  target={dashboardData.targets.proteinTarget}
+                  title={t("protein")}
+                  unit="g"
+                  color="#8884d8"
+                  targetColor="#10b981"
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

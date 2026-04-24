@@ -97,11 +97,27 @@ export async function GET(req: NextRequest) {
     const selectedEndDate = new Date(selectedDate);
     selectedEndDate.setHours(23, 59, 59, 999);
 
+    // Find the first meal date for this user to set as chart start
+    const firstMeal = await prisma.meal.findFirst({
+      where: { userId: user.id },
+      orderBy: { mealDate: "asc" },
+      take: 1,
+    });
+
     const chartEndDate = new Date();
     chartEndDate.setHours(23, 59, 59, 999);
-    const chartStartDate = new Date(chartEndDate);
-    chartStartDate.setDate(chartStartDate.getDate() - 6);
-    chartStartDate.setHours(0, 0, 0, 0);
+
+    let chartStartDate: Date;
+    if (firstMeal) {
+      // Start from the first meal date
+      chartStartDate = new Date(firstMeal.mealDate);
+      chartStartDate.setHours(0, 0, 0, 0);
+    } else {
+      // Default to 7 days if no meals exist
+      chartStartDate = new Date(chartEndDate);
+      chartStartDate.setDate(chartStartDate.getDate() - 6);
+      chartStartDate.setHours(0, 0, 0, 0);
+    }
 
     const [chartMeals, selectedMeals] = await Promise.all([
       prisma.meal.findMany({
@@ -176,12 +192,14 @@ export async function GET(req: NextRequest) {
     const chartGroups = groupMealsByDay(chartMeals);
     const selectedGroups = groupMealsByDay(selectedMeals);
 
+    // Generate chart days from first meal date to today
     const chartDays: HistoryDay[] = [];
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(chartStartDate);
-      day.setDate(chartStartDate.getDate() + i);
-      const dayKey = formatDateKey(day);
-
+    const endDate = new Date();
+    endDate.setHours(23, 59, 59, 999);
+    
+    let currentDate = new Date(chartStartDate);
+    while (currentDate <= endDate) {
+      const dayKey = formatDateKey(currentDate);
       chartDays.push(
         chartGroups[dayKey] ?? {
           date: dayKey,
@@ -195,6 +213,7 @@ export async function GET(req: NextRequest) {
           meals: [],
         }
       );
+      currentDate.setDate(currentDate.getDate() + 1);
     }
 
     const selectedDay = selectedGroups[formatDateKey(selectedDate)] || null;

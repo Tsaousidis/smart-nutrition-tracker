@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCsrfToken } from "@/lib/useCsrfToken";
 import { calculateMacroTargets } from "@/lib/calculations";
@@ -14,22 +14,46 @@ type ProfileFormData = {
   goalType: "MAINTAIN" | "LOSE_WEIGHT" | "LOSE_FAT" | "GAIN_MUSCLE" | "RECOMP";
 };
 
+const defaultFormData: ProfileFormData = {
+  sex: "MALE",
+  age: 27,
+  heightCm: 180,
+  weightKg: 82,
+  activityLevel: "MODERATE",
+  goalType: "LOSE_FAT",
+};
+
 export default function ProfileForm() {
   const t = useTranslations("Onboarding");
   const { csrfToken } = useCsrfToken();
 
-  const [formData, setFormData] = useState<ProfileFormData>({
-    sex: "MALE",
-    age: 27,
-    heightCm: 180,
-    weightKg: 82,
-    activityLevel: "MODERATE",
-    goalType: "LOSE_FAT",
-  });
-
+  const [formData, setFormData] = useState<ProfileFormData>(defaultFormData);
   const [loading, setLoading] = useState(false);
   const [responseData, setResponseData] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Load existing profile on mount
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const res = await fetch("/api/profile");
+        const data = await res.json();
+        if (res.ok && data.ok && data.data?.profile) {
+          setFormData({
+            sex: data.data.profile.sex ?? defaultFormData.sex,
+            age: data.data.profile.age ?? defaultFormData.age,
+            heightCm: data.data.profile.heightCm ?? defaultFormData.heightCm,
+            weightKg: data.data.profile.weightKg ?? defaultFormData.weightKg,
+            activityLevel: data.data.profile.activityLevel ?? defaultFormData.activityLevel,
+            goalType: data.data.goal?.goalType ?? defaultFormData.goalType,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load profile:", err);
+      }
+    }
+    loadProfile();
+  }, []);
 
   const calculatedTargets = useMemo(() => {
     return calculateMacroTargets(
