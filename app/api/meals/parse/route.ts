@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { gemini } from "@/lib/gemini";
 import { mealParseInputSchema, parsedMealSchema } from "@/lib/validators";
 import { sanitizeMealInput } from "@/lib/sanitize";
@@ -205,6 +206,19 @@ ${mealText}
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth();
+
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
     let body: unknown;
     try {
       body = await req.json();
@@ -266,7 +280,6 @@ export async function POST(req: NextRequest) {
         ok: false,
         code: "PARSING_ERROR",
         message: "Something went wrong while parsing the meal",
-        details: errorMessage,
       },
       { status: 500 }
     );
