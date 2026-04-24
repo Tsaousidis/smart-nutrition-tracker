@@ -95,7 +95,7 @@ export default function LoginForm() {
         )}
 
         <div className="mt-6 text-center text-sm">
-          <p className="text-gray-600">{t("noAccount")} <Link href={`/${locale}/signup`} className="font-medium text-blue-600 hover:underline">{t("signupLink")}</Link></p>
+          <p className="text-gray-600">{t("noAccount")} <Link href="/signup" className="font-medium text-blue-600 hover:underline">{t("signupLink")}</Link></p>
         </div>
       </div>
     </main>

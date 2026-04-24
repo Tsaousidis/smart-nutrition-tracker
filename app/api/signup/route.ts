@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
+import { randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { signupSchema } from "@/lib/validators";
 import { sanitizeEmail } from "@/lib/sanitize";
+import { sendVerificationEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -36,6 +38,7 @@ export async function POST(req: NextRequest) {
 
     let email = parsedBody.data.email;
     const password = parsedBody.data.password;
+    const locale = parsedBody.data.locale || "en";
     
     // Sanitize email
     try {
@@ -68,18 +71,23 @@ export async function POST(req: NextRequest) {
     }
 
     const hashedPassword = await hash(password, 12);
+    const verificationToken = randomBytes(32).toString("hex");
 
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
+        verificationToken,
       },
     });
+
+    // Send verification email with locale
+    await sendVerificationEmail(email, verificationToken, locale);
 
     return NextResponse.json({
       ok: true,
       code: "SUCCESS",
-      message: "User created successfully",
+      message: "User created successfully. Please check your email to verify your account.",
       data: {
         id: user.id,
         email: user.email,
