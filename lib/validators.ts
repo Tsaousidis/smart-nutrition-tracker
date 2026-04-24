@@ -73,6 +73,7 @@ export type SaveMealRequestBody = z.infer<typeof saveMealSchema>;
 export const signupSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6).max(100),
+  locale: z.string().optional(),
 });
 
 export type SignupRequestBody = z.infer<typeof signupSchema>;

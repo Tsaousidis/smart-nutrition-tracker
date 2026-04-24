@@ -39,14 +39,14 @@ export default function SignupForm() {
           "x-csrf-token": csrfToken,
         },
         credentials: "include",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, locale }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to sign up");
 
-      setMessage(t("success"));
-      setTimeout(() => { router.push(`/${locale}/login`); }, 1000);
+      setMessage(t("verifyEmailSent"));
+      setTimeout(() => { router.push(`/${locale}/login`); }, 5000);
       setEmail("");
       setPassword("");
     } catch (err) {

@@ -103,7 +103,8 @@
     "sending": "Sending...",
     "emailSent": "Check Your Email",
     "checkEmail": "If an account exists, we've sent a password reset link.",
-    "backToLogin": "Back to Login"
+    "backToLogin": "Back to Login",
+    "alreadyRequested": "You have already requested a password reset. Please check your email or spam folder, or try again in 1 hour."
   },
   "ResetPassword": {
     "title": "New Password",
@@ -165,6 +166,7 @@
     "submit": "Sign Up",
     "loading": "Creating account...",
     "success": "Account created successfully. You can now log in.",
+    "verifyEmailSent": "Account created! Please check your email to verify your account before logging in.",
     "haveAccount": "Already have an account?",
     "loginLink": "Log in here"
   },
@@ -206,5 +208,12 @@
     "accountDeleted": "Your account has been deleted. Redirecting...",
     "confirmDelete": "Confirm Deletion",
     "cancel": "Cancel"
+  },
+  "VerifyEmail": {
+    "verifying": "Verifying your email...",
+    "verificationFailed": "Verification Failed",
+    "success": "Email Verified!",
+    "successMessage": "Your email has been verified. You can now log in.",
+    "goToLogin": "Go to Login"
   }
 }
