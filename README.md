@@ -103,14 +103,16 @@ This app focuses on:
 |----------------|-----------|
 | Framework      | Next.js |
 | Language       | TypeScript |
-| Database       | PostgreSQL |
+| Database       | PostgreSQL (Neon DB) |
 | ORM            | Prisma |
 | Auth           | next-auth |
+| AI             | Azure OpenAI (GPT-4o) |
 | Validation     | Zod |
 | Styling        | Tailwind CSS |
 | Charts         | Recharts |
 | i18n           | next-intl |
 | Email Service  | Resend |
+| Deployment     | Render |
 
 ---
 
@@ -152,11 +154,22 @@ npm install
 Create a .env file:
 
 ```bash
-GEMINI_API_KEY=
-AUTH_SECRET=
+# Azure OpenAI (for meal parsing)
+AZURE_OPENAI_API_KEY=
+AZURE_OPENAI_ENDPOINT=
+AZURE_OPENAI_DEPLOYMENT_NAME=
+
+# Database (PostgreSQL - Neon DB)
 DATABASE_URL=
 DIRECT_URL=
+
+# Authentication
+AUTH_SECRET=
+
+# Email (Resend)
 RESEND_API_KEY=
+
+# App URL
 NEXT_PUBLIC_APP_URL=
 DEFAULT_LOCALE=
 ```
