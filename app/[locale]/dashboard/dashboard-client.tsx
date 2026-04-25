@@ -384,15 +384,15 @@ export default function DashboardClient() {
             {dashboardData.chartData && dashboardData.chartData.length > 0 && (
               <div className="space-y-6">
                 <section className="grid items-stretch gap-6 lg:grid-cols-3">
-                  <div className="space-y-6 lg:col-span-2">
-                    <div className="h-full rounded-xl border border-border bg-surface p-5 ambient-shadow">
+                  <div className="flex h-full flex-col justify-between gap-6 lg:col-span-2">
+                    <div className="flex flex-col justify-between gap-6 rounded-xl border border-border bg-surface p-5 ambient-shadow">
                       <div className="mb-2 flex items-center justify-between">
                         <h3 className="font-display text-lg font-semibold text-brand">{t("weeklyConsistency")}</h3>
                         <span className="rounded-full bg-surface-soft px-3 py-1 text-xs font-semibold text-ink-muted">
                           {t("daysWithinCaloriesTarget", { value: metrics.daysWithinTarget })} ({metrics.daysWithData})
                         </span>
                       </div>
-                      <div className="space-y-4">
+                      <div className="flex flex-col gap-4">
                         <SingleMetricChart
                           data={dashboardData.chartData.map((d) => ({ date: d.date, value: d.calories }))}
                           target={dashboardData.targets.dailyCalories}
@@ -451,7 +451,7 @@ export default function DashboardClient() {
                 </section>
 
                 <section className="grid items-stretch gap-6 lg:grid-cols-3">
-                  <div className="h-full rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-2">
+                  <div className="flex h-full flex-col justify-between rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-2">
                     <h3 className="font-display text-lg font-semibold text-brand">{t("recentMeals")}</h3>
                     <div className="mt-4 space-y-3">
                       {dashboardData.meals.slice(0, 4).map((meal) => {
