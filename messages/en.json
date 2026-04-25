@@ -108,7 +108,14 @@
     "nextBestAction": "Next best action",
     "reviewWeeklyPlan": "Review weekly plan",
     "addProteinSnack": "Add 25g protein meal",
-    "logDinnerNow": "Log dinner now"
+    "logDinnerNow": "Log dinner now",
+    "errorLabel": "Error",
+    "retry": "Retry",
+    "loadError": "Failed to fetch dashboard data",
+    "unknownLoadError": "Unknown dashboard fetch error",
+    "emptyStateTitle": "No meals logged yet",
+    "emptyStateSubtitle": "Start by logging your first meal to unlock your dashboard insights.",
+    "logFirstMeal": "Log your first meal"
   },
   "History": {
     "title": "7-Day History",
@@ -136,7 +143,8 @@
     "caloriesTargetLabel": "Calories target: {value} kcal",
     "deleteMeal": "Delete",
     "confirmDeleteMeal": "Are you sure you want to delete this meal?",
-    "deleting": "Deleting..."
+    "deleting": "Deleting...",
+    "errorLabel": "Error"
   },
   "Login": {
     "title": "Log In",
@@ -285,13 +293,19 @@
     "confirmDelete": "Confirm Deletion",
     "cancel": "Cancel"
     ,
-    "selectRequiredDropdowns": "Please select sex, activity level, and goal before saving."
+    "selectRequiredDropdowns": "Please select sex, activity level, and goal before saving.",
+    "profileCompleteTitle": "Profile saved successfully",
+    "profileCompleteSubtitle": "You're all set. Continue to your dashboard to start tracking meals.",
+    "continueToDashboard": "Continue to Dashboard",
+    "editProfileAgain": "Edit profile again",
+    "dashboardRedirectHint": "Redirecting automatically in {seconds}s."
   },
   "VerifyEmail": {
     "verifying": "Verifying your email...",
     "verificationFailed": "Verification Failed",
     "success": "Email Verified!",
     "successMessage": "Your email has been verified. You can now log in.",
-    "goToLogin": "Go to Login"
+    "goToLogin": "Go to Login",
+    "invalidLink": "Invalid verification link"
   }
 }

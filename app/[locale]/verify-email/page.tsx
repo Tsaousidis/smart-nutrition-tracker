@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useCsrfToken } from "@/lib/useCsrfToken";
 
 export default function VerifyEmailPage() {
   const t = useTranslations("VerifyEmail");
   const searchParams = useSearchParams();
+  const { csrfToken } = useCsrfToken();
   const token = searchParams.get("token");
 
   const [loading, setLoading] = useState(true);
@@ -17,15 +19,19 @@ export default function VerifyEmailPage() {
   useEffect(() => {
     async function verifyEmail() {
       if (!token) {
-        setError("Invalid verification link");
+        setError(t("invalidLink"));
         setLoading(false);
         return;
       }
 
       try {
+        if (!csrfToken) {
+          throw new Error("Security error: CSRF token not available");
+        }
         const res = await fetch("/api/verify-email/confirm", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
+          credentials: "include",
           body: JSON.stringify({ token }),
         });
 
@@ -45,7 +51,7 @@ export default function VerifyEmailPage() {
     }
 
     verifyEmail();
-  }, [token]);
+  }, [csrfToken, t, token]);
 
   if (loading) {
     return (

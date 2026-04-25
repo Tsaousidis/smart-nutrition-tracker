@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCsrfToken } from "@/lib/useCsrfToken";
 import { calculateMacroTargets } from "@/lib/calculations";
+import { Link } from "@/i18n/navigation";
 
 type ProfileFormData = {
   sex: "MALE" | "FEMALE" | "";
@@ -31,6 +32,7 @@ export default function ProfileForm() {
   const [profileReady, setProfileReady] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [redirectIn, setRedirectIn] = useState(5);
   const [error, setError] = useState<string | null>(null);
 
   // Account deletion state
@@ -114,6 +116,21 @@ export default function ProfileForm() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!saveSuccess) return;
+    if (redirectIn <= 0) return;
+    const timer = setTimeout(() => {
+      setRedirectIn((prev) => prev - 1);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [redirectIn, saveSuccess]);
+
+  useEffect(() => {
+    if (saveSuccess && redirectIn === 0) {
+      window.location.href = "/dashboard";
+    }
+  }, [redirectIn, saveSuccess]);
+
   const calculatedTargets = useMemo(() => {
     if (!formData.sex || !formData.activityLevel || !formData.goalType) {
       return { dailyCalories: 0, proteinTarget: 0, carbsTarget: 0, fatTarget: 0 };
@@ -177,6 +194,7 @@ export default function ProfileForm() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to save profile");
+      setRedirectIn(5);
       setSaveSuccess(true);
     } catch (err) {
       console.error(err);
@@ -200,6 +218,30 @@ export default function ProfileForm() {
           <div className="h-11 w-full rounded bg-surface-soft" />
         </div>
         <p className="sr-only">{t("loadingProfile")}</p>
+      </div>
+    );
+  }
+
+  if (saveSuccess) {
+    return (
+      <div className="mx-auto max-w-2xl rounded-xl border border-border bg-surface p-6 ambient-shadow md:p-8">
+        <h1 className="font-display text-2xl font-semibold text-brand">{t("profileCompleteTitle")}</h1>
+        <p className="mt-2 text-sm text-ink-muted">{t("profileCompleteSubtitle")}</p>
+        <p className="mt-2 text-xs text-ink-muted">
+          {t("dashboardRedirectHint", { seconds: redirectIn })}
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link href="/dashboard" className="btn-brand inline-flex">
+            {t("continueToDashboard")}
+          </Link>
+          <button
+            type="button"
+            className="rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-brand transition hover:bg-surface-soft"
+            onClick={() => setSaveSuccess(false)}
+          >
+            {t("editProfileAgain")}
+          </button>
+        </div>
       </div>
     );
   }
@@ -391,11 +433,6 @@ export default function ProfileForm() {
         </div>
       )}
 
-      {saveSuccess && (
-        <div className="mt-6 rounded-lg border border-green-300 bg-green-50 p-4 text-green-800">
-          <p className="font-medium">{t("saveProfileSuccess")}</p>
-        </div>
-      )}
     </div>
   );
 }

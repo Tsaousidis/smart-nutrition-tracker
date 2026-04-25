@@ -26,14 +26,14 @@ export default auth((req) => {
 
       if (!csrfToken || !cookieToken) {
         return new Response(
-          JSON.stringify({ error: "CSRF token missing", code: "CSRF_MISSING" }),
+          JSON.stringify({ error: "CSRF token missing", message: "CSRF token missing", code: "CSRF_MISSING" }),
           { status: 403, headers: { "Content-Type": "application/json" } }
         );
       }
 
       if (!validateCsrfToken(csrfToken, cookieToken)) {
         return new Response(
-          JSON.stringify({ error: "CSRF token invalid", code: "CSRF_INVALID" }),
+          JSON.stringify({ error: "CSRF token invalid", message: "CSRF token invalid", code: "CSRF_INVALID" }),
           { status: 403, headers: { "Content-Type": "application/json" } }
         );
       }

@@ -31,6 +31,8 @@ export default function WeeklySummary({ totals, targets }: Props) {
     return Math.round(((actual - weeklyTarget) / weeklyTarget) * 100);
   };
 
+  const formatNumber = (value: number) => Math.round(value).toLocaleString();
+
   const metrics = [
     {
       label: t("calories"),
@@ -38,6 +40,7 @@ export default function WeeklySummary({ totals, targets }: Props) {
       weeklyTarget: targets.dailyCalories * DAYS_PER_WEEK,
       unit: "kcal",
       diff: getDiff(totals.calories, targets.dailyCalories * DAYS_PER_WEEK),
+      accent: "bg-emerald-500/15 text-emerald-700",
     },
     {
       label: t("protein"),
@@ -45,6 +48,7 @@ export default function WeeklySummary({ totals, targets }: Props) {
       weeklyTarget: targets.proteinTarget * DAYS_PER_WEEK,
       unit: "g",
       diff: getDiff(totals.protein, targets.proteinTarget * DAYS_PER_WEEK),
+      accent: "bg-indigo-500/15 text-indigo-700",
     },
     {
       label: t("carbs"),
@@ -52,6 +56,7 @@ export default function WeeklySummary({ totals, targets }: Props) {
       weeklyTarget: targets.carbsTarget * DAYS_PER_WEEK,
       unit: "g",
       diff: getDiff(totals.carbs, targets.carbsTarget * DAYS_PER_WEEK),
+      accent: "bg-sky-500/15 text-sky-700",
     },
     {
       label: t("fat"),
@@ -59,43 +64,52 @@ export default function WeeklySummary({ totals, targets }: Props) {
       weeklyTarget: targets.fatTarget * DAYS_PER_WEEK,
       unit: "g",
       diff: getDiff(totals.fat, targets.fatTarget * DAYS_PER_WEEK),
+      accent: "bg-amber-500/15 text-amber-700",
     },
   ];
 
   return (
     <div className="h-full rounded-xl border border-border bg-surface p-5 ambient-shadow md:p-6">
-      <h3 className="mb-3 font-display text-lg font-semibold text-brand">{t("weeklySummary")}</h3>
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="font-display text-lg font-semibold text-brand">{t("weeklySummary")}</h3>
+        <span className="rounded-full bg-surface-soft px-3 py-1 text-xs font-semibold text-ink-muted">
+          {t("last7Days")}
+        </span>
+      </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="space-y-3">
         {metrics.map((metric) => (
-          <div key={metric.label} className="text-center">
-            <div className="text-sm text-ink-muted">{metric.label}</div>
-            <div className="mt-1 font-display text-xl font-bold text-brand">
-              {Math.round(metric.actual).toLocaleString()}
-              <span className="text-sm font-normal text-ink-muted">{metric.unit}</span>
+          <div key={metric.label} className="rounded-lg border border-border bg-surface-soft/70 p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className={`h-2.5 w-2.5 rounded-full ${metric.accent.split(" ")[0]}`} aria-hidden />
+                <p className="text-sm font-semibold text-ink">{metric.label}</p>
+              </div>
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                  metric.diff > 10
+                    ? "bg-red-100 text-red-700"
+                    : metric.diff < -10
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-emerald-100 text-emerald-700"
+                }`}
+              >
+                {metric.diff > 0 ? "+" : ""}
+                {metric.diff}%
+              </span>
             </div>
-            <div className="text-xs text-ink-muted">
-              {t("weeklyTarget7d")}: {Math.round(metric.weeklyTarget).toLocaleString()}
-              {metric.unit}
-            </div>
-            <div
-              className={`mt-1 text-sm font-medium ${
-                metric.diff > 10
-                  ? "text-red-600"
-                  : metric.diff < -10
-                  ? "text-orange-600"
-                  : "text-green-600"
-              }`}
-            >
-              {metric.diff > 0 ? "+" : ""}
-              {metric.diff}%
+
+            <div className="mt-2 flex items-end justify-between">
+              <p className="font-display text-2xl font-semibold text-brand">
+                {formatNumber(metric.actual)}
+                <span className="ml-1 text-sm font-medium text-ink-muted">{metric.unit}</span>
+              </p>
+              <p className="text-xs text-ink-muted">
+                {t("target")}: {formatNumber(metric.weeklyTarget)} {metric.unit}
+              </p>
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="mt-3 text-center text-sm text-ink-muted">
-        {t("last7Days")}
       </div>
     </div>
   );
