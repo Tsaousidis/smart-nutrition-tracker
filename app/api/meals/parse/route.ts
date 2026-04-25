@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { gemini } from "@/lib/gemini";
+import { azureOpenAI } from "@/lib/azure-openai";
 import { mealParseInputSchema, parsedMealSchema } from "@/lib/validators";
 import { sanitizeMealInput } from "@/lib/sanitize";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
@@ -64,15 +64,12 @@ async function parseMealWithRetry(mealText: string, locale: "en" | "el") {
 
   for (let attempt = 1; attempt <= MAX_RETRIES + 1; attempt++) {
     try {
-      const response = await gemini.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: [
+      const response = await azureOpenAI.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
           {
-            role: "user",
-            parts: [
-              {
-                text: `
-You are a nutrition extraction engine.
+            role: "system",
+            content: `You are a nutrition extraction engine.
 
 Your task:
 - Read the user's meal description
@@ -107,77 +104,34 @@ Return this exact JSON shape:
     "carbs": number,
     "fat": number
   }
-}
-
-User meal:
-${mealText}
-                `.trim(),
-              }
-            ],
+}`,
+          },
+          {
+            role: "user",
+            content: `User meal:\n${mealText}`,
           },
         ],
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: "object",
-            properties: {
-              items: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    name: { type: "string" },
-                    quantity: { type: "number" },
-                    unit: { type: "string" },
-                    calories: { type: "number" },
-                    protein: { type: "number" },
-                    carbs: { type: "number" },
-                    fat: { type: "number" },
-                  },
-                  required: [
-                    "name",
-                    "quantity",
-                    "unit",
-                    "calories",
-                    "protein",
-                    "carbs",
-                    "fat",
-                  ],
-                },
-              },
-              mealTotal: {
-                type: "object",
-                properties: {
-                  calories: { type: "number" },
-                  protein: { type: "number" },
-                  carbs: { type: "number" },
-                  fat: { type: "number" },
-                },
-                required: ["calories", "protein", "carbs", "fat"],
-              },
-            },
-            required: ["items", "mealTotal"],
-          },
-        },
+        response_format: { type: "json_object" },
+        temperature: 0.1,
       });
 
-      const text = response.text;
+      const text = response.choices[0]?.message?.content ?? "";
 
       if (!text) {
-        throw new Error("Gemini returned an empty response");
+        throw new Error("Azure OpenAI returned an empty response");
       }
 
       let rawJson;
       try {
         rawJson = JSON.parse(text);
       } catch (error) {
-        throw new Error(`Failed to parse Gemini response as JSON: ${getErrorMessage(error)}`);
+        throw new Error(`Failed to parse Azure OpenAI response as JSON: ${getErrorMessage(error)}`);
       }
 
       const validatedMeal = parsedMealSchema.safeParse(rawJson);
 
       if (!validatedMeal.success) {
-        throw new Error("Gemini response did not match expected schema");
+        throw new Error("Azure OpenAI response did not match expected schema");
       }
 
       return validatedMeal.data;
@@ -187,7 +141,7 @@ ${mealText}
 
       if (isQuotaError(errorMessage)) {
         throw new Error(
-          "The daily Gemini quota/credits appear to be exhausted. Please try again later or tomorrow."
+          "The Azure OpenAI quota appears to be exhausted. Please try again later or tomorrow."
         );
       }
 
@@ -202,7 +156,7 @@ ${mealText}
     }
   }
 
-  throw lastError ?? new Error("Unknown Gemini parsing error");
+  throw lastError ?? new Error("Unknown Azure OpenAI parsing error");
 }
 
 export async function POST(req: NextRequest) {
