@@ -108,7 +108,14 @@
     "nextBestAction": "Επόμενη καλύτερη ενέργεια",
     "reviewWeeklyPlan": "Δες το εβδομαδιαίο πλάνο",
     "addProteinSnack": "Πρόσθεσε γεύμα με +25g πρωτεΐνης",
-    "logDinnerNow": "Καταχώρησε βραδινό τώρα"
+    "logDinnerNow": "Καταχώρησε βραδινό τώρα",
+    "errorLabel": "Σφάλμα",
+    "retry": "Δοκίμασε ξανά",
+    "loadError": "Αποτυχία φόρτωσης δεδομένων dashboard",
+    "unknownLoadError": "Άγνωστο σφάλμα φόρτωσης dashboard",
+    "emptyStateTitle": "Δεν υπάρχουν καταχωρημένα γεύματα ακόμα",
+    "emptyStateSubtitle": "Ξεκίνα με την πρώτη καταχώρηση γεύματος για να εμφανιστούν τα insights του dashboard.",
+    "logFirstMeal": "Καταχώρησε πρώτο γεύμα"
   },
   "History": {
     "title": "Ιστορικό 7 Ημερών",
@@ -136,7 +143,8 @@
     "caloriesTargetLabel": "Στόχος θερμίδων: {value} kcal",
     "deleteMeal": "Διαγραφή",
     "confirmDeleteMeal": "Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το γεύμα;",
-    "deleting": "Διαγράφεται..."
+    "deleting": "Διαγράφεται...",
+    "errorLabel": "Σφάλμα"
   },
     "Login": {
     "title": "Σύνδεση",
@@ -284,13 +292,19 @@
     "accountDeleted": "Ο λογαριασμός σου διαγράφηκε. Ανακατεύθυνση...",
     "confirmDelete": "Επιβεβαίωση Διαγραφής",
     "cancel": "Ακύρωση",
-    "selectRequiredDropdowns": "Επίλεξε φύλο, επίπεδο δραστηριότητας και στόχο πριν την αποθήκευση."
+    "selectRequiredDropdowns": "Επίλεξε φύλο, επίπεδο δραστηριότητας και στόχο πριν την αποθήκευση.",
+    "profileCompleteTitle": "Το προφίλ αποθηκεύτηκε επιτυχώς",
+    "profileCompleteSubtitle": "Είσαι έτοιμος/η. Συνέχισε στο dashboard για να ξεκινήσεις την καταγραφή γευμάτων.",
+    "continueToDashboard": "Συνέχεια στο Dashboard",
+    "editProfileAgain": "Επεξεργασία προφίλ ξανά",
+    "dashboardRedirectHint": "Αυτόματη μετάβαση σε {seconds}δ."
   },
   "VerifyEmail": {
     "verifying": "Επαλήθευση του email σου...",
     "verificationFailed": "Αποτυχία Επαλήθευσης",
     "success": "Email Επαληθεύτηκε!",
     "successMessage": "Το email σου έχει επαληθευτεί. Μπορείς τώρα να συνδεθείς.",
-    "goToLogin": "Πήγαινε στη Σύνδεση"
+    "goToLogin": "Πήγαινε στη Σύνδεση",
+    "invalidLink": "Μη έγκυρος σύνδεσμος επαλήθευσης"
   }
 }

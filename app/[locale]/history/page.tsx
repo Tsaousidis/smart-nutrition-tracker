@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useCsrfToken } from "@/lib/useCsrfToken";
 
 type HistoryItem = {
   id: string;
@@ -63,6 +64,7 @@ export default function HistoryPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<HistoryDay | null>(null);
   const [deletingMealId, setDeletingMealId] = useState<string | null>(null);
+  const { csrfToken } = useCsrfToken();
 
   const params = useParams() as { locale?: string };
   const locale = params.locale ?? "en";
@@ -121,8 +123,13 @@ export default function HistoryPage() {
 
     setDeletingMealId(mealId);
     try {
+      if (!csrfToken) {
+        throw new Error("Security error: CSRF token not available");
+      }
       const res = await fetch(`/api/meals?id=${mealId}`, {
         method: "DELETE",
+        headers: { "x-csrf-token": csrfToken },
+        credentials: "include",
       });
 
       const data = await res.json();
@@ -198,7 +205,7 @@ export default function HistoryPage() {
 
           {error ? (
             <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-              <p className="font-medium">Error</p>
+              <p className="font-medium">{t("errorLabel")}</p>
               <p>{error}</p>
             </div>
           ) : null}

@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useCsrfToken } from "@/lib/useCsrfToken";
 
 type ParsedMealItem = {
   name: string;
@@ -55,6 +56,7 @@ function isMealItemComplete(item: ParsedMealItem): boolean {
 export default function MealsPage() {
   const t = useTranslations("Meals");
   const { locale } = useParams() as { locale?: string };
+  const { csrfToken } = useCsrfToken();
 
   const mealTitleOptions = [
     { value: t.raw("mealTitleBreakfast"), label: t("mealTitleBreakfast") },
@@ -88,9 +90,13 @@ export default function MealsPage() {
       if (!selectedTitle) {
         throw new Error(t("selectMealTitle"));
       }
+      if (!csrfToken) {
+        throw new Error("Security error: CSRF token not available");
+      }
       const res = await fetch("/api/meals/parse", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
+        credentials: "include",
         body: JSON.stringify({
           mealText,
           locale: locale === "el" ? "el" : "en",
@@ -170,6 +176,9 @@ export default function MealsPage() {
       if (!title.trim()) {
         throw new Error(t("selectMealTitle"));
       }
+      if (!csrfToken) {
+        throw new Error("Security error: CSRF token not available");
+      }
       if (parsedMeal.items.length === 0) {
         throw new Error(t("noItems"));
       }
@@ -194,7 +203,8 @@ export default function MealsPage() {
 
       const res = await fetch("/api/meals", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
+        credentials: "include",
         body: JSON.stringify({
           title,
           mealDate: new Date(`${mealDate}T12:00:00`).toISOString(),

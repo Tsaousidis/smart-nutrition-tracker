@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Insights from "@/components/dashboard/insights";
 import SingleMetricChart from "@/components/charts/single-metric-chart";
 import MacroDonutChart from "@/components/charts/macro-donut-chart";
@@ -83,12 +83,14 @@ type DashboardResponse = {
 };
 
 export default function DashboardClient() {
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslations("Dashboard");
   const [dashboardData, setDashboardData] =
     useState<DashboardResponse["data"] | null>(null);
 
-  async function loadDashboard() {
+  const loadDashboard = useCallback(async () => {
+    setLoading(true);
     setError(null);
 
     try {
@@ -96,23 +98,25 @@ export default function DashboardClient() {
       const data: DashboardResponse = await res.json();
 
       if (!res.ok || !data.ok) {
-        throw new Error(data.message || "Failed to fetch dashboard data");
+        throw new Error(data.message || t("loadError"));
       }
 
       setDashboardData(data.data || null);
     } catch (err) {
       console.error(err);
       setError(
-        err instanceof Error ? err.message : "Unknown dashboard fetch error"
+        err instanceof Error ? err.message : t("unknownLoadError")
       );
       setDashboardData(null);
+    } finally {
+      setLoading(false);
     }
-  }
+  }, [t]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadDashboard();
-  }, []);
+  }, [loadDashboard]);
 
   const insights = useMemo(() => {
     if (!dashboardData) return [];
@@ -236,11 +240,60 @@ export default function DashboardClient() {
 
           {error ? (
             <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-              <p className="font-medium">Error</p>
+              <p className="font-medium">{t("errorLabel")}</p>
               <p>{error}</p>
+              <button
+                type="button"
+                onClick={loadDashboard}
+                className="mt-3 rounded-md border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100"
+              >
+                {t("retry")}
+              </button>
             </div>
           ) : null}
         </div>
+
+        {loading ? (
+          <div className="grid gap-4 lg:grid-cols-3">
+            {[...Array(3)].map((_, idx) => (
+              <div key={idx} className="h-32 animate-pulse rounded-xl border border-border bg-surface-soft" />
+            ))}
+          </div>
+        ) : null}
+
+        {!loading &&
+        !error &&
+        !dashboardData ? (
+          <div className="rounded-xl border border-dashed border-border-strong bg-surface p-8 text-center ambient-shadow">
+            <h2 className="font-display text-xl font-semibold text-brand">{t("emptyStateTitle")}</h2>
+            <p className="mt-2 text-sm text-ink-muted">{t("emptyStateSubtitle")}</p>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+              <Link href="/meals" className="btn-brand inline-flex">
+                {t("logFirstMeal")}
+              </Link>
+              <button
+                type="button"
+                onClick={loadDashboard}
+                className="rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-brand transition hover:bg-surface-soft"
+              >
+                {t("retry")}
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {!loading &&
+        !error &&
+        dashboardData &&
+        (dashboardData.meals.length === 0 || dashboardData.chartData.every((d) => d.calories <= 0)) ? (
+          <div className="rounded-xl border border-dashed border-border-strong bg-surface p-8 text-center ambient-shadow">
+            <h2 className="font-display text-xl font-semibold text-brand">{t("emptyStateTitle")}</h2>
+            <p className="mt-2 text-sm text-ink-muted">{t("emptyStateSubtitle")}</p>
+            <Link href="/meals" className="btn-brand mt-5 inline-flex">
+              {t("logFirstMeal")}
+            </Link>
+          </div>
+        ) : null}
 
         {dashboardData && metrics && (
           <div className="space-y-8">

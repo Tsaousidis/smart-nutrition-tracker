@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useCsrfToken } from "@/lib/useCsrfToken";
 
 export default function ForgotPasswordPage() {
   const t = useTranslations("ForgotPassword");
   const locale = useLocale();
+  const { csrfToken } = useCsrfToken();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -19,9 +21,13 @@ export default function ForgotPasswordPage() {
     setError(null);
 
     try {
+      if (!csrfToken) {
+        throw new Error("Security error: CSRF token not available");
+      }
       const res = await fetch("/api/password-reset", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
+        credentials: "include",
         body: JSON.stringify({ email, locale }),
       });
 

@@ -5,12 +5,14 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useCsrfToken } from "@/lib/useCsrfToken";
 
 export default function ResetPasswordPage() {
   const t = useTranslations("ResetPassword");
   const searchParams = useSearchParams();
   const router = useRouter();
   const locale = useLocale();
+  const { csrfToken } = useCsrfToken();
   const token = searchParams.get("token");
 
   const [password, setPassword] = useState("");
@@ -31,9 +33,13 @@ export default function ResetPasswordPage() {
     }
 
     try {
+      if (!csrfToken) {
+        throw new Error("Security error: CSRF token not available");
+      }
       const res = await fetch("/api/password-reset/confirm", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
+        credentials: "include",
         body: JSON.stringify({ token, newPassword: password }),
       });
 
