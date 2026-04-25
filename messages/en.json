@@ -87,6 +87,7 @@
     "macroDistribution": "Macro Distribution",
     "todayStatus": "Today's status",
     "onTrackPercent": "You're {value}% on today's target",
+    "overCalories": "You've exceeded your target by {value}%",
     "fromYesterday": "{value} vs yesterday",
     "logMeal": "Log meal",
     "caloriesLeft": "Calories left",

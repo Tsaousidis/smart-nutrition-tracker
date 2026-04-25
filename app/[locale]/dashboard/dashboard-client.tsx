@@ -147,11 +147,9 @@ export default function DashboardClient() {
     if (!dashboardData) return null;
     const caloriePct =
       dashboardData.targets.dailyCalories > 0
-        ? Math.min(
-            100,
-            Math.max(0, (dashboardData.totals.calories / dashboardData.targets.dailyCalories) * 100)
-          )
+        ? Math.max(0, (dashboardData.totals.calories / dashboardData.targets.dailyCalories) * 100)
         : 0;
+    const isOverCalories = dashboardData.totals.calories > dashboardData.targets.dailyCalories;
     const proteinPct =
       dashboardData.targets.proteinTarget > 0
         ? Math.min(
@@ -212,6 +210,7 @@ export default function DashboardClient() {
     return {
       caloriePct,
       proteinPct,
+      isOverCalories,
       todayMeals,
       hasYesterdayMeal,
       trendPct,
@@ -301,7 +300,9 @@ export default function DashboardClient() {
               <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-1">
                 <p className="text-xs font-bold uppercase tracking-wider text-accent">{t("todayStatus")}</p>
                 <h2 className="mt-2 font-display text-2xl font-semibold text-brand">
-                  {t("onTrackPercent", { value: Math.round(metrics.caloriePct) })}
+                  {metrics.isOverCalories
+                    ? t("overCalories", { value: Math.round(metrics.caloriePct) })
+                    : t("onTrackPercent", { value: Math.round(metrics.caloriePct) })}
                 </h2>
                 {metrics.hasYesterdayMeal && metrics.trendPct !== null ? (
                   <span className="mt-3 inline-block rounded-full bg-emerald-soft px-3 py-1 text-xs font-semibold text-emerald-800">
