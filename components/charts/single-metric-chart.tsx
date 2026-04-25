@@ -30,7 +30,7 @@ export default function SingleMetricChart({ data, target, title, unit, color, ta
   const t = useTranslations("Dashboard");
 
   return (
-    <div className="rounded-2xl border p-4 shadow-sm">
+    <div className="h-full rounded-2xl border p-4 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-lg font-semibold">{title}</h3>
         {target !== undefined && (

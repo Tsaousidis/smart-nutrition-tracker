@@ -1,13 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
-import { randomBytes } from "crypto";
+import { createHash, randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { signupSchema } from "@/lib/validators";
 import { sanitizeEmail } from "@/lib/sanitize";
 import { sendVerificationEmail } from "@/lib/email";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req);
+    const rate = checkRateLimit({
+      key: `signup:${ip}`,
+      limit: 10,
+      windowMs: 15 * 60 * 1000,
+    });
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { ok: false, code: "RATE_LIMITED", message: "Too many signup attempts. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      );
+    }
+
     let body: unknown;
     try {
       body = await req.json();
@@ -72,12 +86,16 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await hash(password, 12);
     const verificationToken = randomBytes(32).toString("hex");
+    const verificationTokenHash = createHash("sha256").update(verificationToken).digest("hex");
+    const verificationTokenExpires = new Date();
+    verificationTokenExpires.setHours(verificationTokenExpires.getHours() + 24);
 
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
-        verificationToken,
+        verificationToken: verificationTokenHash,
+        verificationTokenExpires,
       },
     });
 

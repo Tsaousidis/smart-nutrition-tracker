@@ -2,10 +2,13 @@ import { auth } from "@/auth";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { validateCsrfToken } from "@/lib/csrf";
+import { NextResponse } from "next/server";
 
 const intlMiddleware = createMiddleware(routing);
 
 export default auth((req) => {
+  const pathname = req.nextUrl.pathname;
+
   // CSRF validation for state-changing requests
   if (["POST", "PUT", "DELETE", "PATCH"].includes(req.method)) {
     // Skip CSRF check for NextAuth endpoints, health checks, and server actions (which have their own token)
@@ -37,8 +40,11 @@ export default auth((req) => {
     }
   }
 
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+
   const isLoggedIn = !!req.auth;
-  const pathname = req.nextUrl.pathname;
 
   const isProtectedRoute = pathname.match(/^\/(en|el)\/(dashboard|meals|history|onboarding)/);
 
@@ -77,6 +83,7 @@ export default auth((req) => {
 export const config = {
   matcher: [
     "/",
+    "/api/:path*",
     "/(el|en)/:path*"
   ]
 };

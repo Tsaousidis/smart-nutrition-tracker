@@ -1,10 +1,24 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { randomBytes } from "crypto";
+import { createHash, randomBytes } from "crypto";
 import { sendVerificationEmail } from "@/lib/email";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   try {
+    const ip = getClientIp(request);
+    const rate = checkRateLimit({
+      key: `verify-email-resend:${ip}`,
+      limit: 8,
+      windowMs: 15 * 60 * 1000,
+    });
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { ok: false, message: "Too many requests. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      );
+    }
+
     const body = await request.json();
     const { email } = body;
 
@@ -36,12 +50,16 @@ export async function POST(request: Request) {
 
     // Generate verification token
     const verificationToken = randomBytes(32).toString("hex");
+    const verificationTokenHash = createHash("sha256").update(verificationToken).digest("hex");
+    const verificationTokenExpires = new Date();
+    verificationTokenExpires.setHours(verificationTokenExpires.getHours() + 24);
 
     // Save token to database
     await prisma.user.update({
       where: { email },
       data: {
-        verificationToken,
+        verificationToken: verificationTokenHash,
+        verificationTokenExpires,
       },
     });
 

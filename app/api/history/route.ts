@@ -197,7 +197,7 @@ export async function GET(req: NextRequest) {
     const endDate = new Date();
     endDate.setHours(23, 59, 59, 999);
     
-    let currentDate = new Date(chartStartDate);
+    const currentDate = new Date(chartStartDate);
     while (currentDate <= endDate) {
       const dayKey = formatDateKey(currentDate);
       chartDays.push(

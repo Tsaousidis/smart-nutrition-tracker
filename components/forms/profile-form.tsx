@@ -6,21 +6,21 @@ import { useCsrfToken } from "@/lib/useCsrfToken";
 import { calculateMacroTargets } from "@/lib/calculations";
 
 type ProfileFormData = {
-  sex: "MALE" | "FEMALE";
-  age: number;
-  heightCm: number;
-  weightKg: number;
-  activityLevel: "SEDENTARY" | "LIGHT" | "MODERATE" | "VERY_ACTIVE" | "EXTRA_ACTIVE";
-  goalType: "MAINTAIN" | "LOSE_WEIGHT" | "GAIN_MUSCLE";
+  sex: "MALE" | "FEMALE" | "";
+  age: string;
+  heightCm: string;
+  weightKg: string;
+  activityLevel: "SEDENTARY" | "LIGHT" | "MODERATE" | "VERY_ACTIVE" | "EXTRA_ACTIVE" | "";
+  goalType: "MAINTAIN" | "LOSE_WEIGHT" | "GAIN_MUSCLE" | "";
 };
 
 const defaultFormData: ProfileFormData = {
-  sex: "MALE",
-  age: 27,
-  heightCm: 180,
-  weightKg: 82,
-  activityLevel: "MODERATE",
-  goalType: "LOSE_WEIGHT",
+  sex: "",
+  age: "",
+  heightCm: "",
+  weightKg: "",
+  activityLevel: "",
+  goalType: "",
 };
 
 export default function ProfileForm() {
@@ -83,9 +83,18 @@ export default function ProfileForm() {
         if (res.ok && data.ok && data.data?.profile) {
           setFormData({
             sex: data.data.profile.sex ?? defaultFormData.sex,
-            age: data.data.profile.age ?? defaultFormData.age,
-            heightCm: data.data.profile.heightCm ?? defaultFormData.heightCm,
-            weightKg: data.data.profile.weightKg ?? defaultFormData.weightKg,
+            age:
+              typeof data.data.profile.age === "number"
+                ? String(data.data.profile.age)
+                : defaultFormData.age,
+            heightCm:
+              typeof data.data.profile.heightCm === "number"
+                ? String(data.data.profile.heightCm)
+                : defaultFormData.heightCm,
+            weightKg:
+              typeof data.data.profile.weightKg === "number"
+                ? String(data.data.profile.weightKg)
+                : defaultFormData.weightKg,
             activityLevel: data.data.profile.activityLevel ?? defaultFormData.activityLevel,
             goalType: data.data.goal?.goalType ?? defaultFormData.goalType,
           });
@@ -106,12 +115,18 @@ export default function ProfileForm() {
   }, []);
 
   const calculatedTargets = useMemo(() => {
+    if (!formData.sex || !formData.activityLevel || !formData.goalType) {
+      return { dailyCalories: 0, proteinTarget: 0, carbsTarget: 0, fatTarget: 0 };
+    }
+    const age = Number(formData.age) || 0;
+    const heightCm = Number(formData.heightCm) || 0;
+    const weightKg = Number(formData.weightKg) || 0;
     return calculateMacroTargets(
       {
-        age: formData.age,
+        age,
         sex: formData.sex,
-        heightCm: formData.heightCm,
-        weightKg: formData.weightKg,
+        heightCm,
+        weightKg,
         activityLevel: formData.activityLevel,
       },
       formData.goalType
@@ -122,7 +137,7 @@ export default function ProfileForm() {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "age" || name === "heightCm" || name === "weightKg" ? Number(value) : value,
+      [name]: value,
     }));
   }
 
@@ -139,6 +154,9 @@ export default function ProfileForm() {
     }
 
     try {
+      if (!formData.sex || !formData.activityLevel || !formData.goalType) {
+        throw new Error(t("selectRequiredDropdowns"));
+      }
       const res = await fetch("/api/profile", {
         method: "POST",
         headers: { 
@@ -146,7 +164,15 @@ export default function ProfileForm() {
           "x-csrf-token": csrfToken,
         },
         credentials: "include",
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          sex: formData.sex,
+          age: Number(formData.age),
+          heightCm: Number(formData.heightCm),
+          weightKg: Number(formData.weightKg),
+          activityLevel: formData.activityLevel,
+          goalType: formData.goalType,
+        }),
       });
 
       const data = await res.json();
@@ -185,7 +211,10 @@ export default function ProfileForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="label-stitch">{t("sex")}</label>
-          <select name="sex" value={formData.sex} onChange={handleChange} className="input-stitch">
+          <select name="sex" value={formData.sex} onChange={handleChange} className="input-stitch" required>
+            <option value="" disabled>
+              {t("selectSex")}
+            </option>
             <option value="MALE">{t("male")}</option>
             <option value="FEMALE">{t("female")}</option>
           </select>
@@ -193,22 +222,52 @@ export default function ProfileForm() {
 
         <div>
           <label className="label-stitch">{t("age")}</label>
-          <input type="number" name="age" value={formData.age} onChange={handleChange} className="input-stitch" />
+          <input
+            type="number"
+            name="age"
+            value={formData.age}
+            onChange={handleChange}
+            className="input-stitch placeholder:text-ink-muted/60"
+            placeholder={t("agePlaceholder")}
+          />
         </div>
 
         <div>
           <label className="label-stitch">{t("height")}</label>
-          <input type="number" name="heightCm" value={formData.heightCm} onChange={handleChange} className="input-stitch" />
+          <input
+            type="number"
+            name="heightCm"
+            value={formData.heightCm}
+            onChange={handleChange}
+            className="input-stitch placeholder:text-ink-muted/60"
+            placeholder={t("heightPlaceholder")}
+          />
         </div>
 
         <div>
           <label className="label-stitch">{t("weight")}</label>
-          <input type="number" name="weightKg" value={formData.weightKg} onChange={handleChange} className="input-stitch" />
+          <input
+            type="number"
+            name="weightKg"
+            value={formData.weightKg}
+            onChange={handleChange}
+            className="input-stitch placeholder:text-ink-muted/60"
+            placeholder={t("weightPlaceholder")}
+          />
         </div>
 
         <div>
           <label className="label-stitch">{t("activityLevel")}</label>
-          <select name="activityLevel" value={formData.activityLevel} onChange={handleChange} className="input-stitch">
+          <select
+            name="activityLevel"
+            value={formData.activityLevel}
+            onChange={handleChange}
+            className="input-stitch"
+            required
+          >
+            <option value="" disabled>
+              {t("selectActivityLevel")}
+            </option>
             <option value="SEDENTARY">{t("sedentary")}</option>
             <option value="LIGHT">{t("light")}</option>
             <option value="MODERATE">{t("moderate")}</option>
@@ -219,7 +278,10 @@ export default function ProfileForm() {
 
         <div>
           <label className="label-stitch">{t("goalType")}</label>
-          <select name="goalType" value={formData.goalType} onChange={handleChange} className="input-stitch">
+          <select name="goalType" value={formData.goalType} onChange={handleChange} className="input-stitch" required>
+            <option value="" disabled>
+              {t("selectGoalType")}
+            </option>
             <option value="MAINTAIN">{t("maintain")}</option>
             <option value="LOSE_WEIGHT">{t("loseWeightFat")}</option>
             <option value="GAIN_MUSCLE">{t("gainMuscle")}</option>
@@ -279,7 +341,7 @@ export default function ProfileForm() {
                   type="password"
                   value={deletePassword}
                   onChange={(e) => setDeletePassword(e.target.value)}
-                  className="input-stitch"
+                  className="input-stitch placeholder:text-ink-muted/60"
                   placeholder={t("enterPasswordToDelete")}
                 />
               </div>

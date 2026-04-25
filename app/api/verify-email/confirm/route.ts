@@ -1,8 +1,23 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { createHash } from "crypto";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   try {
+    const ip = getClientIp(request);
+    const rate = checkRateLimit({
+      key: `verify-email-confirm:${ip}`,
+      limit: 20,
+      windowMs: 15 * 60 * 1000,
+    });
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { ok: false, message: "Too many verification attempts. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      );
+    }
+
     const body = await request.json();
     const { token } = body;
 
@@ -13,10 +28,15 @@ export async function POST(request: Request) {
       );
     }
 
+    const tokenHash = createHash("sha256").update(token).digest("hex");
+
     // Find user with valid verification token
     const user = await prisma.user.findFirst({
       where: {
-        verificationToken: token,
+        verificationToken: tokenHash,
+        verificationTokenExpires: {
+          gt: new Date(),
+        },
       },
     });
 
@@ -33,6 +53,7 @@ export async function POST(request: Request) {
       data: {
         emailVerified: true,
         verificationToken: null,
+        verificationTokenExpires: null,
       },
     });
 

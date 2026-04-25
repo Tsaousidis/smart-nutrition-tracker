@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
@@ -62,17 +62,10 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<HistoryDay | null>(null);
-  const [chartDays, setChartDays] = useState<HistoryDay[]>([]);
-  const [goalTargets, setGoalTargets] = useState<{ dailyCalories: number; proteinTarget: number } | null>(null);
   const [deletingMealId, setDeletingMealId] = useState<string | null>(null);
 
   const params = useParams() as { locale?: string };
   const locale = params.locale ?? "en";
-
-  function formatDateForChart(dateString: string): string {
-    const [year, month, day] = dateString.split("-");
-    return `${day}/${month}/${year}`;
-  }
 
   function formatDateForDisplay(dateString: string): string {
     const [year, month, day] = dateString.split("-");
@@ -94,12 +87,6 @@ export default function HistoryPage() {
 
   const [selectedDate, setSelectedDate] = useState<string>(getIsoDate());
 
-  const chartData = chartDays.map((day) => ({
-    date: formatDateForChart(day.date),
-    calories: day.totals.calories,
-    protein: day.totals.protein,
-  }));
-
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   async function loadHistory(date: string) {
@@ -115,16 +102,7 @@ export default function HistoryPage() {
       }
 
       setSelectedDay(data.data?.selectedDay ?? null);
-      setChartDays(data.data?.chartDays ?? []);
       setUserEmail(data.data?.user.email ?? null);
-      setGoalTargets(
-        data.data?.goals
-          ? {
-              dailyCalories: data.data.goals.dailyCalories,
-              proteinTarget: data.data.goals.proteinTarget,
-            }
-          : null
-      );
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : "Unknown history error");
@@ -134,6 +112,7 @@ export default function HistoryPage() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadHistory(selectedDate);
   }, [selectedDate]);
 

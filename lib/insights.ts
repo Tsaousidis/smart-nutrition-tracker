@@ -44,7 +44,7 @@ export function generateInsights(
 ): string[] {
   const insights: string[] = [];
 
-  const { remaining, mealCount, weeklyStats, targets } = data;
+  const { remaining, mealCount, weeklyStats } = data;
 
   // 1. Meal count insight
   if (mealCount < 3) {

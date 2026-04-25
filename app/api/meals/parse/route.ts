@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { gemini } from "@/lib/gemini";
 import { mealParseInputSchema, parsedMealSchema } from "@/lib/validators";
 import { sanitizeMealInput } from "@/lib/sanitize";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 2000;
@@ -216,6 +217,23 @@ export async function POST(req: NextRequest) {
           message: "Unauthorized",
         },
         { status: 401 }
+      );
+    }
+
+    const ip = getClientIp(req);
+    const rate = checkRateLimit({
+      key: `meal-parse:${session.user.email}:${ip}`,
+      limit: 30,
+      windowMs: 15 * 60 * 1000,
+    });
+    if (!rate.allowed) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "RATE_LIMITED",
+          message: "Too many meal parsing requests. Please try again later.",
+        },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
       );
     }
 
