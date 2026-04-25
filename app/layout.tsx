@@ -16,7 +16,7 @@ const epilogue = Epilogue({
 });
 
 export const metadata: Metadata = {
-  title: "Nutrition Tracker",
+  title: "Nutrella",
   description: "AI-assisted nutrition tracking app",
 };
 
