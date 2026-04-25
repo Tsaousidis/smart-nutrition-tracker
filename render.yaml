@@ -2,8 +2,9 @@ services:
   - type: web
     name: nutrition-tracker
     env: node
+    region: frankfurt
     buildCommand: npm ci && npx prisma generate && npm run build
-    startCommand: npm start
+    startCommand: sh -c 'npx prisma migrate deploy || true && npm start'
     envVars:
       - key: NODE_ENV
         value: production
