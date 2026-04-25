@@ -37,6 +37,7 @@ model User {
   resetTokenExpires DateTime?
   emailVerified     Boolean  @default(false)
   verificationToken String?
+  verificationTokenExpires DateTime?
 
   profile   Profile?
   goal      Goal?

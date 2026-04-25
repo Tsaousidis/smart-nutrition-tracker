@@ -55,6 +55,7 @@ type DashboardResponse = {
       date: string;
       calories: number;
       protein: number;
+      fat: number;
     }>;
     weeklyStats?: {
       avgDailyProtein: number;
@@ -82,14 +83,12 @@ type DashboardResponse = {
 };
 
 export default function DashboardClient() {
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslations("Dashboard");
   const [dashboardData, setDashboardData] =
     useState<DashboardResponse["data"] | null>(null);
 
   async function loadDashboard() {
-    setLoading(true);
     setError(null);
 
     try {
@@ -107,38 +106,38 @@ export default function DashboardClient() {
         err instanceof Error ? err.message : "Unknown dashboard fetch error"
       );
       setDashboardData(null);
-    } finally {
-      setLoading(false);
     }
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadDashboard();
   }, []);
 
-  const insights = dashboardData
-    ? generateInsights(
-        {
-          totals: dashboardData.totals,
-          targets: dashboardData.targets,
-          remaining: dashboardData.remaining,
-          mealCount: dashboardData.meals?.length || 0,
-          weeklyStats: dashboardData.weeklyStats,
-        },
-        {
-          belowProtein: (value) => t("belowProtein", { value }),
-          aboveProtein: (value) => t("aboveProtein", { value }),
-          remainingCalories: (value) => t("remainingCalories", { value }),
-          aboveCalories: (value) => t("aboveCalories", { value }),
-          onTrack: t("onTrack"),
-          mealCount: (count) => t("mealCount", { count }),
-          avgProteinPerMeal: (value) => t("avgProteinPerMeal", { value }),
-          proteinTargetPerMeal: (value) => t("proteinTargetPerMeal", { value }),
-          weeklyProteinDiff: (value) => t("weeklyProteinDiff", { value }),
-          weeklyProteinOnTrack: t("weeklyProteinOnTrack"),
-        }
-      )
-    : [];
+  const insights = useMemo(() => {
+    if (!dashboardData) return [];
+    return generateInsights(
+      {
+        totals: dashboardData.totals,
+        targets: dashboardData.targets,
+        remaining: dashboardData.remaining,
+        mealCount: dashboardData.meals?.length || 0,
+        weeklyStats: dashboardData.weeklyStats,
+      },
+      {
+        belowProtein: (value) => t("belowProtein", { value }),
+        aboveProtein: (value) => t("aboveProtein", { value }),
+        remainingCalories: (value) => t("remainingCalories", { value }),
+        aboveCalories: (value) => t("aboveCalories", { value }),
+        onTrack: t("onTrack"),
+        mealCount: (count) => t("mealCount", { count }),
+        avgProteinPerMeal: (value) => t("avgProteinPerMeal", { value }),
+        proteinTargetPerMeal: (value) => t("proteinTargetPerMeal", { value }),
+        weeklyProteinDiff: (value) => t("weeklyProteinDiff", { value }),
+        weeklyProteinOnTrack: t("weeklyProteinOnTrack"),
+      }
+    );
+  }, [dashboardData, t]);
 
   const metrics = useMemo(() => {
     if (!dashboardData) return null;
@@ -245,8 +244,8 @@ export default function DashboardClient() {
 
         {dashboardData && metrics && (
           <div className="space-y-8">
-            <section className="grid gap-4 lg:grid-cols-4">
-              <div className="rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-1">
+            <section className="grid gap-4 lg:auto-rows-fr lg:grid-cols-4">
+              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-1">
                 <p className="text-xs font-bold uppercase tracking-wider text-accent">{t("todayStatus")}</p>
                 <h2 className="mt-2 font-display text-2xl font-semibold text-brand">
                   {t("onTrackPercent", { value: Math.round(metrics.caloriePct) })}
@@ -265,21 +264,21 @@ export default function DashboardClient() {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-surface p-5 ambient-shadow">
+              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-5 ambient-shadow">
                 <p className="text-sm text-ink-muted">{t("caloriesLeft")}</p>
                 <p className="mt-2 font-display text-2xl font-semibold text-brand">
                   {Math.max(0, Math.round(dashboardData.remaining.calories))} kcal
                 </p>
               </div>
 
-              <div className="rounded-xl border border-border bg-surface p-5 ambient-shadow">
+              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-5 ambient-shadow">
                 <p className="text-sm text-ink-muted">{t("proteinProgress")}</p>
                 <p className="mt-2 font-display text-2xl font-semibold text-brand">
                   {Math.round(dashboardData.totals.protein)} / {Math.round(dashboardData.targets.proteinTarget)} g
                 </p>
               </div>
 
-              <div className="rounded-xl border border-border bg-surface p-5 ambient-shadow">
+              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-5 ambient-shadow">
                 <p className="text-sm text-ink-muted">{t("mealsToday")}</p>
                 <p className="mt-2 font-display text-2xl font-semibold text-brand">{metrics.todayMeals}</p>
               </div>
@@ -289,8 +288,8 @@ export default function DashboardClient() {
               {metrics.motivationLine}
             </section>
 
-            <section className="grid min-w-0 gap-6 lg:grid-cols-3">
-              <div className="rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-2">
+            <section className="grid min-w-0 items-stretch gap-6 lg:grid-cols-3">
+              <div className="h-full rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-2">
                 <h3 className="font-display text-xl font-semibold text-brand">{t("macroProgress")}</h3>
                 <div className="mt-5 space-y-5">
                   {[
@@ -330,9 +329,9 @@ export default function DashboardClient() {
 
             {dashboardData.chartData && dashboardData.chartData.length > 0 && (
               <div className="space-y-6">
-                <section className="grid gap-6 lg:grid-cols-3">
+                <section className="grid items-stretch gap-6 lg:grid-cols-3">
                   <div className="space-y-6 lg:col-span-2">
-                    <div className="rounded-xl border border-border bg-surface p-5 ambient-shadow">
+                    <div className="h-full rounded-xl border border-border bg-surface p-5 ambient-shadow">
                       <div className="mb-2 flex items-center justify-between">
                         <h3 className="font-display text-lg font-semibold text-brand">{t("weeklyConsistency")}</h3>
                         <span className="rounded-full bg-surface-soft px-3 py-1 text-xs font-semibold text-ink-muted">
@@ -356,12 +355,20 @@ export default function DashboardClient() {
                           color="#6366f1"
                           targetColor="#10b981"
                         />
+                        <SingleMetricChart
+                          data={dashboardData.chartData.map((d) => ({ date: d.date, value: d.fat }))}
+                          target={dashboardData.targets.fatTarget}
+                          title={t("fat")}
+                          unit="g"
+                          color="#f59e0b"
+                          targetColor="#ef4444"
+                        />
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-6">
-                    <div className="rounded-xl border border-border bg-surface p-5 ambient-shadow">
+                  <div className="grid auto-rows-fr gap-6">
+                    <div className="h-full rounded-xl border border-border bg-surface p-5 ambient-shadow">
                       <h3 className="font-display text-lg font-semibold text-brand">{t("streakHabits")}</h3>
                       <div className="mt-4 space-y-3 text-sm">
                         <p className="flex items-center justify-between">
@@ -389,8 +396,8 @@ export default function DashboardClient() {
                   </div>
                 </section>
 
-                <section className="grid gap-6 lg:grid-cols-3">
-                  <div className="rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-2">
+                <section className="grid items-stretch gap-6 lg:grid-cols-3">
+                  <div className="h-full rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-2">
                     <h3 className="font-display text-lg font-semibold text-brand">{t("recentMeals")}</h3>
                     <div className="mt-4 space-y-3">
                       {dashboardData.meals.slice(0, 4).map((meal) => {
@@ -411,7 +418,7 @@ export default function DashboardClient() {
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-border bg-surface p-6 ambient-shadow">
+                  <div className="flex h-full flex-col rounded-xl border border-border bg-surface p-6 ambient-shadow">
                     <h3 className="font-display text-lg font-semibold text-brand">{t("goalMomentum")}</h3>
                     <p className="mt-3 text-sm text-ink-muted">
                       {t("projectedWeeklyOutcome", { value: metrics.projectedOutcome })}

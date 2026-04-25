@@ -8,7 +8,7 @@ export default function Insights({ insights }: Props) {
   const t = useTranslations("Dashboard");
   
   return (
-    <div className="rounded-xl border border-border bg-surface p-6 ambient-shadow md:p-8">
+    <div className="h-full rounded-xl border border-border bg-surface p-6 ambient-shadow md:p-8">
       <h2 className="mb-4 font-display text-xl font-semibold text-brand">{t("insights")}</h2>
 
       <div className="space-y-2">

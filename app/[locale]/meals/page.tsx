@@ -64,9 +64,9 @@ export default function MealsPage() {
     { value: t.raw("mealTitleDinner"), label: t("mealTitleDinner") },
     { value: t.raw("mealTitleSnack"), label: t("mealTitleSnack") },
   ];
-  const [title, setTitle] = useState(t("mealTitleDefault"));
-  const [selectedTitle, setSelectedTitle] = useState(mealTitleOptions[0].value);
-  const [mealText, setMealText] = useState(t("mealDescriptionDefault"));
+  const [title, setTitle] = useState("");
+  const [selectedTitle, setSelectedTitle] = useState("");
+  const [mealText, setMealText] = useState("");
   const [mealDate, setMealDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -85,6 +85,9 @@ export default function MealsPage() {
     setParsedMeal(null);
 
     try {
+      if (!selectedTitle) {
+        throw new Error(t("selectMealTitle"));
+      }
       const res = await fetch("/api/meals/parse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -164,6 +167,9 @@ export default function MealsPage() {
     setSaveSuccess(null);
 
     try {
+      if (!title.trim()) {
+        throw new Error(t("selectMealTitle"));
+      }
       if (parsedMeal.items.length === 0) {
         throw new Error(t("noItems"));
       }
@@ -224,7 +230,11 @@ export default function MealsPage() {
                 setSelectedTitle(e.target.value);
                 setTitle(e.target.value);
               }}
+              required
             >
+              <option value="" disabled>
+                {t("selectMealTitle")}
+              </option>
               {mealTitleOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -266,7 +276,7 @@ export default function MealsPage() {
             <textarea
               value={mealText}
               onChange={(e) => setMealText(e.target.value)}
-              className="input-stitch min-h-[160px] resize-none font-normal leading-relaxed"
+              className="input-stitch min-h-[160px] resize-none font-normal leading-relaxed placeholder:text-ink-muted/60"
               placeholder={t("mealDescriptionPlaceholder")}
             />
           </div>

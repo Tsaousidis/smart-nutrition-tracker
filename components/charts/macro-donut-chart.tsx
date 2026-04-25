@@ -28,7 +28,7 @@ export default function MacroDonutChart({ data, title }: Props) {
   const total = data.carbs + data.protein + data.fat;
 
   return (
-    <div className="rounded-2xl border p-4 shadow-sm">
+    <div className="h-full rounded-2xl border p-4 shadow-sm">
       <h3 className="mb-3 text-lg font-semibold">{title}</h3>
       
       <div className="h-64 w-full min-w-0">

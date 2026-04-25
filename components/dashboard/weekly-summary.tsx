@@ -63,7 +63,7 @@ export default function WeeklySummary({ totals, targets }: Props) {
   ];
 
   return (
-    <div className="rounded-xl border border-border bg-surface p-5 ambient-shadow md:p-6">
+    <div className="h-full rounded-xl border border-border bg-surface p-5 ambient-shadow md:p-6">
       <h3 className="mb-3 font-display text-lg font-semibold text-brand">{t("weeklySummary")}</h3>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

@@ -116,20 +116,21 @@ export async function GET() {
     });
 
     // Group meals by day
-    const chartGroups = chartMeals.reduce<Record<string, { calories: number; protein: number }>>((acc, meal) => {
+    const chartGroups = chartMeals.reduce<Record<string, { calories: number; protein: number; fat: number }>>((acc, meal) => {
       const dayKey = meal.mealDate.toISOString().slice(0, 10);
       if (!acc[dayKey]) {
-        acc[dayKey] = { calories: 0, protein: 0 };
+        acc[dayKey] = { calories: 0, protein: 0, fat: 0 };
       }
       for (const item of meal.items) {
         acc[dayKey].calories += item.calories;
         acc[dayKey].protein += item.protein;
+        acc[dayKey].fat += item.fat;
       }
       return acc;
     }, {});
 
     // Generate chart days
-    const chartData: Array<{ date: string; calories: number; protein: number }> = [];
+    const chartData: Array<{ date: string; calories: number; protein: number; fat: number }> = [];
     const currentDate = new Date(chartStartDate);
     const today = new Date();
     while (currentDate <= today) {
@@ -139,6 +140,7 @@ export async function GET() {
         date: day,
         calories: Math.round((chartGroups[dayKey]?.calories ?? 0) * 10) / 10,
         protein: Math.round((chartGroups[dayKey]?.protein ?? 0) * 10) / 10,
+        fat: Math.round((chartGroups[dayKey]?.fat ?? 0) * 10) / 10,
       });
       currentDate.setDate(currentDate.getDate() + 1);
     }

@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import type { Session } from "next-auth";
+import Image from "next/image";
 
 export default function NavbarClient({ session }: { session: Session | null }) {
   const router = useRouter();
@@ -34,14 +35,14 @@ export default function NavbarClient({ session }: { session: Session | null }) {
               : "opacity-70 hover:opacity-100"
           }`}
         >
-          <img
+          <Image
             src="/flags/gb.webp"
             alt=""
             width={24}
             height={16}
             className="pointer-events-none h-4 w-auto max-w-[26px] object-contain"
-            draggable={false}
             aria-hidden
+            unoptimized
           />
         </button>
         <button
@@ -56,14 +57,14 @@ export default function NavbarClient({ session }: { session: Session | null }) {
               : "opacity-70 hover:opacity-100"
           }`}
         >
-          <img
+          <Image
             src="/flags/gr.webp"
             alt=""
             width={24}
             height={16}
             className="pointer-events-none h-4 w-auto max-w-[26px] object-contain"
-            draggable={false}
             aria-hidden
+            unoptimized
           />
         </button>
       </div>

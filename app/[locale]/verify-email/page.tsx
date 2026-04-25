@@ -1,16 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 export default function VerifyEmailPage() {
   const t = useTranslations("VerifyEmail");
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const locale = useLocale();
   const token = searchParams.get("token");
 
   const [loading, setLoading] = useState(true);
