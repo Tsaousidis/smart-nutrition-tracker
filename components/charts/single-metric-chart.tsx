@@ -27,13 +27,15 @@ type Props = {
 };
 
 export default function SingleMetricChart({ data, target, title, unit, color, targetColor }: Props) {
+  const t = useTranslations("Dashboard");
+
   return (
     <div className="rounded-2xl border p-4 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-lg font-semibold">{title}</h3>
         {target !== undefined && (
           <span className="text-sm text-slate-600">
-            Target: {target.toFixed(0)} {unit}
+            {t("target")}: {target.toFixed(0)} {unit} (dashed line)
           </span>
         )}
       </div>
@@ -64,6 +66,12 @@ export default function SingleMetricChart({ data, target, title, unit, color, ta
                 y={target}
                 stroke={targetColor}
                 strokeDasharray="3 3"
+                label={{
+                  position: "insideTopRight",
+                  value: t("target"),
+                  fill: targetColor,
+                  fontSize: 12,
+                }}
               />
             )}
           </LineChart>

@@ -1,8 +1,9 @@
-import { auth, signOut } from "@/auth";
+﻿import { auth, signOut } from "@/auth";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import NavbarClient from "./navbar-client";
 import NavbarLinks from "./navbar-links";
+import MobileNavMenu from "./mobile-nav-menu";
 
 export default async function Navbar() {
   const session = await auth();
@@ -31,25 +32,35 @@ export default async function Navbar() {
           {navItems.length > 0 ? <NavbarLinks items={navItems} /> : null}
         </div>
 
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="relative flex shrink-0 items-center gap-3">
           <NavbarClient session={session} />
 
           {session?.user ? (
-            <form
-              action={async () => {
-                "use server";
-                await signOut({
-                  redirectTo: `/${locale}/login`,
-                });
-              }}
-            >
-              <button
-                type="submit"
-                className="rounded-lg bg-brand px-4 py-2 text-xs font-bold uppercase tracking-wider text-on-brand shadow-md transition hover:bg-brand-hover active:scale-[0.98]"
+            <>
+              <form
+                action={async () => {
+                  "use server";
+                  await signOut({
+                    redirectTo: `/${locale}/login`,
+                  });
+                }}
+                className="hidden md:block"
               >
-                {t("logout")}
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  className="rounded-lg bg-brand px-4 py-2 text-xs font-bold uppercase tracking-wider text-on-brand shadow-md transition hover:bg-brand-hover active:scale-[0.98]"
+                >
+                  {t("logout")}
+                </button>
+              </form>
+
+              <MobileNavMenu
+                items={navItems}
+                locale={locale}
+                menuLabel={t("menu")}
+                logoutLabel={t("logout")}
+              />
+            </>
           ) : null}
         </div>
       </div>
