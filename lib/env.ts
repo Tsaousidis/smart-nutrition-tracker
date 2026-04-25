@@ -6,12 +6,20 @@ export function validateEnv() {
     "GEMINI_API_KEY",
     "AUTH_SECRET",
   ];
+  const requiredInProduction = ["RESEND_API_KEY", "NEXT_PUBLIC_APP_URL"];
 
   const missing: string[] = [];
 
   for (const variable of requiredVars) {
     if (!process.env[variable]) {
       missing.push(variable);
+    }
+  }
+  if (process.env.NODE_ENV === "production") {
+    for (const variable of requiredInProduction) {
+      if (!process.env[variable]) {
+        missing.push(variable);
+      }
     }
   }
 

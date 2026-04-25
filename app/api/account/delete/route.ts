@@ -46,36 +46,13 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // Delete all related data first (cascade)
-    // Delete meals and their items
-    const meals = await prisma.meal.findMany({
-      where: { userId: user.id },
-      select: { id: true },
-    });
-
-    for (const meal of meals) {
-      await prisma.mealItem.deleteMany({
-        where: { mealId: meal.id },
-      });
-    }
-
-    await prisma.meal.deleteMany({
-      where: { userId: user.id },
-    });
-
-    // Delete profile and goal
-    await prisma.profile.deleteMany({
-      where: { userId: user.id },
-    });
-
-    await prisma.goal.deleteMany({
-      where: { userId: user.id },
-    });
-
-    // Delete user
-    await prisma.user.delete({
-      where: { id: user.id },
-    });
+    // Use a transaction to guarantee all-or-nothing deletion.
+    // Related rows are removed by Prisma relations with onDelete: Cascade.
+    await prisma.$transaction([
+      prisma.user.delete({
+        where: { id: user.id },
+      }),
+    ]);
 
     return NextResponse.json({
       ok: true,

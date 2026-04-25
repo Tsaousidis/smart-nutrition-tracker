@@ -3,12 +3,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const userCount = await prisma.user.count();
+    await prisma.$queryRaw`SELECT 1`;
 
     return NextResponse.json({
       ok: true,
       message: "Database connection works.",
-      userCount,
     });
   } catch (error) {
     console.error("DB health check error:", error);
