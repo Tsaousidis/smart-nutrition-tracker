@@ -162,16 +162,16 @@ export default function ProfileForm() {
 
   if (!profileReady) {
     return (
-      <div className="mx-auto max-w-2xl rounded-2xl border p-6 shadow-sm">
+      <div className="mx-auto max-w-2xl rounded-xl border border-border bg-surface p-6 ambient-shadow">
         <div className="animate-pulse space-y-4" aria-busy="true" aria-live="polite">
-          <div className="h-8 w-48 rounded bg-slate-200" />
-          <div className="h-10 w-full rounded bg-slate-100" />
-          <div className="h-10 w-full rounded bg-slate-100" />
-          <div className="h-10 w-full rounded bg-slate-100" />
-          <div className="h-10 w-full rounded bg-slate-100" />
-          <div className="h-10 w-full rounded bg-slate-100" />
-          <div className="h-10 w-full rounded bg-slate-100" />
-          <div className="h-11 w-full rounded bg-slate-200" />
+          <div className="h-8 w-48 rounded bg-surface-soft" />
+          <div className="h-10 w-full rounded bg-surface-soft" />
+          <div className="h-10 w-full rounded bg-surface-soft" />
+          <div className="h-10 w-full rounded bg-surface-soft" />
+          <div className="h-10 w-full rounded bg-surface-soft" />
+          <div className="h-10 w-full rounded bg-surface-soft" />
+          <div className="h-10 w-full rounded bg-surface-soft" />
+          <div className="h-11 w-full rounded bg-surface-soft" />
         </div>
         <p className="sr-only">{t("loadingProfile")}</p>
       </div>
@@ -179,36 +179,36 @@ export default function ProfileForm() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl rounded-2xl border p-6 shadow-sm">
-      <h1 className="mb-6 text-2xl font-bold">{t("title")}</h1>
+    <div className="mx-auto max-w-2xl rounded-xl border border-border bg-surface p-6 ambient-shadow md:p-8">
+      <h1 className="mb-6 font-display text-2xl font-semibold text-brand">{t("title")}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="mb-1 block text-sm font-medium">{t("sex")}</label>
-          <select name="sex" value={formData.sex} onChange={handleChange} className="w-full rounded-lg border px-3 py-2">
+          <label className="label-stitch">{t("sex")}</label>
+          <select name="sex" value={formData.sex} onChange={handleChange} className="input-stitch">
             <option value="MALE">{t("male")}</option>
             <option value="FEMALE">{t("female")}</option>
           </select>
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium">{t("age")}</label>
-          <input type="number" name="age" value={formData.age} onChange={handleChange} className="w-full rounded-lg border px-3 py-2" />
+          <label className="label-stitch">{t("age")}</label>
+          <input type="number" name="age" value={formData.age} onChange={handleChange} className="input-stitch" />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium">{t("height")}</label>
-          <input type="number" name="heightCm" value={formData.heightCm} onChange={handleChange} className="w-full rounded-lg border px-3 py-2" />
+          <label className="label-stitch">{t("height")}</label>
+          <input type="number" name="heightCm" value={formData.heightCm} onChange={handleChange} className="input-stitch" />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium">{t("weight")}</label>
-          <input type="number" name="weightKg" value={formData.weightKg} onChange={handleChange} className="w-full rounded-lg border px-3 py-2" />
+          <label className="label-stitch">{t("weight")}</label>
+          <input type="number" name="weightKg" value={formData.weightKg} onChange={handleChange} className="input-stitch" />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium">{t("activityLevel")}</label>
-          <select name="activityLevel" value={formData.activityLevel} onChange={handleChange} className="w-full rounded-lg border px-3 py-2">
+          <label className="label-stitch">{t("activityLevel")}</label>
+          <select name="activityLevel" value={formData.activityLevel} onChange={handleChange} className="input-stitch">
             <option value="SEDENTARY">{t("sedentary")}</option>
             <option value="LIGHT">{t("light")}</option>
             <option value="MODERATE">{t("moderate")}</option>
@@ -218,37 +218,37 @@ export default function ProfileForm() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium">{t("goalType")}</label>
-          <select name="goalType" value={formData.goalType} onChange={handleChange} className="w-full rounded-lg border px-3 py-2">
+          <label className="label-stitch">{t("goalType")}</label>
+          <select name="goalType" value={formData.goalType} onChange={handleChange} className="input-stitch">
             <option value="MAINTAIN">{t("maintain")}</option>
             <option value="LOSE_WEIGHT">{t("loseWeightFat")}</option>
             <option value="GAIN_MUSCLE">{t("gainMuscle")}</option>
           </select>
         </div>
 
-        <button type="submit" disabled={loading} className="w-full rounded-lg bg-black px-4 py-2 text-white disabled:opacity-50">
+        <button type="submit" disabled={loading} className="btn-brand-lg mt-2 w-full py-3.5 disabled:opacity-50">
           {loading ? t("saving") : t("submit")}
         </button>
       </form>
 
-      <section className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-        <h2 className="mb-3 text-lg font-semibold">{t("currentTargetSummary")}</h2>
+      <section className="mt-8 rounded-xl border border-border bg-surface-soft p-5">
+        <h2 className="mb-3 font-display text-lg font-semibold text-brand">{t("currentTargetSummary")}</h2>
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl bg-white p-4 shadow-sm">
-            <p className="text-sm text-slate-500">{t("dailyCalories")}</p>
-            <p className="mt-2 text-2xl font-bold">{calculatedTargets.dailyCalories.toFixed(0)} kcal</p>
+          <div className="rounded-xl border border-border bg-surface p-4 ambient-shadow">
+            <p className="text-sm text-ink-muted">{t("dailyCalories")}</p>
+            <p className="mt-2 font-display text-2xl font-bold text-brand">{calculatedTargets.dailyCalories.toFixed(0)} kcal</p>
           </div>
-          <div className="rounded-xl bg-white p-4 shadow-sm">
-            <p className="text-sm text-slate-500">{t("dailyProtein")}</p>
-            <p className="mt-2 text-2xl font-bold">{calculatedTargets.proteinTarget.toFixed(0)} g</p>
+          <div className="rounded-xl border border-border bg-surface p-4 ambient-shadow">
+            <p className="text-sm text-ink-muted">{t("dailyProtein")}</p>
+            <p className="mt-2 font-display text-2xl font-bold text-brand">{calculatedTargets.proteinTarget.toFixed(0)} g</p>
           </div>
-          <div className="rounded-xl bg-white p-4 shadow-sm">
-            <p className="text-sm text-slate-500">{t("dailyCarbs")}</p>
-            <p className="mt-2 text-2xl font-bold">{calculatedTargets.carbsTarget.toFixed(0)} g</p>
+          <div className="rounded-xl border border-border bg-surface p-4 ambient-shadow">
+            <p className="text-sm text-ink-muted">{t("dailyCarbs")}</p>
+            <p className="mt-2 font-display text-2xl font-bold text-brand">{calculatedTargets.carbsTarget.toFixed(0)} g</p>
           </div>
-          <div className="rounded-xl bg-white p-4 shadow-sm">
-            <p className="text-sm text-slate-500">{t("dailyFat")}</p>
-            <p className="mt-2 text-2xl font-bold">{calculatedTargets.fatTarget.toFixed(0)} g</p>
+          <div className="rounded-xl border border-border bg-surface p-4 ambient-shadow">
+            <p className="text-sm text-ink-muted">{t("dailyFat")}</p>
+            <p className="mt-2 font-display text-2xl font-bold text-brand">{calculatedTargets.fatTarget.toFixed(0)} g</p>
           </div>
         </div>
       </section>
@@ -274,12 +274,12 @@ export default function ProfileForm() {
             
             <div className="space-y-3">
               <div>
-                <label className="mb-1 block text-sm font-medium">{t("confirmPassword")}</label>
+                <label className="label-stitch">{t("confirmPassword")}</label>
                 <input
                   type="password"
                   value={deletePassword}
                   onChange={(e) => setDeletePassword(e.target.value)}
-                  className="w-full rounded-lg border px-3 py-2"
+                  className="input-stitch"
                   placeholder={t("enterPasswordToDelete")}
                 />
               </div>

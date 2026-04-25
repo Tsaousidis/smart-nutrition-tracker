@@ -12,7 +12,10 @@
     "profile": "Profile",
     "login": "Log In",
     "signup": "Sign Up",
-    "logout": "Log Out"
+    "logout": "Log Out",
+    "switchToEnglish": "Switch to English",
+    "switchToGreek": "Switch to Greek",
+    "languagePicker": "Language"
   },
   "HomePage": {
     "heroEyebrow": "Free nutrition tracking",
@@ -228,8 +231,7 @@
     "extraActive": "Extra Active",
     "goalType": "Goal Type",
     "maintain": "Maintain",
-    "loseWeight": "Lose Weight",
-    "loseFat": "Lose Fat",
+    "loseWeightFat": "Lose Weight and Fat",
     "gainMuscle": "Gain Muscle",
     "recomp": "Recomp",
     "submit": "Save Profile",

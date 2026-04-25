@@ -236,16 +236,16 @@ export default function MealsPage() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-10">
-      <div className="mx-auto max-w-5xl rounded-2xl border p-6 shadow-sm">
-        <h1 className="mb-2 text-2xl font-bold">{t("title")}</h1>
-        <p className="mb-6 text-sm text-gray-600">{t("subtitle")}</p>
+    <main className="min-h-screen bg-canvas px-6 py-10">
+      <div className="mx-auto max-w-[1152px] rounded-xl border border-border bg-surface p-6 ambient-shadow md:p-8">
+        <h1 className="mb-2 font-display text-3xl font-semibold text-brand">{t("title")}</h1>
+        <p className="mb-8 text-sm text-ink-muted md:text-base">{t("subtitle")}</p>
 
         <form onSubmit={handleParseMeal} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium">{t("mealTitle")}</label>
+            <label className="label-stitch">{t("mealTitle")}</label>
             <select
-              className="w-full rounded-lg border px-3 py-2 mb-2"
+              className="input-stitch mb-2"
               value={selectedTitle}
               onChange={(e) => {
                 setSelectedTitle(e.target.value);
@@ -261,7 +261,7 @@ export default function MealsPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">{t("mealDate")}</label>
+            <label className="label-stitch">{t("mealDate")}</label>
             <div className="relative">
               <input
                 type="text"
@@ -275,7 +275,7 @@ export default function MealsPage() {
                     setMealDate(fromISODate(new Date().toISOString().slice(0, 10)));
                   }
                 }}
-                className="w-full rounded-lg border px-3 py-2 pr-10"
+                className="input-stitch pr-10"
                 placeholder="DD/MM/YYYY"
               />
               <input
@@ -293,27 +293,27 @@ export default function MealsPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">{t("mealDescription")}</label>
+            <label className="label-stitch">{t("mealDescription")}</label>
             <textarea
               value={mealText}
               onChange={(e) => setMealText(e.target.value)}
-              className="min-h-[140px] w-full rounded-lg border px-3 py-2"
+              className="input-stitch min-h-[160px] resize-none font-normal leading-relaxed"
               placeholder={t("mealDescriptionPlaceholder")}
             />
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button
               type="submit"
               disabled={loading}
-              className="rounded-lg bg-black px-4 py-2 text-white disabled:opacity-50"
+              className="btn-brand disabled:opacity-50"
             >
               {loading ? t("parsing") : t("parseMeal")}
             </button>
             <button
               type="button"
               onClick={addEmptyMealItem}
-              className="rounded-lg border px-4 py-2"
+              className="rounded-lg border border-border-strong bg-surface px-4 py-3 text-sm font-semibold text-brand transition hover:bg-surface-soft"
             >
               {t("reviewEdit")}
             </button>
@@ -328,14 +328,14 @@ export default function MealsPage() {
         )}
 
         {parsedMeal && (
-          <div className="mt-6 space-y-6">
-            <div className="rounded-2xl border bg-gray-50 p-4">
+          <div className="mt-8 space-y-6">
+            <div className="rounded-xl border border-border bg-surface-soft p-4 md:p-6">
               <div className="mb-4 flex items-center justify-between">
-                <p className="font-medium">{t("parsedItems")}</p>
+                <p className="font-display font-semibold text-brand">{t("parsedItems")}</p>
                 <button
                   type="button"
                   onClick={addEmptyMealItem}
-                  className="rounded-lg border bg-white px-3 py-2 text-sm"
+                  className="rounded-lg border border-border bg-surface px-3 py-2 text-sm font-semibold text-brand shadow-sm transition hover:bg-surface-soft"
                 >
                   {t("addItem")}
                 </button>
@@ -343,7 +343,7 @@ export default function MealsPage() {
 
               <div className="space-y-4">
                 {parsedMeal.items.map((item, index) => (
-                  <div key={index} className="rounded-xl border bg-white p-4">
+                  <div key={index} className="rounded-xl border border-border bg-surface p-4 ambient-shadow">
                     <div className="mb-3 flex items-center justify-between">
                       <p className="font-medium">{t("item")} #{index + 1}</p>
                       <button
@@ -358,13 +358,13 @@ export default function MealsPage() {
                     <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                       {(["name", "quantity", "unit", "calories", "protein", "carbs", "fat"] as Array<keyof ParsedMealItem>).map((field) => (
                         <div key={field}>
-                          <label className="mb-1 block text-sm font-medium">{t(field)}</label>
+                          <label className="label-stitch">{t(field)}</label>
                           <input
                             type={field === "name" || field === "unit" ? "text" : "number"}
                             step="0.1"
                             value={item[field]}
                             onChange={(e) => updateMealItem(index, field, e.target.value)}
-                            className="w-full rounded-lg border px-3 py-2"
+                            className="input-stitch"
                           />
                         </div>
                       ))}
@@ -374,13 +374,13 @@ export default function MealsPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border p-4">
-              <p className="mb-3 font-medium">{t("computedTotals")}</p>
+            <div className="rounded-xl border border-border bg-surface p-4 md:p-6 ambient-shadow">
+              <p className="mb-3 font-display font-semibold text-brand">{t("computedTotals")}</p>
               <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                 {(["calories", "protein", "carbs", "fat"] as const).map((macro) => (
-                  <div key={macro} className="rounded-xl border p-3">
-                    <p className="text-sm text-gray-500">{t(macro)}</p>
-                    <p className="text-lg font-semibold">
+                  <div key={macro} className="rounded-xl border border-border bg-surface-soft p-3">
+                    <p className="text-sm text-ink-muted">{t(macro)}</p>
+                    <p className="font-display text-lg font-semibold text-brand">
                       {computedTotals[macro]} {macro === "calories" ? "kcal" : "g"}
                     </p>
                   </div>
@@ -395,7 +395,7 @@ export default function MealsPage() {
                 type="button"
                 onClick={handleSaveMeal}
                 disabled={saving || !allItemsComplete}
-                className="mt-4 rounded-lg bg-green-600 px-4 py-2 text-white disabled:opacity-50"
+                className="btn-brand-lg mt-4 w-full disabled:opacity-50"
               >
                 {saving ? t("saving") : t("saveMeal")}
               </button>
@@ -417,7 +417,7 @@ export default function MealsPage() {
             <p className="mt-3 text-sm leading-relaxed">
               {t.rich("saveSuccessHistoryHint", {
                 link: (chunks) => (
-                  <Link href="/history" className="font-semibold text-green-900 underline underline-offset-2 hover:no-underline">
+                  <Link href="/history" className="link-accent">
                     {chunks}
                   </Link>
                 ),

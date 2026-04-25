@@ -137,22 +137,20 @@ export default function DashboardClient() {
   : [];
 
   return (
-    <main className="min-h-screen px-4 py-10">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-8 rounded-2xl border p-6 shadow-sm">
+    <main className="min-h-screen bg-canvas px-6 py-10">
+      <div className="mx-auto max-w-[1152px]">
+        <div className="mb-8 rounded-xl border border-border bg-surface p-6 ambient-shadow md:p-8">
           <div>
-            <h1 className="text-3xl font-bold">{t("title")}</h1>
-            <p className="mt-2 text-sm text-gray-600">
-              {t("subtitle")}
-            </p>
+            <h1 className="font-display text-3xl font-semibold text-brand">{t("title")}</h1>
+            <p className="mt-2 text-sm text-ink-muted">{t("subtitle")}</p>
           </div>
 
-          {error && (
-            <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
+          {error ? (
+            <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
               <p className="font-medium">Error</p>
               <p>{error}</p>
             </div>
-          )}
+          ) : null}
         </div>
 
         {dashboardData && (

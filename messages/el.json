@@ -12,7 +12,10 @@
     "profile": "Προφίλ",
     "login": "Σύνδεση",
     "signup": "Εγγραφή",
-    "logout": "Αποσύνδεση"
+    "logout": "Αποσύνδεση",
+    "switchToEnglish": "Αλλαγή σε Αγγλικά",
+    "switchToGreek": "Αλλαγή σε Ελληνικά",
+    "languagePicker": "Γλώσσα"
   },
   "HomePage": {
     "heroEyebrow": "Δωρεάν παρακολούθηση διατροφής",
