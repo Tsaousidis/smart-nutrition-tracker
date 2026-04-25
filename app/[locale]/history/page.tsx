@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCsrfToken } from "@/lib/useCsrfToken";
@@ -65,6 +65,7 @@ export default function HistoryPage() {
   const [selectedDay, setSelectedDay] = useState<HistoryDay | null>(null);
   const [deletingMealId, setDeletingMealId] = useState<string | null>(null);
   const { csrfToken } = useCsrfToken();
+  const historyDateInputRef = useRef<HTMLInputElement | null>(null);
 
   const params = useParams() as { locale?: string };
   const locale = params.locale ?? "en";
@@ -166,13 +167,31 @@ export default function HistoryPage() {
                 <label htmlFor="history-date" className="label-stitch mb-0 sm:mb-0">
                   {t("dateLabel")}
                 </label>
-                <input
-                  id="history-date"
-                  type="date"
-                  value={selectedDate}
-                  onChange={(event) => setSelectedDate(event.target.value)}
-                  className="input-stitch max-w-[240px]"
-                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const input = historyDateInputRef.current;
+                    if (!input) return;
+                    const pickerInput = input as HTMLInputElement & { showPicker?: () => void };
+                    if (typeof pickerInput.showPicker === "function") {
+                      pickerInput.showPicker();
+                    } else {
+                      input.focus();
+                    }
+                  }}
+                  className="relative block max-w-[240px] text-left"
+                >
+                  <div className="input-stitch pr-10">{formatDateForDisplay(selectedDate)}</div>
+                  <input
+                    ref={historyDateInputRef}
+                    id="history-date"
+                    type="date"
+                    value={selectedDate}
+                    onChange={(event) => setSelectedDate(event.target.value)}
+                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                    aria-label={t("dateLabel")}
+                  />
+                </button>
               </div>
 
               <div className="flex flex-wrap gap-2">
