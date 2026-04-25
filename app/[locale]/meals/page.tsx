@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -29,6 +29,12 @@ function roundOne(value: number) {
   return Math.round(value * 10) / 10;
 }
 
+function formatISOToDisplayDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-");
+  if (!year || !month || !day) return isoDate;
+  return `${day}/${month}/${year}`;
+}
+
 function isMealItemComplete(item: ParsedMealItem): boolean {
   if (!item.name.trim() || !item.unit.trim()) {
     return false;
@@ -46,34 +52,6 @@ function isMealItemComplete(item: ParsedMealItem): boolean {
   return true;
 }
 
-function parseDMYDate(dateString: string): string | null {
-  const match = dateString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (!match) return null;
-  const [, day, month, year] = match;
-  // Use UTC to avoid timezone shifts - set time to noon UTC
-  const parsed = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day), 12, 0, 0));
-  if (Number.isNaN(parsed.getTime())) return null;
-  return parsed.toISOString();
-}
-
-function formatDateForInput(date: Date): string {
-  const day = String(date.getUTCDate()).padStart(2, "0");
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const year = date.getUTCFullYear();
-  return `${day}/${month}/${year}`;
-}
-
-function toISODate(dmyDate: string): string | null {
-  const parsed = parseDMYDate(dmyDate);
-  if (!parsed) return null;
-  return parsed.slice(0, 10);
-}
-
-function fromISODate(isoDate: string): string {
-  const [year, month, day] = isoDate.split("-");
-  return `${day}/${month}/${year}`;
-}
-
 export default function MealsPage() {
   const t = useTranslations("Meals");
   const { locale } = useParams() as { locale?: string };
@@ -89,19 +67,14 @@ export default function MealsPage() {
   const [title, setTitle] = useState(t("mealTitleDefault"));
   const [selectedTitle, setSelectedTitle] = useState(mealTitleOptions[0].value);
   const [mealText, setMealText] = useState(t("mealDescriptionDefault"));
-  const [mealDate, setMealDate] = useState(() => {
-    const now = new Date();
-    const day = String(now.getUTCDate()).padStart(2, "0");
-    const month = String(now.getUTCMonth() + 1).padStart(2, "0");
-    const year = now.getUTCFullYear();
-    return `${day}/${month}/${year}`;
-  });
+  const [mealDate, setMealDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [parsedMeal, setParsedMeal] = useState<ParsedMealData | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+  const mealDateInputRef = useRef<HTMLInputElement | null>(null);
 
   async function handleParseMeal(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -209,8 +182,7 @@ export default function MealsPage() {
         fat: Number(item.fat),
       }));
 
-      const isoDate = toISODate(mealDate);
-      if (!isoDate) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(mealDate)) {
         throw new Error(t("invalidDateFormat"));
       }
 
@@ -219,7 +191,7 @@ export default function MealsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title,
-          mealDate: new Date(`${isoDate}T12:00:00`).toISOString(),
+          mealDate: new Date(`${mealDate}T12:00:00`).toISOString(),
           items: cleanedItems,
         }),
       });
@@ -227,6 +199,7 @@ export default function MealsPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to save meal");
       setSaveSuccess(t("saveSuccess"));
+      setParsedMeal(null);
     } catch (err) {
       console.error(err);
       setSaveError(err instanceof Error ? err.message : "Unknown save error");
@@ -262,34 +235,30 @@ export default function MealsPage() {
 
           <div>
             <label className="label-stitch">{t("mealDate")}</label>
-            <div className="relative">
+            <button
+              type="button"
+              onClick={() => {
+                const input = mealDateInputRef.current;
+                if (!input) return;
+                const pickerInput = input as HTMLInputElement & { showPicker?: () => void };
+                if (typeof pickerInput.showPicker === "function") {
+                  pickerInput.showPicker();
+                } else {
+                  input.focus();
+                }
+              }}
+              className="relative block w-full text-left"
+            >
+              <div className="input-stitch pr-10">{formatISOToDisplayDate(mealDate)}</div>
               <input
-                type="text"
+                ref={mealDateInputRef}
+                type="date"
                 value={mealDate}
                 onChange={(e) => setMealDate(e.target.value)}
-                onBlur={(e) => {
-                  const parsed = parseDMYDate(e.target.value);
-                  if (parsed) {
-                    setMealDate(fromISODate(parsed.slice(0, 10)));
-                  } else {
-                    setMealDate(fromISODate(new Date().toISOString().slice(0, 10)));
-                  }
-                }}
-                className="input-stitch pr-10"
-                placeholder="DD/MM/YYYY"
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                aria-label={t("mealDate")}
               />
-              <input
-                type="date"
-                value={toISODate(mealDate) ?? ""}
-                onChange={(e) => {
-                  if (e.target.value) {
-                    setMealDate(fromISODate(e.target.value));
-                  }
-                }}
-                className="absolute inset-0 w-full opacity-0 cursor-pointer"
-                style={{ }}
-              />
-            </div>
+            </button>
           </div>
 
           <div>
