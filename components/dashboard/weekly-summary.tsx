@@ -63,18 +63,18 @@ export default function WeeklySummary({ totals, targets }: Props) {
   ];
 
   return (
-    <div className="rounded-2xl border p-4 shadow-sm">
-      <h3 className="mb-3 text-lg font-semibold">{t("weeklySummary")}</h3>
+    <div className="rounded-xl border border-border bg-surface p-5 ambient-shadow md:p-6">
+      <h3 className="mb-3 font-display text-lg font-semibold text-brand">{t("weeklySummary")}</h3>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {metrics.map((metric) => (
           <div key={metric.label} className="text-center">
-            <div className="text-sm text-slate-600">{metric.label}</div>
-            <div className="mt-1 text-xl font-bold">
+            <div className="text-sm text-ink-muted">{metric.label}</div>
+            <div className="mt-1 font-display text-xl font-bold text-brand">
               {Math.round(metric.actual).toLocaleString()}
-              <span className="text-sm font-normal">{metric.unit}</span>
+              <span className="text-sm font-normal text-ink-muted">{metric.unit}</span>
             </div>
-            <div className="text-xs text-slate-500">
+            <div className="text-xs text-ink-muted">
               {t("weeklyTarget7d")}: {Math.round(metric.weeklyTarget).toLocaleString()}
               {metric.unit}
             </div>
@@ -94,7 +94,7 @@ export default function WeeklySummary({ totals, targets }: Props) {
         ))}
       </div>
 
-      <div className="mt-3 text-center text-sm text-slate-500">
+      <div className="mt-3 text-center text-sm text-ink-muted">
         {t("last7Days")}
       </div>
     </div>

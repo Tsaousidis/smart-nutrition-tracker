@@ -1,35 +1,40 @@
-import {auth, signOut} from "@/auth";
-import {getTranslations, getLocale} from "next-intl/server";
-import {Link} from "@/i18n/navigation";
+import { auth, signOut } from "@/auth";
+import { getTranslations, getLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import NavbarClient from "./navbar-client";
+import NavbarLinks from "./navbar-links";
 
 export default async function Navbar() {
   const session = await auth();
   const t = await getTranslations("Navbar");
   const locale = await getLocale();
 
+  const navItems = session?.user
+    ? [
+        { href: "/dashboard", label: t("dashboard") },
+        { href: "/meals", label: t("meals") },
+        { href: "/history", label: t("history") },
+        { href: "/onboarding", label: t("profile") },
+      ]
+    : [];
+
   return (
-    <header className="border-b bg-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="text-lg font-bold">
+    <header className="sticky top-0 z-50 border-b border-border bg-surface/80 shadow-sm backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-[1152px] items-center justify-between gap-4 px-6">
+        <div className="flex min-w-0 items-center gap-8">
+          <Link
+            href="/"
+            className="font-display text-xl font-bold tracking-tight text-brand"
+          >
             {t("brand")}
           </Link>
-
-          {session?.user && (
-            <nav className="flex items-center gap-4 text-sm text-gray-700">
-              <Link href="/dashboard">{t("dashboard")}</Link>
-              <Link href="/meals">{t("meals")}</Link>
-              <Link href="/history">{t("history")}</Link>
-              <Link href="/onboarding">{t("profile")}</Link>
-            </nav>
-          )}
+          {navItems.length > 0 ? <NavbarLinks items={navItems} /> : null}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-3">
           <NavbarClient session={session} />
 
-          {session?.user && (
+          {session?.user ? (
             <form
               action={async () => {
                 "use server";
@@ -38,11 +43,14 @@ export default async function Navbar() {
                 });
               }}
             >
-              <button className="rounded-lg bg-black px-4 py-2 text-sm text-white">
+              <button
+                type="submit"
+                className="rounded-lg bg-brand px-4 py-2 text-xs font-bold uppercase tracking-wider text-on-brand shadow-md transition hover:bg-brand-hover active:scale-[0.98]"
+              >
                 {t("logout")}
               </button>
             </form>
-          )}
+          ) : null}
         </div>
       </div>
     </header>

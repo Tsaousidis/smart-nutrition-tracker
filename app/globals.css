@@ -1,26 +1,80 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Design tokens (Stitch / Material-style palette) → Tailwind v4 theme */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-canvas: #fcfcfa;
+  --color-ink: #191c1b;
+  --color-ink-muted: #404944;
+  --color-brand: #003527;
+  --color-brand-hover: #022a1f;
+  --color-on-brand: #ffffff;
+  --color-accent: #904d00;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f2f4f1;
+  --color-border: #e5e7eb;
+  --color-border-strong: #bfc9c3;
+  --color-emerald-soft: #ecfdf5;
+  --color-emerald-ring: rgba(4, 120, 87, 0.25);
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .font-display {
+    font-family: var(--font-epilogue), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .ambient-shadow {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  .active-shadow {
+    transition: box-shadow 0.2s ease;
+  }
+
+  .active-shadow:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  .glass-gradient {
+    background: linear-gradient(
+      135deg,
+      rgba(6, 78, 59, 0.06) 0%,
+      rgba(254, 147, 44, 0.05) 100%
+    );
+  }
+
+  .input-stitch {
+    @apply w-full rounded-lg border border-border bg-surface px-4 py-3 text-ink outline-none transition;
+    @apply placeholder:text-slate-400 focus:border-brand focus:ring-2 focus:ring-emerald-600/25;
+  }
+
+  .label-stitch {
+    @apply mb-1 block text-[11px] font-bold uppercase tracking-wider text-ink-muted;
+  }
+
+  .btn-brand {
+    @apply rounded-lg bg-brand px-4 py-3 font-semibold text-on-brand shadow-md transition;
+    @apply hover:bg-brand-hover active:scale-[0.98] disabled:opacity-50;
+  }
+
+  .btn-brand-lg {
+    @apply rounded-lg bg-brand px-6 py-3.5 font-semibold text-on-brand shadow-md transition;
+    @apply hover:bg-brand-hover active:scale-[0.98] disabled:opacity-50;
+  }
+
+  .link-accent {
+    @apply font-semibold text-accent underline-offset-2 hover:underline;
+  }
 }

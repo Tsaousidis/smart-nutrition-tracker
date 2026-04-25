@@ -17,30 +17,34 @@ export default async function HomePage({
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
+    <main className="min-h-screen bg-canvas text-ink">
       {/* Hero */}
-      <section className="border-b border-slate-200/80 bg-white/70 px-4 pb-16 pt-16 md:pb-24 md:pt-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+      <section className="relative overflow-hidden border-b border-border pb-20 pt-20 md:pb-28 md:pt-24">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-tr from-emerald-50/40 via-transparent to-amber-50/25"
+          aria-hidden
+        />
+        <div className="mx-auto max-w-[1152px] px-6 text-center">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
             {t("heroEyebrow")}
           </p>
-          <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-5xl lg:text-[3.25rem]">
+          <h1 className="font-display mt-4 max-w-3xl mx-auto text-4xl font-bold leading-[1.1] tracking-tight text-brand md:text-5xl lg:text-[3rem]">
             {t("heroHeadline")}
           </h1>
-          <p className="mx-auto mt-5 max-w-xl text-lg text-slate-600 md:text-xl">
+          <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-ink-muted md:text-xl">
             {t("heroSub")}
           </p>
 
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
             <Link
               href="/signup"
-              className="inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800 sm:w-auto"
+              className="inline-flex w-full items-center justify-center rounded-full bg-brand px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-brand shadow-lg transition hover:bg-brand-hover active:scale-[0.98] sm:w-auto"
             >
               {t("getStarted")}
             </Link>
             <Link
               href="/login"
-              className="inline-flex w-full items-center justify-center rounded-xl border border-slate-300 bg-white px-8 py-3.5 text-base font-semibold text-slate-800 transition hover:bg-slate-50 sm:w-auto"
+              className="inline-flex w-full items-center justify-center rounded-full border border-border-strong bg-surface px-8 py-4 text-xs font-bold uppercase tracking-wider text-brand transition hover:bg-surface-soft sm:w-auto"
             >
               {t("login")}
             </Link>
@@ -49,13 +53,13 @@ export default async function HomePage({
       </section>
 
       {/* Live example */}
-      <section className="px-4 py-16 md:py-20">
+      <section className="px-6 py-16 md:py-20">
         <div className="mx-auto max-w-3xl">
-          <p className="text-center text-sm font-medium uppercase tracking-wide text-slate-500">
+          <p className="text-center text-[11px] font-bold uppercase tracking-wider text-ink-muted">
             {t("demoLabel")}
           </p>
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-            <blockquote className="text-center text-lg font-medium leading-relaxed text-slate-800 md:text-xl">
+          <div className="mt-6 rounded-2xl border border-border bg-surface p-6 ambient-shadow md:p-8">
+            <blockquote className="text-center text-lg font-medium leading-relaxed text-ink md:text-xl">
               «{t("demoMealText")}»
             </blockquote>
             <div className="mx-auto mt-8 grid max-w-md grid-cols-2 gap-3 sm:grid-cols-4">
@@ -64,18 +68,18 @@ export default async function HomePage({
               <DemoStat label={t("demoCarbs")} value={t("demoCarbsValue")} unit={t("demoGrams")} />
               <DemoStat label={t("demoFat")} value={t("demoFatValue")} unit={t("demoGrams")} />
             </div>
-            <p className="mt-6 text-center text-xs text-slate-500">{t("demoDisclaimer")}</p>
+            <p className="mt-6 text-center text-xs text-ink-muted">{t("demoDisclaimer")}</p>
           </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="border-y border-slate-200/80 bg-slate-50/80 px-4 py-16 md:py-20">
-        <div className="mx-auto max-w-5xl">
-          <h2 className="text-center text-3xl font-bold text-slate-900 md:text-4xl">
+      <section className="border-y border-border bg-surface px-6 py-16 md:py-20">
+        <div className="mx-auto max-w-[1152px]">
+          <h2 className="text-center font-display text-3xl font-bold text-brand md:text-4xl">
             {t("stepsTitle")}
           </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-3 md:gap-6">
+          <div className="mt-12 grid gap-8 md:grid-cols-3 md:gap-8">
             <StepCard
               step={1}
               title={t("step1Title")}
@@ -99,9 +103,9 @@ export default async function HomePage({
       </section>
 
       {/* Value props */}
-      <section className="px-4 py-16 md:py-20">
+      <section className="bg-surface px-6 py-16 md:py-20">
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-center text-3xl font-bold text-slate-900 md:text-4xl">
+          <h2 className="text-center font-display text-3xl font-bold text-brand md:text-4xl">
             {t("valueTitle")}
           </h2>
           <ul className="mt-10 space-y-4">
@@ -114,23 +118,34 @@ export default async function HomePage({
       </section>
 
       {/* CTA */}
-      <section className="px-4 pb-20 pt-4 md:pb-28">
-        <div className="mx-auto max-w-3xl rounded-3xl bg-slate-900 px-6 py-12 text-center shadow-xl md:px-12 md:py-14">
-          <h2 className="text-2xl font-bold text-white md:text-3xl">{t("ctaTitle")}</h2>
-          <p className="mx-auto mt-3 max-w-lg text-slate-300">{t("ctaSub")}</p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-            <Link
-              href="/signup"
-              className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-slate-900 transition hover:bg-slate-100 sm:w-auto"
-            >
-              {t("ctaButton")}
-            </Link>
-            <Link
-              href="/login"
-              className="inline-flex w-full items-center justify-center rounded-xl border border-slate-500 px-8 py-3.5 text-base font-semibold text-white transition hover:bg-slate-800 sm:w-auto"
-            >
-              {t("login")}
-            </Link>
+      <section className="px-6 pb-20 pt-4 md:pb-28">
+        <div className="relative mx-auto max-w-[1152px] overflow-hidden rounded-[48px] bg-emerald-950 px-8 py-14 text-center shadow-2xl md:px-16 md:py-20">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.12] bg-gradient-to-br from-emerald-600/30 to-amber-500/20"
+            aria-hidden
+          />
+          <div className="relative z-10 flex flex-col items-center gap-6">
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-200/90">
+              {t("heroEyebrow")}
+            </span>
+            <h2 className="max-w-2xl font-display text-2xl font-bold leading-tight text-white md:text-4xl">
+              {t("ctaTitle")}
+            </h2>
+            <p className="mx-auto max-w-lg text-sm text-emerald-100/85 md:text-base">{t("ctaSub")}</p>
+            <div className="mt-2 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+              <Link
+                href="/signup"
+                className="inline-flex w-full items-center justify-center rounded-full bg-emerald-100 px-10 py-4 text-xs font-bold uppercase tracking-wider text-brand shadow-lg transition hover:bg-white sm:w-auto"
+              >
+                {t("ctaButton")}
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex w-full items-center justify-center rounded-full border border-white/30 px-10 py-4 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-white/10 sm:w-auto"
+              >
+                {t("login")}
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -148,11 +163,11 @@ function DemoStat({
   unit: string;
 }) {
   return (
-    <div className="rounded-xl border border-slate-100 bg-slate-50/80 px-3 py-4 text-center">
-      <p className="text-xs font-medium text-slate-500">{label}</p>
-      <p className="mt-1 text-xl font-bold tabular-nums text-slate-900">
+    <div className="rounded-xl border border-border bg-surface-soft px-3 py-4 text-center">
+      <p className="text-xs font-medium text-ink-muted">{label}</p>
+      <p className="mt-1 font-display text-xl font-bold tabular-nums text-brand">
         {value}
-        <span className="text-sm font-semibold text-slate-600"> {unit}</span>
+        <span className="text-sm font-semibold text-ink-muted"> {unit}</span>
       </p>
     </div>
   );
@@ -170,13 +185,13 @@ function StepCard({
   example: string;
 }) {
   return (
-    <div className="relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">
+    <div className="relative rounded-3xl border border-border-strong bg-surface p-8 ambient-shadow transition-shadow duration-300 hover:shadow-lg">
+      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand text-sm font-bold text-on-brand">
         {step}
       </span>
-      <h3 className="mt-4 text-lg font-semibold text-slate-900">{title}</h3>
-      <p className="mt-2 text-sm text-slate-600">{body}</p>
-      <p className="mt-4 rounded-lg bg-slate-50 px-3 py-2 text-center text-sm font-medium text-slate-800">
+      <h3 className="mt-4 font-display text-lg font-semibold text-brand">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-ink-muted">{body}</p>
+      <p className="mt-4 rounded-lg bg-surface-soft px-3 py-2 text-center text-sm font-medium text-ink">
         {example}
       </p>
     </div>
@@ -186,16 +201,21 @@ function StepCard({
 function ValueRow({ label, negative }: { label: string; negative?: boolean }) {
   return (
     <li
-      className={`flex items-start gap-3 rounded-xl border px-4 py-4 md:px-5 md:py-4 ${
+      className={`flex items-start gap-4 rounded-xl border px-4 py-4 md:px-5 md:py-4 ${
         negative
-          ? "border-slate-200 bg-white text-slate-500"
-          : "border-emerald-200/80 bg-emerald-50/60 text-slate-800"
+          ? "border-border bg-surface text-ink-muted"
+          : "border-emerald-200/80 bg-emerald-soft text-ink"
       }`}
     >
-      <span className="mt-0.5 text-lg leading-none" aria-hidden>
+      <span
+        className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+          negative ? "bg-red-50 text-red-600" : "bg-brand text-on-brand"
+        }`}
+        aria-hidden
+      >
         {negative ? "✗" : "✓"}
       </span>
-      <span className={`text-base font-medium ${negative ? "line-through decoration-slate-400" : ""}`}>
+      <span className={`text-base font-medium leading-snug ${negative ? "line-through decoration-ink-muted" : ""}`}>
         {label}
       </span>
     </li>

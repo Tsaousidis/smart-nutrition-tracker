@@ -45,57 +45,76 @@ export default function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-10">
-      <div className="mx-auto max-w-md rounded-2xl border bg-white p-6 shadow-sm">
-        <h1 className="mb-2 text-2xl font-bold">{t("title")}</h1>
-        <p className="mb-6 text-sm text-gray-600">{t("subtitle")}</p>
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium">{t("email")}</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border px-3 py-2"
-              placeholder={t("emailPlaceholder")}
-            />
+    <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-6 py-16 glass-gradient">
+      <div className="w-full max-w-[440px]">
+        <div className="rounded-xl border border-border bg-surface p-8 ambient-shadow active-shadow transition-all duration-300">
+          <div className="mb-8 text-center">
+            <h1 className="font-display text-[32px] font-semibold leading-tight tracking-tight text-brand">
+              {t("title")}
+            </h1>
+            <p className="mt-2 text-sm text-ink-muted opacity-90">{t("subtitle")}</p>
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium">{t("password")}</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border px-3 py-2"
-              placeholder={t("passwordPlaceholder")}
-            />
-          </div>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="label-stitch" htmlFor="login-email">
+                {t("email")}
+              </label>
+              <input
+                id="login-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input-stitch"
+                placeholder={t("emailPlaceholder")}
+                autoComplete="email"
+              />
+            </div>
 
-          <div className="mt-4 text-right">
-          <Link href="/forgot-password" className="text-sm font-medium text-blue-600 hover:underline">
-            {t("forgotPassword")}
-          </Link>
-        </div>
+            <div>
+              <div className="mb-1 flex items-center justify-between gap-2">
+                <label className="label-stitch mb-0" htmlFor="login-password">
+                  {t("password")}
+                </label>
+                <Link href="/forgot-password" className="link-accent text-[12px]">
+                  {t("forgotPassword")}
+                </Link>
+              </div>
+              <input
+                id="login-password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input-stitch"
+                placeholder={t("passwordPlaceholder")}
+                autoComplete="current-password"
+              />
+            </div>
 
-        <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-black px-4 py-2 text-white disabled:opacity-50"
-          >
-            {loading ? t("loading") : t("submit")}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-brand-lg mt-2 w-full py-4 disabled:opacity-50"
+            >
+              {loading ? t("loading") : t("submit")}
+            </button>
+          </form>
 
-        {error && (
-          <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
-            {error}
-          </div>
-        )}
+          {error ? (
+            <div
+              className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+              role="alert"
+            >
+              {error}
+            </div>
+          ) : null}
 
-        <div className="mt-6 text-center text-sm">
-          <p className="text-gray-600">{t("noAccount")} <Link href="/signup" className="font-medium text-blue-600 hover:underline">{t("signupLink")}</Link></p>
+          <p className="mt-8 text-center text-sm text-ink-muted">
+            {t("noAccount")}{" "}
+            <Link href="/signup" className="link-accent">
+              {t("signupLink")}
+            </Link>
+          </p>
         </div>
       </div>
     </main>

@@ -42,57 +42,57 @@ export default function ForgotPasswordPage() {
 
   if (submitted) {
     return (
-      <main className="min-h-screen px-4 py-10">
-        <div className="mx-auto max-w-md rounded-2xl border bg-white p-6 shadow-sm">
-          <div className="text-center">
-            <div className="mb-4 text-4xl">✓</div>
-            <h1 className="mb-2 text-2xl font-bold">{t("emailSent")}</h1>
-            <p className="mb-6 text-sm text-gray-600">{t("checkEmail")}</p>
-            <Link href="/login" className="text-sm font-medium text-blue-600 hover:underline">
-              {t("backToLogin")}
-            </Link>
+      <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-6 py-16 glass-gradient">
+        <div className="w-full max-w-[440px] rounded-xl border border-border bg-surface p-8 text-center ambient-shadow">
+          <div className="mb-4 text-3xl text-brand" aria-hidden>
+            ✓
           </div>
+          <h1 className="font-display text-[28px] font-semibold text-brand">{t("emailSent")}</h1>
+          <p className="mt-3 text-sm text-ink-muted">{t("checkEmail")}</p>
+          <Link href="/login" className="link-accent mt-8 inline-block text-sm">
+            {t("backToLogin")}
+          </Link>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen px-4 py-10">
-      <div className="mx-auto max-w-md rounded-2xl border bg-white p-6 shadow-sm">
-        <h1 className="mb-2 text-2xl font-bold">{t("title")}</h1>
-        <p className="mb-6 text-sm text-gray-600">{t("subtitle")}</p>
+    <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-6 py-16 glass-gradient">
+      <div className="w-full max-w-[440px] rounded-xl border border-border bg-surface p-8 ambient-shadow active-shadow transition-all duration-300">
+        <h1 className="font-display text-[32px] font-semibold text-brand">{t("title")}</h1>
+        <p className="mt-2 text-sm text-ink-muted">{t("subtitle")}</p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium">{t("email")}</label>
+            <label className="label-stitch" htmlFor="forgot-email">
+              {t("email")}
+            </label>
             <input
+              id="forgot-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border px-3 py-2"
+              className="input-stitch"
               placeholder={t("emailPlaceholder")}
               required
+              autoComplete="email"
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-black px-4 py-2 text-white disabled:opacity-50"
-          >
+          <button type="submit" disabled={loading} className="btn-brand-lg w-full py-4 disabled:opacity-50">
             {loading ? t("sending") : t("submit")}
           </button>
         </form>
 
-        {error && (
-          <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
+        {error ? (
+          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800" role="alert">
             {error}
           </div>
-        )}
+        ) : null}
 
-        <div className="mt-6 text-center text-sm">
-          <Link href="/login" className="font-medium text-blue-600 hover:underline">
+        <div className="mt-8 text-center text-sm">
+          <Link href="/login" className="link-accent">
             {t("backToLogin")}
           </Link>
         </div>
