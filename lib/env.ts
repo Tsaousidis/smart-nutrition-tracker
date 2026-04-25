@@ -3,7 +3,9 @@ export function validateEnv() {
   const requiredVars = [
     "DATABASE_URL",
     "DIRECT_URL",
-    "GEMINI_API_KEY",
+    "AZURE_OPENAI_API_KEY",
+    "AZURE_OPENAI_ENDPOINT",
+    "AZURE_OPENAI_DEPLOYMENT_NAME",
     "AUTH_SECRET",
   ];
   const requiredInProduction = ["RESEND_API_KEY", "NEXT_PUBLIC_APP_URL"];
