@@ -59,35 +59,6 @@ The Nutrition Tracker is a comprehensive web application designed to help users 
 - **Resend**: Email delivery service for email verification and password reset.
 - **Zod**: Schema validation for form data.
 
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-repo/nutrition-tracker.git
-   cd nutrition-tracker
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Set up environment variables:
-   - Copy `.env.example` to `.env`.
-   - Update the environment variables with your configuration (e.g., database URL, email service credentials).
-
-4. Run database migrations:
-   ```bash
-   npx prisma migrate dev
-   ```
-
-5. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-6. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
 ## Folder Structure
 
 - `app/`: Contains the main application pages and layouts.
@@ -99,10 +70,6 @@ The Nutrition Tracker is a comprehensive web application designed to help users 
 - `prisma/`: Database schema and migrations.
 - `public/`: Static assets such as images and flags.
 - `types/`: TypeScript type definitions.
-
-## Deployment
-
-The application can be deployed on [Vercel](https://vercel.com/) for seamless hosting and scaling. Follow the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for detailed instructions.
 
 ## Contributing
 

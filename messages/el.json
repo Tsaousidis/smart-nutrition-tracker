@@ -87,6 +87,7 @@
     "macroDistribution": "Κατανομή Μακροθρεπτικών",
     "todayStatus": "Κατάσταση σήμερα",
     "onTrackPercent": "Είσαι στο {value}% του σημερινού στόχου",
+    "overCalories": "Έχεις ξεπεράσει τον στόχο κατά {value}%",
     "fromYesterday": "{value} σε σχέση με χθες",
     "logMeal": "Καταχώρηση γεύματος",
     "caloriesLeft": "Θερμίδες που απομένουν",
