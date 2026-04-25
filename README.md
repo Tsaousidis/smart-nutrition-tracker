@@ -1,65 +1,120 @@
-# Nutrition Tracker
+# 🥗 Nutrition Tracker
 
-The Nutrition Tracker is a comprehensive web application designed to help users manage their dietary habits, track meals, and achieve their health goals. Built with modern web technologies, it offers a seamless and user-friendly experience with a focus on internationalization, security, and performance.
+A modern, full-stack web application that helps users **take control of their nutrition** through intelligent tracking, personalized insights, and clean data visualization.
 
-## Features
+Designed with scalability and user experience in mind, this project combines **robust backend architecture** with a **polished, responsive UI**.
 
-### 1. User Authentication
-- Secure user authentication using `next-auth`.
-- Login, signup, and password reset functionalities.
-- Email verification with secure token-based confirmation.
+---
 
-### 2. Meal Tracking
-- Log meals with detailed nutritional information, including calories, protein, carbs, and fat.
-- Parse meal data to calculate total nutritional values.
-- Dropdown options for meal types (e.g., Breakfast, Lunch, Snack) with translations.
+## 🚀 Why this project?
 
-### 3. User Profile Management
-- Set and update personal details such as age, weight, height, and activity level.
-- Define health goals (e.g., Maintain, Lose Weight, Gain Muscle).
-- Automatic calculation of macro targets based on user profile and goals.
+Most nutrition apps are either:
+- too complex  
+- too minimal  
+- or locked behind paywalls  
 
-### 4. Dashboard Insights
-- Visualize daily and weekly nutritional summaries using `Recharts`.
-- Macro distribution donut chart and single metric charts for detailed insights.
-- Personalized insights generated based on user data.
+This app focuses on:
+- ✔️ **Clarity over clutter**
+- ✔️ **Actionable insights (not just raw data)**
+- ✔️ **Performance & security by design**
+- ✔️ **Full internationalization support**
 
-### 5. History and Trends
-- View historical data of logged meals and nutritional trends.
-- Interactive charts to track progress over time.
+---
 
-### 6. Internationalization (i18n)
-- Fully localized application using `next-intl`.
-- Supports multiple languages (e.g., English, Greek).
-- Locale-aware routing and translations for all UI elements.
+## ✨ Features
 
-### 7. Security
-- Comprehensive security headers configured in `next.config.ts`.
-- CSRF protection for all sensitive operations.
-- Secure password hashing using `bcryptjs`.
+### 🔐 Authentication & Security
+- Secure authentication via `next-auth`
+- Email verification with token-based confirmation
+- Password reset flow
+- CSRF protection & secure headers
+- Password hashing using `bcryptjs`
 
-### 8. Responsive Design
-- Mobile-first design with `Tailwind CSS`.
-- Optimized for various screen sizes and devices.
+---
 
-### 9. API
-- RESTful API endpoints for user authentication, meal logging, profile management, and more.
-- Built with Next.js API routes and Prisma ORM.
+### 🍽️ Smart Meal Tracking
+- Log meals with:
+  - Calories
+  - Protein
+  - Carbs
+  - Fat
+- Automatic macro aggregation per day
+- Localized meal types (Breakfast, Lunch, etc.)
+- Clean input validation with `Zod`
 
-## Technologies Used
+---
 
-- **Next.js**: Framework for server-side rendering and static site generation.
-- **TypeScript**: Ensures type safety and better developer experience.
-- **Prisma**: ORM for database management with PostgreSQL.
-- **PostgreSQL**: Relational database for storing user and meal data.
-- **next-intl**: Handles internationalization and locale-aware routing.
-- **Tailwind CSS**: Utility-first CSS framework for responsive design.
-- **Recharts**: Library for creating interactive charts and data visualizations.
-- **next-auth**: Authentication library for secure user login and session management.
-- **Resend**: Email delivery service for email verification and password reset.
-- **Zod**: Schema validation for form data.
+### 👤 Personalized User Profiles
+- Store:
+  - Age, weight, height
+  - Activity level
+- Define goals:
+  - Maintain weight
+  - Lose weight
+  - Gain muscle
+- 🎯 Auto-calculated macro targets based on profile
 
-## Folder Structure
+---
+
+### 📊 Dashboard & Insights
+- Interactive charts powered by `Recharts`
+- Daily & weekly summaries
+- Macro distribution (donut chart)
+- Single-metric breakdowns
+- Insight generation based on user behavior
+
+---
+
+### 📈 History & Progress Tracking
+- View past meals and nutrition logs
+- Track trends over time
+- Identify patterns in eating habits
+
+---
+
+### 🌍 Internationalization (i18n)
+- Built with `next-intl`
+- Multi-language support (e.g., English, Greek)
+- Locale-aware routing
+- Fully translated UI
+
+---
+
+### 📱 Responsive Design
+- Mobile-first approach using `Tailwind CSS`
+- Optimized for all screen sizes
+- Clean and modern UI
+
+---
+
+### 🔌 API Architecture
+- RESTful endpoints via Next.js API routes
+- Handles:
+  - Authentication
+  - Meal tracking
+  - Profile management
+- Prisma ORM for clean database access
+
+---
+
+## 🛠️ Tech Stack
+
+| Category        | Technology |
+|----------------|-----------|
+| Framework      | Next.js |
+| Language       | TypeScript |
+| Database       | PostgreSQL |
+| ORM            | Prisma |
+| Auth           | next-auth |
+| Validation     | Zod |
+| Styling        | Tailwind CSS |
+| Charts         | Recharts |
+| i18n           | next-intl |
+| Email Service  | Resend |
+
+---
+
+## 📂 Project Structure
 
 - `app/`: Contains the main application pages and layouts.
 - `api/`: API routes for handling backend logic.
@@ -71,10 +126,59 @@ The Nutrition Tracker is a comprehensive web application designed to help users 
 - `public/`: Static assets such as images and flags.
 - `types/`: TypeScript type definitions.
 
-## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request with your changes.
+---
 
-## License
+## ⚙️ Getting Started
 
-This project is licensed under the MIT License.
+### 1. Clone the repository
+```bash
+git clone https://github.com/your-username/nutrition-tracker.git
+cd nutrition-tracker
+```
+
+---
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+---
+
+### 3. Setup environment variables
+
+Create a .env file:
+
+```bash
+GEMINI_API_KEY=
+AUTH_SECRET=
+DATABASE_URL=
+DIRECT_URL=
+RESEND_API_KEY=
+NEXT_PUBLIC_APP_URL=
+DEFAULT_LOCALE=
+```
+
+---
+
+### 4. Run database migrations
+
+```bash
+npx prisma migrate dev
+```
+
+---
+
+### 5. Start the development server
+
+```bash
+npm run dev
+```
+
+---
+
+## 📄 License
+
+MIT License
