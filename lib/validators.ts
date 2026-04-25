@@ -1,5 +1,15 @@
 import { z } from "zod";
 
+const mealItemSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  quantity: z.number().finite().gt(0).max(10000),
+  unit: z.string().trim().min(1).max(40),
+  calories: z.number().finite().min(0).max(20000),
+  protein: z.number().finite().min(0).max(1000),
+  carbs: z.number().finite().min(0).max(1000),
+  fat: z.number().finite().min(0).max(1000),
+});
+
 export const profileSchema = z.object({
   email: z.email(),
   sex: z.enum(["MALE", "FEMALE"]),
@@ -25,27 +35,17 @@ export const profileSchema = z.object({
 export type ProfileRequestBody = z.infer<typeof profileSchema>;
 
 export const mealParseInputSchema = z.object({
-  mealText: z.string().min(3),
+  mealText: z.string().trim().min(3).max(2000),
   locale: z.enum(["en", "el"]).optional(),
 });
 
 export const parsedMealSchema = z.object({
-  items: z.array(
-    z.object({
-      name: z.string(),
-      quantity: z.number(),
-      unit: z.string(),
-      calories: z.number(),
-      protein: z.number(),
-      carbs: z.number(),
-      fat: z.number(),
-    })
-  ),
+  items: z.array(mealItemSchema).min(1).max(50),
   mealTotal: z.object({
-    calories: z.number(),
-    protein: z.number(),
-    carbs: z.number(),
-    fat: z.number(),
+    calories: z.number().finite().min(0).max(100000),
+    protein: z.number().finite().min(0).max(5000),
+    carbs: z.number().finite().min(0).max(5000),
+    fat: z.number().finite().min(0).max(5000),
   }),
 });
 
@@ -53,19 +53,9 @@ export type ParsedMeal = z.infer<typeof parsedMealSchema>;
 
 export const saveMealSchema = z.object({
   email: z.string().email(),
-  title: z.string().optional(),
-  mealDate: z.string(),
-  items: z.array(
-    z.object({
-      name: z.string(),
-      quantity: z.number(),
-      unit: z.string(),
-      calories: z.number(),
-      protein: z.number(),
-      carbs: z.number(),
-      fat: z.number(),
-    })
-  ),
+  title: z.string().trim().min(1).max(80).optional(),
+  mealDate: z.string().datetime({ offset: true }),
+  items: z.array(mealItemSchema).min(1).max(50),
 });
 
 export type SaveMealRequestBody = z.infer<typeof saveMealSchema>;

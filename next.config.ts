@@ -4,6 +4,22 @@ import createNextIntlPlugin from "next-intl/plugin";
 const nextConfig: NextConfig = {
   compress: true,
   async headers() {
+    const isProduction = process.env.NODE_ENV === "production";
+    const scriptSrc = isProduction
+      ? "script-src 'self' 'unsafe-inline';"
+      : "script-src 'self' 'unsafe-inline' 'unsafe-eval';";
+    const csp = [
+      "default-src 'self';",
+      scriptSrc,
+      "style-src 'self' 'unsafe-inline';",
+      "img-src 'self' data: https:;",
+      "font-src 'self';",
+      "connect-src 'self' https://generativelanguage.googleapis.com;",
+      "object-src 'none';",
+      "base-uri 'self';",
+      "frame-ancestors 'none';",
+    ].join(" ");
+
     return [
       {
         source: "/:path*",
@@ -26,7 +42,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://generativelanguage.googleapis.com; frame-ancestors 'none';",
+            value: csp,
           },
           {
             key: "Strict-Transport-Security",
