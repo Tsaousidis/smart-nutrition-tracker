@@ -9,7 +9,7 @@ import { useCsrfToken } from "@/lib/useCsrfToken";
 export default function VerifyEmailPage() {
   const t = useTranslations("VerifyEmail");
   const searchParams = useSearchParams();
-  const { csrfToken } = useCsrfToken();
+  const { csrfToken, loading: csrfLoading } = useCsrfToken();
   const token = searchParams.get("token");
 
   const [loading, setLoading] = useState(true);
@@ -24,10 +24,19 @@ export default function VerifyEmailPage() {
         return;
       }
 
+      // Wait for CSRF token to load
+      if (!csrfToken && !csrfLoading) {
+        setError("Security error: CSRF token not available");
+        setLoading(false);
+        return;
+      }
+
+      // Don't run until CSRF token is loaded
+      if (!csrfToken || csrfLoading) {
+        return;
+      }
+
       try {
-        if (!csrfToken) {
-          throw new Error("Security error: CSRF token not available");
-        }
         const res = await fetch("/api/verify-email/confirm", {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
@@ -51,7 +60,7 @@ export default function VerifyEmailPage() {
     }
 
     verifyEmail();
-  }, [csrfToken, t, token]);
+  }, [csrfToken, csrfLoading, t, token]);
 
   if (loading) {
     return (
