@@ -27,6 +27,12 @@ export default function MacroDonutChart({ data, title }: Props) {
 
   const total = data.carbs + data.protein + data.fat;
 
+  const renderLabel = (entry: { name: string; value: number }) => {
+    if (total === 0) return "";
+    const percentage = ((entry.value / total) * 100).toFixed(0);
+    return `${percentage}%`;
+  };
+
   return (
     <div className="h-full rounded-2xl border p-4 shadow-sm">
       <h3 className="mb-3 text-lg font-semibold">{title}</h3>
@@ -47,13 +53,13 @@ export default function MacroDonutChart({ data, title }: Props) {
               outerRadius={80}
               paddingAngle={5}
               dataKey="value"
+              label={renderLabel}
+              labelLine={false}
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip />
-            <Legend />
           </PieChart>
         </ResponsiveContainer>
       </div>
