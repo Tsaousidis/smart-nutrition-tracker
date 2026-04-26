@@ -24,7 +24,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
     const resend = new Resend(apiKey);
     
     const { data, error } = await resend.emails.send({
-      from: "Nutrella <onboarding@resend.dev>",
+      from: process.env.EMAIL_FROM_ADDRESS || "Nutrella <onboarding@resend.dev>",
       to: options.to,
       subject: options.subject,
       html: options.html,
