@@ -70,6 +70,8 @@
     "remaining": "Υπόλοιπο",
     "insights": "Σημερινά συμπεράσματα",
     "mealsToday": "Γεύματα Σήμερα",
+    "meals": "γεύμα",
+    "mealsPlural": "γεύματα",
     "refresh": "Ανανέωση",
     "logout": "Αποσύνδεση",
     "belowProtein": "Σου λείπουν {value}g πρωτεΐνης σήμερα",

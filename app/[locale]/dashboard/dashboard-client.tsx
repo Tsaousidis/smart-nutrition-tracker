@@ -232,9 +232,14 @@ export default function DashboardClient() {
     <main className="min-h-screen bg-canvas px-6 py-10">
       <div className="mx-auto max-w-[1152px]">
         <div className="mb-8 rounded-xl border border-border bg-surface p-6 ambient-shadow md:p-8">
-          <div>
-            <h1 className="font-display text-3xl font-semibold text-brand">{t("title")}</h1>
-            <p className="mt-2 text-sm text-ink-muted">{t("subtitle")}</p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="font-display text-3xl font-semibold text-brand">{t("title")}</h1>
+              <p className="mt-2 text-sm text-ink-muted">{t("subtitle")}</p>
+            </div>
+            <Link href="/meals" className="btn-brand inline-flex shrink-0">
+              {t("logMeal")}
+            </Link>
           </div>
 
           {error ? (
@@ -297,50 +302,80 @@ export default function DashboardClient() {
         {dashboardData && metrics && (
           <div className="space-y-8">
             <section className="grid gap-4 lg:auto-rows-fr lg:grid-cols-4">
-              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-1">
+              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-1 flex flex-col items-center justify-center text-center">
                 <p className="text-xs font-bold uppercase tracking-wider text-accent">{t("todayStatus")}</p>
                 <h2 className="mt-2 font-display text-2xl font-semibold text-brand">
                   {metrics.isOverCalories
                     ? t("overCalories", { value: Math.round(metrics.caloriePct) })
                     : t("onTrackPercent", { value: Math.round(metrics.caloriePct) })}
                 </h2>
-                {metrics.hasYesterdayMeal && metrics.trendPct !== null ? (
+                {metrics.hasYesterdayMeal && metrics.trendPct !== null && metrics.todayMeals > 0 ? (
                   <span className="mt-3 inline-block rounded-full bg-emerald-soft px-3 py-1 text-xs font-semibold text-emerald-800">
                     {t("fromYesterday", {
                       value: `${metrics.trendPct >= 0 ? "+" : ""}${Math.round(metrics.trendPct)}%`,
                     })}
                   </span>
                 ) : null}
-                <div className="mt-5">
-                  <Link href="/meals" className="btn-brand inline-flex">
-                    {t("logMeal")}
-                  </Link>
+              </div>
+
+              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-5 ambient-shadow flex flex-col items-center justify-center text-center">
+                <p className="text-xs font-bold uppercase tracking-wider text-accent">{t("caloriesLeft")}</p>
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="font-display text-4xl font-bold text-brand">
+                    {Math.max(0, Math.round(dashboardData.remaining.calories))}
+                  </span>
+                  <span className="text-sm font-medium text-ink-muted">kcal</span>
+                </div>
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-surface-soft">
+                  <div
+                    className="h-full rounded-full bg-amber-500"
+                    style={{ width: `${Math.min(100, Math.max(0, (dashboardData.totals.calories / dashboardData.targets.dailyCalories) * 100))}%` }}
+                  />
                 </div>
               </div>
 
-              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-5 ambient-shadow">
-                <p className="text-sm text-ink-muted">{t("caloriesLeft")}</p>
-                <p className="mt-2 font-display text-2xl font-semibold text-brand">
-                  {Math.max(0, Math.round(dashboardData.remaining.calories))} kcal
-                </p>
+              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-5 ambient-shadow flex flex-col items-center justify-center text-center">
+                <p className="text-xs font-bold uppercase tracking-wider text-accent">{t("proteinProgress")}</p>
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="font-display text-4xl font-bold text-brand">
+                    {Math.round(dashboardData.totals.protein)}
+                  </span>
+                  <span className="text-sm font-medium text-ink-muted">/ {Math.round(dashboardData.targets.proteinTarget)} g</span>
+                </div>
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-surface-soft">
+                  <div
+                    className="h-full rounded-full bg-indigo-500"
+                    style={{ width: `${Math.min(100, Math.max(0, (dashboardData.totals.protein / dashboardData.targets.proteinTarget) * 100))}%` }}
+                  />
+                </div>
               </div>
 
-              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-5 ambient-shadow">
-                <p className="text-sm text-ink-muted">{t("proteinProgress")}</p>
-                <p className="mt-2 font-display text-2xl font-semibold text-brand">
-                  {Math.round(dashboardData.totals.protein)} / {Math.round(dashboardData.targets.proteinTarget)} g
-                </p>
-              </div>
-
-              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-5 ambient-shadow">
-                <p className="text-sm text-ink-muted">{t("mealsToday")}</p>
-                <p className="mt-2 font-display text-2xl font-semibold text-brand">{metrics.todayMeals}</p>
+              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-5 ambient-shadow flex flex-col items-center justify-center text-center">
+                <p className="text-xs font-bold uppercase tracking-wider text-accent">{t("mealsToday")}</p>
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="font-display text-4xl font-bold text-brand">{metrics.todayMeals}</span>
+                  <span className="text-sm font-medium text-ink-muted">
+                    {metrics.todayMeals === 1 ? t("meals") : t("mealsPlural")}
+                  </span>
+                </div>
+                <div className="mt-3 flex justify-center gap-1">
+                  {[...Array(4)].map((_, idx) => (
+                    <div
+                      key={idx}
+                      className={`h-2 w-6 rounded-full ${
+                        idx < metrics.todayMeals ? "bg-emerald-500" : "bg-surface-soft"
+                      }`}
+                    />
+                  ))}
+                </div>
               </div>
             </section>
 
-            <section className="rounded-xl border border-border bg-emerald-soft/70 px-5 py-3 text-sm text-ink ambient-shadow">
-              {metrics.motivationLine}
-            </section>
+            {metrics.todayMeals > 0 && (
+              <section className="rounded-xl border border-border bg-emerald-soft/70 px-5 py-3 text-sm text-ink ambient-shadow">
+                {metrics.motivationLine}
+              </section>
+            )}
 
             <section className="grid min-w-0 items-stretch gap-6 lg:grid-cols-3">
               <div className="h-full rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-2">
