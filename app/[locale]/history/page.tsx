@@ -161,12 +161,10 @@ export default function HistoryPage() {
             </p>
           ) : null}
 
-          <div className="mt-6 space-y-4">
-            <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto]">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <label htmlFor="history-date" className="label-stitch mb-0 sm:mb-0">
-                  {t("dateLabel")}
-                </label>
+          <div className="mt-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-ink-muted">{t("dateLabel")}</span>
                 <button
                   type="button"
                   onClick={() => {
@@ -179,9 +177,12 @@ export default function HistoryPage() {
                       input.focus();
                     }
                   }}
-                  className="relative block max-w-[240px] text-left"
+                  className="group relative flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 transition hover:border-brand hover:shadow-sm"
                 >
-                  <div className="input-stitch pr-10">{formatDateForDisplay(selectedDate)}</div>
+                  <svg className="h-4 w-4 text-ink-muted transition group-hover:text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-sm font-medium text-brand">{formatDateForDisplay(selectedDate)}</span>
                   <input
                     ref={historyDateInputRef}
                     id="history-date"
@@ -194,32 +195,41 @@ export default function HistoryPage() {
                 </button>
               </div>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedDate(getIsoDate(-1))}
+                  className="flex items-center gap-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-ink-muted transition hover:border-brand hover:text-brand"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  {t("yesterday")}
+                </button>
                 <button
                   type="button"
                   onClick={() => setSelectedDate(getIsoDate())}
-                  className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-semibold text-brand shadow-sm transition hover:bg-surface-soft"
+                  className={`flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    selectedDate === getIsoDate()
+                      ? "bg-brand text-white"
+                      : "border border-border bg-surface text-ink-muted hover:border-brand hover:text-brand"
+                  }`}
                 >
                   {t("today")}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setSelectedDate(getIsoDate(-1))}
-                  className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-semibold text-brand shadow-sm transition hover:bg-surface-soft"
-                >
-                  {t("yesterday")}
-                </button>
-                <button
-                  type="button"
                   onClick={() => loadHistory(selectedDate)}
                   disabled={loading}
-                  className="btn-brand text-sm disabled:opacity-50"
+                  className="flex items-center gap-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-ink-muted transition hover:border-brand hover:text-brand disabled:opacity-50"
                 >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
                   {loading ? t("loading") : t("refresh")}
                 </button>
               </div>
             </div>
-            <p className="text-sm text-ink-muted">{t("historyForDate", { date: formatDateForDisplay(selectedDate) })}</p>
           </div>
 
           {error ? (
@@ -247,33 +257,28 @@ export default function HistoryPage() {
                   </p>
                 </div>
 
-                <div className="grid gap-2 text-sm md:grid-cols-4">
-                  <div className="rounded-lg border border-border bg-surface-soft px-3 py-2">
-                    <span className="font-semibold text-brand">{t("calories")}:</span>{" "}
-                    {selectedDay.totals.calories}
-                  </div>
-                  <div className="rounded-lg border border-border bg-surface-soft px-3 py-2">
-                    <span className="font-semibold text-brand">{t("protein")}:</span>{" "}
-                    {selectedDay.totals.protein}g
-                  </div>
-                  <div className="rounded-lg border border-border bg-surface-soft px-3 py-2">
-                    <span className="font-semibold text-brand">{t("carbs")}:</span>{" "}
-                    {selectedDay.totals.carbs}g
-                  </div>
-                  <div className="rounded-lg border border-border bg-surface-soft px-3 py-2">
-                    <span className="font-semibold text-brand">{t("fat")}:</span>{" "}
-                    {selectedDay.totals.fat}g
-                  </div>
+                <div className="flex flex-wrap gap-2 text-sm">
+                  <span className="text-ink-muted">{t("calories")}:</span>
+                  <span className="font-medium text-ink">{selectedDay.totals.calories}</span>
+                  <span className="text-ink-muted">|</span>
+                  <span className="text-ink-muted">{t("protein")}:</span>
+                  <span className="font-medium text-ink">{selectedDay.totals.protein}g</span>
+                  <span className="text-ink-muted">|</span>
+                  <span className="text-ink-muted">{t("carbs")}:</span>
+                  <span className="font-medium text-ink">{selectedDay.totals.carbs}g</span>
+                  <span className="text-ink-muted">|</span>
+                  <span className="text-ink-muted">{t("fat")}:</span>
+                  <span className="font-medium text-ink">{selectedDay.totals.fat}g</span>
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {selectedDay.meals.map((meal) => (
-                  <div key={meal.id} className="rounded-xl border border-border bg-surface-soft/80 p-4 transition hover:shadow-md">
+                  <div key={meal.id} className="rounded-lg border border-border bg-surface p-4">
                     <div className="mb-3 flex items-start justify-between gap-3">
                       <div>
-                        <p className="font-semibold text-brand">{meal.title || t("untitledMeal")}</p>
-                        <p className="text-sm text-ink-muted">
+                        <p className="font-semibold text-ink">{meal.title || t("untitledMeal")}</p>
+                        <p className="text-xs text-ink-muted">
                           {new Date(meal.mealDate).toLocaleString()}
                         </p>
                       </div>
@@ -281,24 +286,23 @@ export default function HistoryPage() {
                         type="button"
                         onClick={() => handleDeleteMeal(meal.id)}
                         disabled={deletingMealId === meal.id}
-                        className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-50"
+                        className="shrink-0 rounded-md px-2.5 py-1 text-xs font-medium text-ink-muted transition hover:text-red-600 disabled:opacity-50"
                       >
                         {deletingMealId === meal.id ? t("deleting") : t("deleteMeal")}
                       </button>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       {meal.items.map((item) => (
                         <div
                           key={item.id}
-                          className="rounded-lg border border-border bg-surface px-3 py-2 text-sm"
+                          className="flex items-center justify-between rounded bg-surface-soft px-2.5 py-1.5 text-sm"
                         >
-                          <p className="font-medium text-ink">
+                          <p className="text-ink">
                             {item.name} — {item.quantity} {item.unit}
                           </p>
-                          <p className="text-ink-muted">
-                            {item.calories} kcal | P: {item.protein}g | C:{" "}
-                            {item.carbs}g | F: {item.fat}g
+                          <p className="text-xs text-ink-muted">
+                            {item.calories} kcal
                           </p>
                         </div>
                       ))}

@@ -312,30 +312,45 @@ export default function MealsPage() {
 
           <div>
             <label className="label-stitch">{t("mealDate")}</label>
-            <button
-              type="button"
-              onClick={() => {
-                const input = mealDateInputRef.current;
-                if (!input) return;
-                const pickerInput = input as HTMLInputElement & { showPicker?: () => void };
-                if (typeof pickerInput.showPicker === "function") {
-                  pickerInput.showPicker();
-                } else {
-                  input.focus();
-                }
-              }}
-              className="relative block w-full text-left"
-            >
-              <div className="input-stitch pr-10">{formatISOToDisplayDate(mealDate)}</div>
-              <input
-                ref={mealDateInputRef}
-                type="date"
-                value={mealDate}
-                onChange={(e) => setMealDate(e.target.value)}
-                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                aria-label={t("mealDate")}
-              />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const input = mealDateInputRef.current;
+                  if (!input) return;
+                  const pickerInput = input as HTMLInputElement & { showPicker?: () => void };
+                  if (typeof pickerInput.showPicker === "function") {
+                    pickerInput.showPicker();
+                  } else {
+                    input.focus();
+                  }
+                }}
+                className="group relative flex flex-1 items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 transition hover:border-brand hover:shadow-sm"
+              >
+                <svg className="h-4 w-4 text-ink-muted transition group-hover:text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="text-sm font-medium text-brand">{formatISOToDisplayDate(mealDate)}</span>
+                <input
+                  ref={mealDateInputRef}
+                  type="date"
+                  value={mealDate}
+                  onChange={(e) => setMealDate(e.target.value)}
+                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                  aria-label={t("mealDate")}
+                />
+              </button>
+              <button
+                type="button"
+                onClick={() => setMealDate(new Date().toISOString().slice(0, 10))}
+                className="flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-ink-muted transition hover:border-brand hover:text-brand"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {t("today") || "Σήμερα"}
+              </button>
+            </div>
           </div>
 
           <div>
