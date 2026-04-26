@@ -301,8 +301,10 @@ export default function DashboardClient() {
 
         {dashboardData && metrics && (
           <div className="space-y-8">
-            <section className="grid gap-4 lg:auto-rows-fr lg:grid-cols-4">
-              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-1 flex flex-col items-center justify-center text-center">
+            {/* Responsive grid for main stats */}
+            <section className="grid gap-x-6 gap-y-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-fr">
+              {/* Κουτάκια με ίσο ύψος και πλήρες πλάτος */}
+              <div className="h-full min-h-[170px] rounded-xl border border-border bg-surface p-6 ambient-shadow flex flex-col items-center justify-center text-center">
                 <p className="text-xs font-bold uppercase tracking-wider text-accent">{t("todayStatus")}</p>
                 <h2 className="mt-2 font-display text-2xl font-semibold text-brand">
                   {metrics.isOverCalories
@@ -377,8 +379,9 @@ export default function DashboardClient() {
               </section>
             )}
 
-            <section className="grid min-w-0 items-stretch gap-6 lg:grid-cols-3">
-              <div className="h-full rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-2">
+            {/* Responsive grid για macro progress και insights */}
+            <section className="grid gap-x-6 gap-y-6 grid-cols-1 lg:grid-cols-3 min-w-0 items-stretch">
+              <div className="h-full min-h-0 rounded-xl border border-border bg-surface p-6 ambient-shadow flex flex-col lg:col-span-2">
                 <h3 className="font-display text-xl font-semibold text-brand">{t("macroProgress")}</h3>
                 <div className="mt-5 space-y-5">
                   {[
@@ -413,21 +416,24 @@ export default function DashboardClient() {
                 </div>
               </div>
 
-              <Insights insights={metrics.topInsights} />
+              <div className="h-full min-h-0 flex flex-col">
+                <Insights insights={metrics.topInsights} />
+              </div>
             </section>
 
             {dashboardData.chartData && dashboardData.chartData.length > 0 && (
               <div className="space-y-6">
-                <section className="grid items-stretch gap-6 lg:grid-cols-3">
-                  <div className="flex h-full flex-col justify-between gap-6 lg:col-span-2">
-                    <div className="flex flex-col justify-between gap-6 rounded-xl border border-border bg-surface p-5 ambient-shadow">
+                {/* Responsive grid για charts και στατιστικά */}
+                <section className="grid gap-x-6 gap-y-6 grid-cols-1 lg:grid-cols-3 items-stretch">
+                  <div className="flex h-full min-h-0 flex-col justify-between gap-6 lg:col-span-2">
+                    <div className="flex flex-col justify-between gap-6 rounded-xl border border-border bg-surface p-5 ambient-shadow h-full min-h-0">
                       <div className="mb-2 flex items-center justify-between">
                         <h3 className="font-display text-lg font-semibold text-brand">{t("weeklyConsistency")}</h3>
                         <span className="rounded-full bg-surface-soft px-3 py-1 text-xs font-semibold text-ink-muted">
                           {t("daysWithinCaloriesTarget", { value: metrics.daysWithinTarget })} ({metrics.daysWithData})
                         </span>
                       </div>
-                      <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-4 h-full min-h-0">
                         <SingleMetricChart
                           data={dashboardData.chartData.map((d) => ({ date: d.date, value: d.calories }))}
                           target={dashboardData.targets.dailyCalories}
@@ -456,8 +462,8 @@ export default function DashboardClient() {
                     </div>
                   </div>
 
-                  <div className="grid auto-rows-fr gap-6">
-                    <div className="h-full rounded-xl border border-border bg-surface p-5 ambient-shadow">
+                  <div className="grid auto-rows-fr gap-6 h-full min-h-0">
+                    <div className="h-full min-h-0 rounded-xl border border-border bg-surface p-5 ambient-shadow flex flex-col">
                       <h3 className="font-display text-lg font-semibold text-brand">{t("streakHabits")}</h3>
                       <div className="mt-4 space-y-3 text-sm">
                         <p className="flex items-center justify-between">
@@ -476,17 +482,22 @@ export default function DashboardClient() {
                     </div>
 
                     {dashboardData.weeklyTotals && (
-                      <WeeklySummary totals={dashboardData.weeklyTotals} targets={dashboardData.targets} />
+                      <div className="h-full min-h-0 flex flex-col">
+                        <WeeklySummary totals={dashboardData.weeklyTotals} targets={dashboardData.targets} />
+                      </div>
                     )}
 
                     {dashboardData.weeklyMacroDistribution && (
-                      <MacroDonutChart data={dashboardData.weeklyMacroDistribution} title={t("macroDistribution")} />
+                      <div className="h-full min-h-0 flex flex-col">
+                        <MacroDonutChart data={dashboardData.weeklyMacroDistribution} title={t("macroDistribution")} />
+                      </div>
                     )}
                   </div>
                 </section>
 
-                <section className="grid items-stretch gap-6 lg:grid-cols-3">
-                  <div className="flex h-full flex-col justify-between rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-2">
+                {/* Responsive grid για recent meals και goal momentum */}
+                <section className="grid gap-x-6 gap-y-6 grid-cols-1 lg:grid-cols-3 items-stretch">
+                  <div className="flex h-full min-h-0 flex-col justify-between rounded-xl border border-border bg-surface p-6 ambient-shadow lg:col-span-2">
                     <h3 className="font-display text-lg font-semibold text-brand">{t("recentMeals")}</h3>
                     <div className="mt-4 space-y-3">
                       {dashboardData.meals.slice(0, 4).map((meal) => {
@@ -507,7 +518,7 @@ export default function DashboardClient() {
                     </div>
                   </div>
 
-                  <div className="flex h-full flex-col rounded-xl border border-border bg-surface p-6 ambient-shadow">
+                  <div className="flex h-full min-h-0 flex-col rounded-xl border border-border bg-surface p-6 ambient-shadow">
                     <h3 className="font-display text-lg font-semibold text-brand">{t("goalMomentum")}</h3>
                     <p className="mt-3 text-sm text-ink-muted">
                       {t("projectedWeeklyOutcome", { value: metrics.projectedOutcome })}
