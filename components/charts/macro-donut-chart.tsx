@@ -27,9 +27,9 @@ export default function MacroDonutChart({ data, title }: Props) {
 
   const total = data.carbs + data.protein + data.fat;
 
-  const renderLabel = (entry: { name: string; value: number }) => {
-    if (total === 0) return "";
-    const percentage = ((entry.value / total) * 100).toFixed(0);
+  const renderLabel = ({ name, value }: { name?: string; value?: number }) => {
+    if (!name || !value || total === 0) return "";
+    const percentage = ((value / total) * 100).toFixed(0);
     return `${percentage}%`;
   };
 
