@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -76,7 +76,61 @@ export default function MealsPage() {
   const [parseError, setParseError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+  const [autoSave, setAutoSave] = useState(false);
+  const [showAutoSaveTooltip, setShowAutoSaveTooltip] = useState(false);
   const mealDateInputRef = useRef<HTMLInputElement | null>(null);
+  const [parsedMealForAutoSave, setParsedMealForAutoSave] = useState<ParsedMealData | null>(null);
+
+  // Auto-save effect
+  useEffect(() => {
+    const doAutoSave = async () => {
+      if (!autoSave || !parsedMealForAutoSave || parsedMealForAutoSave.items.length === 0) return;
+      if (!parsedMealForAutoSave.items.every(isMealItemComplete)) return;
+      if (!title.trim()) return;
+      if (!csrfToken) return;
+
+      setSaving(true);
+      setSaveError(null);
+      setSaveSuccess(null);
+
+      try {
+        const cleanedItems = parsedMealForAutoSave.items.map((item) => ({
+          name: item.name.trim(),
+          quantity: Number(item.quantity),
+          unit: item.unit.trim(),
+          calories: Number(item.calories),
+          protein: Number(item.protein),
+          carbs: Number(item.carbs),
+          fat: Number(item.fat),
+        }));
+
+        const res = await fetch("/api/meals", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
+          credentials: "include",
+          body: JSON.stringify({
+            title,
+            mealDate: new Date(`${mealDate}T12:00:00`).toISOString(),
+            items: cleanedItems,
+          }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to auto-save meal");
+        setSaveSuccess(t("autoSaveSuccess"));
+        setParsedMeal(null);
+        setParsedMealForAutoSave(null);
+      } catch (err) {
+        console.error(err);
+        setSaveError(err instanceof Error ? err.message : "Unknown auto-save error");
+      } finally {
+        setSaving(false);
+      }
+    };
+
+    doAutoSave();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parsedMealForAutoSave]);
 
   async function handleParseMeal(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -106,6 +160,9 @@ export default function MealsPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to parse meal");
       setParsedMeal(data.data);
+      if (autoSave && title) {
+        setParsedMealForAutoSave(data.data);
+      }
     } catch (err) {
       console.error(err);
       setParseError(err instanceof Error ? err.message : "Unknown parse error");
@@ -291,7 +348,7 @@ export default function MealsPage() {
             />
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               type="submit"
               disabled={loading}
@@ -306,6 +363,39 @@ export default function MealsPage() {
             >
               {t("reviewEdit")}
             </button>
+            <div className="relative ml-auto flex items-center gap-2">
+              <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-ink">
+                <span>{t("autoSave")}</span>
+                <button
+                  type="button"
+                  onClick={() => setShowAutoSaveTooltip(!showAutoSaveTooltip)}
+                  className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-300 text-slate-700 hover:bg-slate-400"
+                  aria-label={t("autoSaveTooltipTitle")}
+                >
+                  ?
+                </button>
+              </label>
+              <button
+                type="button"
+                onClick={() => setAutoSave(!autoSave)}
+                className={`relative h-6 w-11 rounded-full transition-colors ${
+                  autoSave ? "bg-emerald-500" : "bg-slate-300"
+                }`}
+                role="switch"
+                aria-checked={autoSave}
+              >
+                <span
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+                    autoSave ? "left-[22px]" : "left-0.5"
+                  }`}
+                />
+              </button>
+              {showAutoSaveTooltip && (
+                <div className="absolute right-0 top-full z-10 mt-2 w-64 rounded-lg border border-border bg-surface p-3 shadow-lg">
+                  <p className="text-sm text-ink">{t("autoSaveTooltip")}</p>
+                </div>
+              )}
+            </div>
           </div>
         </form>
 
