@@ -72,14 +72,9 @@ export default function LoginForm() {
             </div>
 
             <div>
-              <div className="mb-1 flex items-center justify-between gap-2">
-                <label className="label-stitch mb-0" htmlFor="login-password">
-                  {t("password")}
-                </label>
-                <Link href="/forgot-password" className="link-accent text-[12px]">
-                  {t("forgotPassword")}
-                </Link>
-              </div>
+              <label className="label-stitch" htmlFor="login-password">
+                {t("password")}
+              </label>
               <input
                 id="login-password"
                 type="password"
@@ -89,6 +84,11 @@ export default function LoginForm() {
                 placeholder={t("passwordPlaceholder")}
                 autoComplete="current-password"
               />
+              <div className="mt-1 text-right">
+                <Link href="/forgot-password" className="link-accent text-[12px]">
+                  {t("forgotPassword")}
+                </Link>
+              </div>
             </div>
 
             <button

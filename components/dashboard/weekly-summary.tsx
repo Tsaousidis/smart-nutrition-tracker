@@ -87,10 +87,8 @@ export default function WeeklySummary({ totals, targets }: Props) {
               </div>
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-                  metric.diff > 10
+                  metric.diff > 0
                     ? "bg-red-100 text-red-700"
-                    : metric.diff < -10
-                    ? "bg-amber-100 text-amber-700"
                     : "bg-emerald-100 text-emerald-700"
                 }`}
               >
