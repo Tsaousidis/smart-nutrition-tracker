@@ -2,9 +2,12 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await auth();
+
+    // Get timezone from client header (default to UTC if not provided)
+    const userTimezone = request.headers.get("x-user-timezone") || "UTC";
 
     if (!session?.user?.email) {
       return NextResponse.json(
@@ -33,11 +36,16 @@ export async function GET() {
       );
     }
 
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    // Calculate start/end of day based on user's timezone
+    const now = new Date();
+    const userOffset = getTimezoneOffset(userTimezone, now);
+    
+    // Create dates in user's local timezone
+    const startOfDay = new Date(now.getTime() - userOffset);
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(now.getTime() - userOffset);
+    endOfDay.setUTCHours(23, 59, 59, 999);
 
     const meals = await prisma.meal.findMany({
       where: {
@@ -255,4 +263,38 @@ export async function GET() {
       { status: 500 }
     );
   }
+}
+
+// Helper function to calculate timezone offset in milliseconds
+function getTimezoneOffset(timezone: string, date: Date): number {
+  // Common timezone offsets in milliseconds (UTC offset)
+  const timezoneOffsets: Record<string, number> = {
+    "Europe/Athens": 3 * 60 * 60 * 1000,     // UTC+3
+    "Europe/London": 0,                        // UTC+0
+    "Europe/Berlin": 1 * 60 * 60 * 1000,       // UTC+1
+    "Europe/Paris": 1 * 60 * 60 * 1000,        // UTC+1
+    "America/New_York": -5 * 60 * 60 * 1000,   // UTC-5
+    "America/Los_Angeles": -8 * 60 * 60 * 1000,// UTC-8
+    "America/Chicago": -6 * 60 * 60 * 1000,    // UTC-6
+    "UTC": 0,
+  };
+
+  // Try to match the timezone string
+  for (const [tz, offset] of Object.entries(timezoneOffsets)) {
+    if (timezone.includes(tz.split("/")[1] || tz)) {
+      return offset;
+    }
+  }
+
+  // Try to parse numeric offset (e.g., "+03:00" or "03:00")
+  const match = timezone.match(/([+-])?(\d{1,2}):?(\d{2})?/);
+  if (match) {
+    const sign = match[1] === "-" ? -1 : 1;
+    const hours = parseInt(match[2] || "0", 10);
+    const minutes = parseInt(match[3] || "0", 10);
+    return sign * (hours * 60 + minutes) * 60 * 1000;
+  }
+
+  // Default to UTC
+  return 0;
 }

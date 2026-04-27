@@ -97,7 +97,13 @@ export default function HistoryPage() {
     setError(null);
 
     try {
-      const res = await fetch(`/api/history?date=${date}`);
+      // Get user's timezone and send as header
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const res = await fetch(`/api/history?date=${date}`, {
+        headers: {
+          "x-user-timezone": userTimezone,
+        },
+      });
       const data: HistoryResponse = await res.json();
 
       if (!res.ok || !data.ok) {

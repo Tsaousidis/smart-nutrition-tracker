@@ -94,7 +94,13 @@ export default function DashboardClient() {
     setError(null);
 
     try {
-      const res = await fetch("/api/dashboard");
+      // Get user's timezone and send as header
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const res = await fetch("/api/dashboard", {
+        headers: {
+          "x-user-timezone": userTimezone,
+        },
+      });
       const data: DashboardResponse = await res.json();
 
       if (!res.ok || !data.ok) {
