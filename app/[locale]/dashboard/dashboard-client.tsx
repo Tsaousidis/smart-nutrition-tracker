@@ -462,8 +462,8 @@ export default function DashboardClient() {
                     </div>
                   </div>
 
-                  <div className="grid auto-rows-fr gap-6 h-full min-h-0">
-                    <div className="h-full min-h-0 rounded-xl border border-border bg-surface p-5 ambient-shadow flex flex-col">
+                  <div className="grid gap-6">
+                    <div className="min-h-[180px] rounded-xl border border-border bg-surface p-5 ambient-shadow flex flex-col">
                       <h3 className="font-display text-lg font-semibold text-brand">{t("streakHabits")}</h3>
                       <div className="mt-4 space-y-3 text-sm">
                         <p className="flex items-center justify-between">
