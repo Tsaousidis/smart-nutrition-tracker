@@ -358,24 +358,20 @@ export default function ProfileForm() {
       </section>
 
       {/* Account Deletion Section - at the bottom */}
-      <section className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-5">
+      <section className="mt-8">
         {!showDeleteConfirm ? (
-          <>
-            <h2 className="mb-3 text-lg font-semibold text-red-700">{t("deleteAccount")}</h2>
-            <p className="mb-4 text-sm text-gray-600">{t("deleteAccountWarning")}</p>
-            <button
-              type="button"
-              onClick={() => setShowDeleteConfirm(true)}
-              className="w-full rounded-lg border border-red-300 bg-red-100 px-4 py-2 text-red-700 hover:bg-red-200"
-            >
-              {t("deleteAccountButton")}
-            </button>
-          </>
+          <button
+            type="button"
+            onClick={() => setShowDeleteConfirm(true)}
+            className="text-sm text-ink-muted underline-offset-2 hover:text-red-600 hover:underline transition-colors"
+          >
+            {t("deleteAccount")}
+          </button>
         ) : (
-          <>
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-5">
             <h2 className="mb-3 text-lg font-semibold text-red-700">{t("deleteAccount")}</h2>
             <p className="mb-4 text-sm text-gray-600">{t("deleteAccountWarning")}</p>
-            
+
             <div className="space-y-3">
               <div>
                 <label className="label-stitch">{t("confirmPassword")}</label>
@@ -387,7 +383,7 @@ export default function ProfileForm() {
                   placeholder={t("enterPasswordToDelete")}
                 />
               </div>
-              
+
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -422,7 +418,7 @@ export default function ProfileForm() {
                 {t("accountDeleted")}
               </div>
             )}
-          </>
+          </div>
         )}
       </section>
 
