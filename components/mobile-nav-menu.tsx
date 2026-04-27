@@ -26,16 +26,23 @@ export default function MobileNavMenu({
 
   async function handleLogout() {
     setOpen(false);
-    // Use NEXT_PUBLIC_APP_URL if available (production), fallback to dynamic origin
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-    const callbackUrl = appUrl 
-      ? `${appUrl}/${locale}/login` 
-      : (typeof window !== "undefined" && window.location.origin 
-        ? `${window.location.origin}/${locale}/login` 
-        : `/${locale}/login`);
-    await signOut({
-      callbackUrl,
-    });
+    
+    // Unregister any service workers first (fixes localhost:10000 redirect issue)
+    if ("serviceWorker" in navigator) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          await registration.unregister();
+        }
+      } catch (err) {
+        console.log("SW unregister error:", err);
+      }
+    }
+    
+    // Sign out without NextAuth redirect
+    await signOut({ redirect: false });
+    // Full page navigation to login
+    window.location.href = `/${locale}/login`;
   }
 
   return (
