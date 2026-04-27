@@ -40,9 +40,7 @@ export default async function Navbar() {
               <form
                 action={async () => {
                   "use server";
-                  await signOut({
-                    redirectTo: `/${locale}/login`,
-                  });
+                  await signOut({ redirect: false });
                 }}
                 className="hidden md:block"
               >
