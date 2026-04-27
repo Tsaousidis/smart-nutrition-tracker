@@ -77,14 +77,18 @@ export default function HistoryPage() {
       day: "2-digit",
       month: "long",
       year: "numeric",
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });
   }
 
   function getIsoDate(offsetDays = 0): string {
-    const date = new Date();
-    date.setDate(date.getDate() + offsetDays);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-      date.getDate()
+    // Use user's local timezone for date
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60 * 1000;
+    const localDate = new Date(now.getTime() - offset);
+    localDate.setDate(localDate.getDate() + offsetDays);
+    return `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, "0")}-${String(
+      localDate.getDate()
     ).padStart(2, "0")}`;
   }
 

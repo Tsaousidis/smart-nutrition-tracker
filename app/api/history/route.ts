@@ -74,13 +74,24 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const requestedDate = searchParams.get("date");
 
-    // Calculate today's date based on user's timezone
+    // Calculate today's date based on user's timezone using Intl
     const now = new Date();
-    const userOffset = getTimezoneOffset(userTimezone, now);
+    const userLocale = req.headers.get("accept-language")?.split(",")[0] || "en-US";
+    const userFormatter = new Intl.DateTimeFormat(userLocale, {
+      timeZone: userTimezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
     
-    const today = new Date(now.getTime() - userOffset);
-    today.setUTCHours(0, 0, 0, 0);
-
+    // Parse the local date parts
+    const parts = userFormatter.formatToParts(now);
+    const year = parseInt(parts.find(p => p.type === "year")?.value || "2024", 10);
+    const month = parseInt(parts.find(p => p.type === "month")?.value || "01", 10);
+    const day = parseInt(parts.find(p => p.type === "day")?.value || "01", 10);
+    
+    // Create start/end of day in UTC from local date parts
+    const today = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
     let selectedDate = new Date(today);
 
     if (requestedDate) {
@@ -111,8 +122,7 @@ export async function GET(req: NextRequest) {
       take: 1,
     });
 
-    const chartEndDate = new Date(now.getTime() - userOffset);
-    chartEndDate.setUTCHours(23, 59, 59, 999);
+    const chartEndDate = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
     let chartStartDate: Date;
     if (firstMeal) {
@@ -201,8 +211,7 @@ export async function GET(req: NextRequest) {
 
     // Generate chart days from first meal date to today
     const chartDays: HistoryDay[] = [];
-    const endDate = new Date(now.getTime() - userOffset);
-    endDate.setUTCHours(23, 59, 59, 999);
+    const endDate = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
     
     const currentDate = new Date(chartStartDate);
     while (currentDate <= endDate) {

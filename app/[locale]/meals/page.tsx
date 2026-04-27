@@ -69,7 +69,13 @@ export default function MealsPage() {
   const [title, setTitle] = useState("");
   const [selectedTitle, setSelectedTitle] = useState("");
   const [mealText, setMealText] = useState("");
-  const [mealDate, setMealDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [mealDate, setMealDate] = useState(() => {
+    // Use user's local timezone for default date
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60 * 1000;
+    const localDate = new Date(now.getTime() - offset);
+    return localDate.toISOString().slice(0, 10);
+  });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [parsedMeal, setParsedMeal] = useState<ParsedMealData | null>(null);
@@ -342,7 +348,13 @@ export default function MealsPage() {
               </button>
               <button
                 type="button"
-                onClick={() => setMealDate(new Date().toISOString().slice(0, 10))}
+                onClick={() => {
+                  // Use user's local timezone for date
+                  const now = new Date();
+                  const offset = now.getTimezoneOffset() * 60 * 1000;
+                  const localDate = new Date(now.getTime() - offset);
+                  setMealDate(localDate.toISOString().slice(0, 10));
+                }}
                 className="flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-ink-muted transition hover:border-brand hover:text-brand"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

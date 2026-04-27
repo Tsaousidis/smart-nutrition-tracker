@@ -38,14 +38,25 @@ export async function GET(request: Request) {
 
     // Calculate start/end of day based on user's timezone
     const now = new Date();
-    const userOffset = getTimezoneOffset(userTimezone, now);
     
-    // Create dates in user's local timezone
-    const startOfDay = new Date(now.getTime() - userOffset);
-    startOfDay.setUTCHours(0, 0, 0, 0);
+    // Get user's local date using Intl to properly handle timezone
+    const userLocale = request.headers.get("accept-language")?.split(",")[0] || "en-US";
+    const userFormatter = new Intl.DateTimeFormat(userLocale, {
+      timeZone: userTimezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
     
-    const endOfDay = new Date(now.getTime() - userOffset);
-    endOfDay.setUTCHours(23, 59, 59, 999);
+    // Parse the local date parts
+    const parts = userFormatter.formatToParts(now);
+    const year = parseInt(parts.find(p => p.type === "year")?.value || "2024", 10);
+    const month = parseInt(parts.find(p => p.type === "month")?.value || "01", 10);
+    const day = parseInt(parts.find(p => p.type === "day")?.value || "01", 10);
+    
+    // Create start/end of day in UTC from local date parts
+    const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+    const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
     const meals = await prisma.meal.findMany({
       where: {
