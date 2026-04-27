@@ -1,4 +1,4 @@
-﻿import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import NavbarClient from "./navbar-client";
@@ -33,32 +33,19 @@ export default async function Navbar() {
         </div>
 
         <div className="relative flex shrink-0 items-center gap-3">
-          <NavbarClient session={session} />
+          <NavbarClient
+            session={session}
+            locale={locale}
+            logoutLabel={session?.user ? t("logout") : undefined}
+          />
 
           {session?.user ? (
-            <>
-              <form
-                action={async () => {
-                  "use server";
-                  await signOut({ redirect: false });
-                }}
-                className="hidden md:block"
-              >
-                <button
-                  type="submit"
-                  className="rounded-lg bg-brand px-4 py-2 text-xs font-bold uppercase tracking-wider text-on-brand shadow-md transition hover:bg-brand-hover active:scale-[0.98]"
-                >
-                  {t("logout")}
-                </button>
-              </form>
-
-              <MobileNavMenu
-                items={navItems}
-                locale={locale}
-                menuLabel={t("menu")}
-                logoutLabel={t("logout")}
-              />
-            </>
+            <MobileNavMenu
+              items={navItems}
+              locale={locale}
+              menuLabel={t("menu")}
+              logoutLabel={t("logout")}
+            />
           ) : null}
         </div>
       </div>
