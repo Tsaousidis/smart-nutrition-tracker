@@ -512,7 +512,11 @@ export default function DashboardClient() {
                           <div key={meal.id} className="rounded-lg border border-border bg-surface-soft px-4 py-3">
                             <p className="font-medium text-ink">{meal.title || t("untitledMeal")}</p>
                             <p className="text-sm text-ink-muted">
-                              {new Date(meal.mealDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} -{" "}
+                              {new Date(meal.mealDate).toLocaleTimeString([], { 
+                                hour: "2-digit", 
+                                minute: "2-digit",
+                                timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                              })} -{" "}
                               {Math.round(mealCalories)} kcal
                             </p>
                           </div>

@@ -26,10 +26,15 @@ export default function MobileNavMenu({
 
   async function handleLogout() {
     setOpen(false);
-    // Use dynamic origin to avoid localhost redirect on mobile
-    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+    // Use NEXT_PUBLIC_APP_URL if available (production), fallback to dynamic origin
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    const callbackUrl = appUrl 
+      ? `${appUrl}/${locale}/login` 
+      : (typeof window !== "undefined" && window.location.origin 
+        ? `${window.location.origin}/${locale}/login` 
+        : `/${locale}/login`);
     await signOut({
-      callbackUrl: baseUrl ? `${baseUrl}/${locale}/login` : `/${locale}/login`,
+      callbackUrl,
     });
   }
 

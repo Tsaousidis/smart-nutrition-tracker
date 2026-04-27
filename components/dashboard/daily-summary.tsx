@@ -40,7 +40,9 @@ export default function DailySummary({ meals }: DailySummaryProps) {
             <div className="mb-3">
               <p className="font-medium">{meal.title || "Untitled Meal"}</p>
               <p className="text-sm text-gray-500">
-                {new Date(meal.mealDate).toLocaleString()}
+                {new Date(meal.mealDate).toLocaleString(undefined, {
+                  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                })}
               </p>
             </div>
 
