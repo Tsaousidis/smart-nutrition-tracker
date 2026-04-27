@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: __dirname,
+  },
   compress: true,
   async headers() {
     const isProduction = process.env.NODE_ENV === "production";
