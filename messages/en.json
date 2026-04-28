@@ -198,6 +198,7 @@
   "Meals": {
     "title": "Meal Parser",
     "subtitle": "Parse meal text with AI, review the extracted items, edit them if needed, and save.",
+    "today": "Today",
     "mealTitle": "Meal Title",
     "selectMealTitle": "Select meal title...",
     "mealTitlePlaceholder": "Example: Breakfast",
