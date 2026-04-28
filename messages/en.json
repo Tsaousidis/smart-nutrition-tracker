@@ -303,7 +303,21 @@
     "profileCompleteSubtitle": "You're all set. Continue to your dashboard to start tracking meals.",
     "continueToDashboard": "Continue to Dashboard",
     "editProfileAgain": "Edit profile again",
-    "dashboardRedirectHint": "Redirecting automatically in {seconds}s."
+    "dashboardRedirectHint": "Redirecting automatically in {seconds}s.",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "enterCurrentPassword": "Enter current password",
+    "enterNewPassword": "Enter new password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "passwordChanged": "Password changed successfully!",
+    "passwordChangeError": "Failed to change password",
+    "passwordMismatch": "New passwords do not match",
+    "incorrectCurrentPassword": "Current password is incorrect",
+    "savePassword": "Save Password",
+    "changing": "Changing...",
+    "accountSettings": "Account Settings"
   },
   "VerifyEmail": {
     "verifying": "Verifying your email...",

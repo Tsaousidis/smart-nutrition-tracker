@@ -304,7 +304,21 @@
     "profileCompleteSubtitle": "Είσαι έτοιμος/η. Συνέχισε στην αρχική για να ξεκινήσεις την καταγραφή γευμάτων.",
     "continueToDashboard": "Συνέχεια στην Αρχική",
     "editProfileAgain": "Επεξεργασία προφίλ ξανά",
-    "dashboardRedirectHint": "Αυτόματη μετάβαση σε {seconds}δ."
+    "dashboardRedirectHint": "Αυτόματη μετάβαση σε {seconds}δ.",
+    "changePassword": "Αλλαγή Κωδικού",
+    "currentPassword": "Τρέχων Κωδικός",
+    "newPassword": "Νέος Κωδικός",
+    "confirmNewPassword": "Επιβεβαίωση Νέου Κωδικού",
+    "enterCurrentPassword": "Εισαγε τον τρέχοντα κωδικό",
+    "enterNewPassword": "Εισαγε τον νέο κωδικό",
+    "confirmPasswordPlaceholder": "Επιβεβαίωση νέου κωδικού",
+    "passwordChanged": "Ο κωδικός άλλαξε επιτυχώς!",
+    "passwordChangeError": "Αποτυχία αλλαγής κωδικού",
+    "passwordMismatch": "Οι νέοι κωδικοί δεν ταιριάζουν",
+    "incorrectCurrentPassword": "Ο τρέχων κωδικός είναι λανθασμένος",
+    "savePassword": "Αποθήκευση Κωδικού",
+    "changing": "Αλλαγή...",
+    "accountSettings": "Ρυθμίσεις Λογαριασμού"
   },
   "VerifyEmail": {
     "verifying": "Επαλήθευση του email σου...",
