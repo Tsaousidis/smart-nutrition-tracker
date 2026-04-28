@@ -126,6 +126,10 @@ export default function MealsPage() {
         setSaveSuccess(t("autoSaveSuccess"));
         setParsedMeal(null);
         setParsedMealForAutoSave(null);
+        // Clear form after auto-save
+        setMealText("");
+        setTitle("");
+        setSelectedTitle("");
       } catch (err) {
         console.error(err);
         setSaveError(err instanceof Error ? err.message : "Unknown auto-save error");
@@ -279,6 +283,14 @@ export default function MealsPage() {
       if (!res.ok) throw new Error(data.message || "Failed to save meal");
       setSaveSuccess(t("saveSuccess"));
       setParsedMeal(null);
+      
+      // Clear form after successful save when autoSave is enabled
+      if (autoSave) {
+        setMealText("");
+        setTitle("");
+        setSelectedTitle("");
+        setParsedMealForAutoSave(null);
+      }
     } catch (err) {
       console.error(err);
       setSaveError(err instanceof Error ? err.message : "Unknown save error");
@@ -348,13 +360,7 @@ export default function MealsPage() {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  // Use user's local timezone for date
-                  const now = new Date();
-                  const offset = now.getTimezoneOffset() * 60 * 1000;
-                  const localDate = new Date(now.getTime() - offset);
-                  setMealDate(localDate.toISOString().slice(0, 10));
-                }}
+                onClick={() => setMealDate(new Date().toISOString().slice(0, 10))}
                 className="flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-ink-muted transition hover:border-brand hover:text-brand"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
