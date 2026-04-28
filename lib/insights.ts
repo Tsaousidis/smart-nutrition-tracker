@@ -36,7 +36,7 @@ type InsightsTranslations = {
   mealCount: (count: number) => string;
   avgProteinPerMeal: (value: number) => string;
   proteinTargetPerMeal: (value: number) => string;
-  weeklyProteinDiff: (value: number) => string;
+  weeklyProteinDiff: (value: number, options?: { direction: string }) => string;
   weeklyProteinOnTrack: string;
 };
 
@@ -67,7 +67,8 @@ export function generateInsights(
   // 3. Weekly protein trend (only if at least 4 days with data)
   if (weeklyStats && weeklyStats.daysWithMeals >= 4) {
     if (Math.abs(weeklyStats.proteinDiffPercent) > 15) {
-      insights.push(translations.weeklyProteinDiff(weeklyStats.proteinDiffPercent));
+      const direction = weeklyStats.proteinDiffPercent > 0 ? "above" : "below";
+      insights.push(translations.weeklyProteinDiff(Math.abs(weeklyStats.proteinDiffPercent), { direction }));
     } else {
       insights.push(translations.weeklyProteinOnTrack);
     }
