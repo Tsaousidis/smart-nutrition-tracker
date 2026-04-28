@@ -25,6 +25,8 @@ type DashboardData = {
   };
 };
 
+import { isWithinTargetRange, getTargetRange } from "./calculations";
+
 type InsightsTranslations = {
   belowProtein: (value: number) => string;
   aboveProtein: (value: number) => string;
@@ -71,18 +73,20 @@ export function generateInsights(
     }
   }
 
-  // 4. Protein insight (existing)
-  if (remaining.protein > 20) {
-    insights.push(translations.belowProtein(Math.round(remaining.protein)));
-  } else if (remaining.protein < -10) {
-    insights.push(translations.aboveProtein(Math.abs(Math.round(remaining.protein))));
+  // 4. Protein insight (existing) - use ±10% tolerance
+  const proteinRange = getTargetRange(data.targets.proteinTarget);
+  if (data.totals.protein < proteinRange.min - 20) {
+    insights.push(translations.belowProtein(Math.round(proteinRange.min - data.totals.protein)));
+  } else if (data.totals.protein > proteinRange.max + 10) {
+    insights.push(translations.aboveProtein(Math.round(data.totals.protein - proteinRange.max)));
   }
 
-  // 5. Calories insight (existing)
-  if (remaining.calories > 200) {
-    insights.push(translations.remainingCalories(Math.round(remaining.calories)));
-  } else if (remaining.calories < -200) {
-    insights.push(translations.aboveCalories(Math.abs(Math.round(remaining.calories))));
+  // 5. Calories insight - use ±10% tolerance
+  const calorieRange = getTargetRange(data.targets.dailyCalories);
+  if (data.totals.calories < calorieRange.min - 200) {
+    insights.push(translations.remainingCalories(Math.round(calorieRange.min - data.totals.calories)));
+  } else if (data.totals.calories > calorieRange.max + 200) {
+    insights.push(translations.aboveCalories(Math.round(data.totals.calories - calorieRange.max)));
   }
 
   // Balanced day (only if no other insights)

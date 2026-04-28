@@ -102,3 +102,26 @@ export function calculateMacroTargets(
     fatTarget,
   };
 }
+
+// Tolerance range for being "on target" (±10%)
+export const TARGET_TOLERANCE_PERCENT = 0.1;
+
+/**
+ * Check if a value is within the target range (±10%)
+ */
+export function isWithinTargetRange(value: number, target: number): boolean {
+  if (target <= 0) return false;
+  const minTarget = target * (1 - TARGET_TOLERANCE_PERCENT);
+  const maxTarget = target * (1 + TARGET_TOLERANCE_PERCENT);
+  return value >= minTarget && value <= maxTarget;
+}
+
+/**
+ * Get the min and max bounds for a target (±10%)
+ */
+export function getTargetRange(target: number): { min: number; max: number } {
+  return {
+    min: target * (1 - TARGET_TOLERANCE_PERCENT),
+    max: target * (1 + TARGET_TOLERANCE_PERCENT),
+  };
+}
