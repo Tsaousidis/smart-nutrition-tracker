@@ -6,6 +6,7 @@ import SingleMetricChart from "@/components/charts/single-metric-chart";
 import MacroDonutChart from "@/components/charts/macro-donut-chart";
 import WeeklySummary from "@/components/dashboard/weekly-summary";
 import { generateInsights } from "@/lib/insights";
+import { isWithinTargetRange, getTargetRange } from "@/lib/calculations";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
@@ -151,11 +152,19 @@ export default function DashboardClient() {
 
   const metrics = useMemo(() => {
     if (!dashboardData) return null;
-    const caloriePct =
-      dashboardData.targets.dailyCalories > 0
-        ? Math.max(0, (dashboardData.totals.calories / dashboardData.targets.dailyCalories) * 100)
-        : 0;
-    const isOverCalories = dashboardData.totals.calories > dashboardData.targets.dailyCalories;
+    
+    // Calculate progress based on ±10% tolerance range
+    const calorieTarget = dashboardData.targets.dailyCalories;
+    const { min: minCalorieTarget, max: maxCalorieTarget } = getTargetRange(calorieTarget);
+    const currentCalories = dashboardData.totals.calories;
+    
+    // Progress bar fills when within ±10% (cap at 100%)
+    const caloriePct = calorieTarget > 0
+      ? Math.min(100, Math.max(0, (currentCalories / maxCalorieTarget) * 100))
+      : 0;
+    
+    // Is over target only when exceeding the ±10% range
+    const isOverCalories = currentCalories > maxCalorieTarget;
     const proteinPct =
       dashboardData.targets.proteinTarget > 0
         ? Math.min(
@@ -175,19 +184,23 @@ export default function DashboardClient() {
     const trendPct = hasYesterdayMeal && ydayCalories > 0 ? ((todayCalories - ydayCalories) / ydayCalories) * 100 : null;
 
     const daysWithData = last7.filter((d) => d.calories > 0).length;
-    const daysWithinTarget = last7.filter((d) => d.calories > 0 && d.calories <= dashboardData.targets.dailyCalories).length;
+    const daysWithinTarget = last7.filter((d) => d.calories > 0 && isWithinTargetRange(d.calories, dashboardData.targets.dailyCalories)).length;
     const completionRate = daysWithData > 0 ? Math.round((daysWithinTarget / daysWithData) * 100) : 0;
 
+    // Streak only counts days within ±10% of target
     let currentStreak = 0;
     for (let i = chartData.length - 1; i >= 0; i -= 1) {
-      if (chartData[i].calories > 0) currentStreak += 1;
-      else break;
+      if (chartData[i].calories > 0 && isWithinTargetRange(chartData[i].calories, dashboardData.targets.dailyCalories)) {
+        currentStreak += 1;
+      } else {
+        break;
+      }
     }
 
     let bestStreak = 0;
     let run = 0;
     for (const day of chartData) {
-      if (day.calories > 0) {
+      if (day.calories > 0 && isWithinTargetRange(day.calories, dashboardData.targets.dailyCalories)) {
         run += 1;
         if (run > bestStreak) bestStreak = run;
       } else {
@@ -231,6 +244,7 @@ export default function DashboardClient() {
       nextActionHref,
       last7,
       daysWithData,
+      maxCalorieTarget,
     };
   }, [dashboardData, insights, t]);
 
@@ -337,7 +351,7 @@ export default function DashboardClient() {
                 <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-surface-soft">
                   <div
                     className="h-full rounded-full bg-amber-500"
-                    style={{ width: `${Math.min(100, Math.max(0, (dashboardData.totals.calories / dashboardData.targets.dailyCalories) * 100))}%` }}
+                    style={{ width: `${Math.min(100, Math.max(0, (dashboardData.totals.calories / metrics.maxCalorieTarget) * 100))}%` }}
                   />
                 </div>
               </div>

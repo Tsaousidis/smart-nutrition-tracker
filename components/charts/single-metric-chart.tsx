@@ -35,7 +35,7 @@ export default function SingleMetricChart({ data, target, title, unit, color, ta
         <h3 className="text-lg font-semibold">{title}</h3>
         {target !== undefined && (
           <span className="text-sm text-slate-600">
-            {t("target")}: {target.toFixed(0)} {unit} (dashed line)
+            {t("target")}: {target.toFixed(0)} {unit}
           </span>
         )}
       </div>
