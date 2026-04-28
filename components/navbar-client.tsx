@@ -67,6 +67,7 @@ export default function NavbarClient({
             width={24}
             height={16}
             className="pointer-events-none h-4 w-auto max-w-[26px] object-contain"
+            style={{ height: "auto" }}
             aria-hidden
             unoptimized
           />
@@ -89,6 +90,7 @@ export default function NavbarClient({
             width={24}
             height={16}
             className="pointer-events-none h-4 w-auto max-w-[26px] object-contain"
+            style={{ height: "auto" }}
             aria-hidden
             unoptimized
           />
