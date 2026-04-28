@@ -42,6 +42,62 @@ export default function ProfileForm() {
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  // Password change state
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+
+  // Handle password change
+  async function handleChangePassword() {
+    setPasswordLoading(true);
+    setPasswordError(null);
+    setPasswordSuccess(false);
+
+    if (newPassword !== confirmNewPassword) {
+      setPasswordError(t("passwordMismatch"));
+      setPasswordLoading(false);
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      setPasswordLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/account/password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.message);
+      }
+
+      setPasswordSuccess(true);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setTimeout(() => {
+        setShowPasswordForm(false);
+        setPasswordSuccess(false);
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      setPasswordError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setPasswordLoading(false);
+    }
+  }
+
   // Handle account deletion
   async function handleDeleteAccount() {
     setDeleteLoading(true);
@@ -357,19 +413,110 @@ export default function ProfileForm() {
         </div>
       </section>
 
-      {/* Account Deletion Section - at the bottom */}
-      <section className="mt-8">
+      {/* Account Settings Section */}
+      <section className="mt-8 rounded-xl border border-border bg-surface-soft p-5">
+        <h2 className="mb-4 font-display text-lg font-semibold text-brand">{t("accountSettings")}</h2>
+
+        {/* Password Change */}
+        {!showPasswordForm && !showDeleteConfirm ? (
+          <button
+            type="button"
+            onClick={() => setShowPasswordForm(true)}
+            className="text-sm text-ink-muted underline-offset-2 hover:text-brand hover:underline transition-colors"
+          >
+            {t("changePassword")}
+          </button>
+        ) : showDeleteConfirm ? null : (
+          <div className="rounded-2xl border border-brand/20 bg-surface p-5">
+            <h3 className="mb-3 text-base font-semibold text-brand">{t("changePassword")}</h3>
+            <p className="mb-4 text-sm text-ink-muted">{t("enterCurrentPassword")}</p>
+
+            <div className="space-y-3">
+              <div>
+                <label className="label-stitch">{t("currentPassword")}</label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="input-stitch placeholder:text-ink-muted/60"
+                  placeholder={t("enterCurrentPassword")}
+                />
+              </div>
+              <div>
+                <label className="label-stitch">{t("newPassword")}</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="input-stitch placeholder:text-ink-muted/60"
+                  placeholder={t("enterNewPassword")}
+                />
+              </div>
+              <div>
+                <label className="label-stitch">{t("confirmNewPassword")}</label>
+                <input
+                  type="password"
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  className="input-stitch placeholder:text-ink-muted/60"
+                  placeholder={t("confirmPasswordPlaceholder")}
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleChangePassword}
+                  disabled={passwordLoading || !currentPassword || !newPassword || !confirmNewPassword}
+                  className="flex-1 rounded-lg border border-brand bg-brand px-4 py-2 text-white hover:opacity-90 disabled:opacity-50"
+                >
+                  {passwordLoading ? t("changing") : t("savePassword")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPasswordForm(false);
+                    setCurrentPassword("");
+                    setNewPassword("");
+                    setConfirmNewPassword("");
+                    setPasswordError(null);
+                  }}
+                  className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50"
+                >
+                  {t("cancel")}
+                </button>
+              </div>
+            </div>
+
+            {passwordError && (
+              <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-3 text-red-700">
+                {passwordError}
+              </div>
+            )}
+
+            {passwordSuccess && (
+              <div className="mt-4 rounded-lg border border-green-300 bg-green-50 p-3 text-green-700">
+                {t("passwordChanged")}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Divider */}
+        <div className="my-5 h-px bg-border"></div>
+
+        {/* Account Deletion */}
         {!showDeleteConfirm ? (
           <button
             type="button"
             onClick={() => setShowDeleteConfirm(true)}
-            className="text-sm text-ink-muted underline-offset-2 hover:text-red-600 hover:underline transition-colors"
+            className="text-sm text-red-600 underline-offset-2 hover:text-red-700 hover:underline transition-colors"
           >
             {t("deleteAccount")}
           </button>
         ) : (
           <div className="rounded-2xl border border-red-200 bg-red-50 p-5">
-            <h2 className="mb-3 text-lg font-semibold text-red-700">{t("deleteAccount")}</h2>
+            <h3 className="mb-3 text-base font-semibold text-red-700">{t("deleteAccount")}</h3>
             <p className="mb-4 text-sm text-gray-600">{t("deleteAccountWarning")}</p>
 
             <div className="space-y-3">
