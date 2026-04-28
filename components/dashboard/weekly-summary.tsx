@@ -28,17 +28,28 @@ export default function WeeklySummary({ totals, targets }: Props) {
   const t = useTranslations("Dashboard");
 
   const getDiff = (actual: number, dailyTarget: number) => {
-    const { min, max } = getTargetRange(dailyTarget);
-    const weeklyMin = min * DAYS_PER_WEEK;
-    const weeklyMax = max * DAYS_PER_WEEK;
+    const weeklyTarget = dailyTarget * DAYS_PER_WEEK;
+    const tolerance = 0.1; // ±10%
+    
     if (actual === 0) return null;
-    if (actual < weeklyMin) {
-      return { value: Math.round(((weeklyMin - actual) / weeklyMin) * 100), status: "under" };
+    
+    // Calculate percentage of target
+    const pctOfTarget = actual / weeklyTarget;
+    
+    // Check if within ±10% range
+    if (pctOfTarget >= (1 - tolerance) && pctOfTarget <= (1 + tolerance)) {
+      return { value: 0, status: "on-track" };
     }
-    if (actual > weeklyMax) {
-      return { value: Math.round(((actual - weeklyMax) / weeklyMax) * 100), status: "over" };
+    
+    // Below range
+    if (pctOfTarget < (1 - tolerance)) {
+      const diffPercent = Math.round(((weeklyTarget - actual) / weeklyTarget) * 100);
+      return { value: diffPercent, status: "under" };
     }
-    return { value: 0, status: "on-track" };
+    
+    // Above range
+    const diffPercent = Math.round(((actual - weeklyTarget) / weeklyTarget) * 100);
+    return { value: diffPercent, status: "over" };
   };
 
   const formatNumber = (value: number) => Math.round(value).toLocaleString();

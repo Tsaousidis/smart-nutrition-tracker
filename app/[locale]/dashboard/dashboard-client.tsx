@@ -144,7 +144,7 @@ export default function DashboardClient() {
         mealCount: (count) => t("mealCount", { count }),
         avgProteinPerMeal: (value) => t("avgProteinPerMeal", { value }),
         proteinTargetPerMeal: (value) => t("proteinTargetPerMeal", { value }),
-        weeklyProteinDiff: (value) => t("weeklyProteinDiff", { value }),
+        weeklyProteinDiff: (value, options) => t("weeklyProteinDiff", { value, direction: options?.direction ? t(options.direction) : "" }),
         weeklyProteinOnTrack: t("weeklyProteinOnTrack"),
       }
     );
