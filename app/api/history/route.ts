@@ -95,8 +95,12 @@ export async function GET(req: NextRequest) {
     let selectedDate = new Date(today);
 
     if (requestedDate) {
-      const parsedDate = new Date(`${requestedDate}T00:00:00`);
-      if (Number.isNaN(parsedDate.getTime())) {
+      // Parse as local date (YYYY-MM-DD) and convert to UTC day boundaries
+      const [y, m, d] = requestedDate.split("-").map(Number);
+      // Create date in user's timezone, then convert to UTC boundaries
+      const localDate = new Date(y, m - 1, d);
+      selectedDate = new Date(Date.UTC(y, m - 1, d, 0, 0, 0, 0));
+      if (Number.isNaN(selectedDate.getTime())) {
         return NextResponse.json(
           {
             ok: false,
@@ -106,7 +110,6 @@ export async function GET(req: NextRequest) {
           { status: 400 }
         );
       }
-      selectedDate = parsedDate;
     }
 
     selectedDate.setUTCHours(0, 0, 0, 0);

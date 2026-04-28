@@ -82,14 +82,12 @@ export default function HistoryPage() {
   }
 
   function getIsoDate(offsetDays = 0): string {
-    // Use user's local timezone for date
+    // Use user's local timezone for date (same logic as meals page)
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60 * 1000;
     const localDate = new Date(now.getTime() - offset);
     localDate.setDate(localDate.getDate() + offsetDays);
-    return `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, "0")}-${String(
-      localDate.getDate()
-    ).padStart(2, "0")}`;
+    return localDate.toISOString().slice(0, 10);
   }
 
   const [selectedDate, setSelectedDate] = useState<string>(getIsoDate());
