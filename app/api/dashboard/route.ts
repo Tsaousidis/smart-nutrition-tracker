@@ -2,6 +2,21 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
+// Helper to format date to local date string using user's timezone
+function formatToLocalDate(date: Date, timezone: string, locale: string): string {
+  const formatter = new Intl.DateTimeFormat(locale, {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = formatter.formatToParts(date);
+  const year = parts.find(p => p.type === "year")?.value || "2024";
+  const month = parts.find(p => p.type === "month")?.value || "01";
+  const day = parts.find(p => p.type === "day")?.value || "01";
+  return `${year}-${month}-${day}`;
+}
+
 export async function GET(request: Request) {
   try {
     const session = await auth();
@@ -134,9 +149,9 @@ export async function GET(request: Request) {
       orderBy: { mealDate: "asc" },
     });
 
-    // Group meals by day
+    // Group meals by day using user's timezone
     const chartGroups = chartMeals.reduce<Record<string, { calories: number; protein: number; fat: number }>>((acc, meal) => {
-      const dayKey = meal.mealDate.toISOString().slice(0, 10);
+      const dayKey = formatToLocalDate(meal.mealDate, userTimezone, userLocale);
       if (!acc[dayKey]) {
         acc[dayKey] = { calories: 0, protein: 0, fat: 0 };
       }
@@ -148,12 +163,12 @@ export async function GET(request: Request) {
       return acc;
     }, {});
 
-    // Generate chart days
+    // Generate chart days using user's timezone
     const chartData: Array<{ date: string; calories: number; protein: number; fat: number }> = [];
     const currentDate = new Date(chartStartDate);
     const today = new Date();
     while (currentDate <= today) {
-      const dayKey = currentDate.toISOString().slice(0, 10);
+      const dayKey = formatToLocalDate(currentDate, userTimezone, userLocale);
       const day = dayKey.slice(8, 10) + "/" + dayKey.slice(5, 7);
       chartData.push({
         date: day,
@@ -188,7 +203,7 @@ export async function GET(request: Request) {
     const weekDaysSet = new Set<string>();
 
     for (const meal of weekMeals) {
-      const dayKey = meal.mealDate.toISOString().slice(0, 10);
+      const dayKey = formatToLocalDate(meal.mealDate, userTimezone, userLocale);
       if (!weekDaysSet.has(dayKey)) {
         weekDaysSet.add(dayKey);
         weekDaysWithMeals++;
