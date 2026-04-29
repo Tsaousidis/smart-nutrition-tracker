@@ -324,6 +324,12 @@
     "changing": "Changing...",
     "accountSettings": "Account Settings"
   },
+  "Error": {
+    "title": "Something went wrong",
+    "message": "An unexpected error occurred. Please try again.",
+    "tryAgain": "Try Again",
+    "goToDashboard": "Go to Dashboard"
+  },
   "VerifyEmail": {
     "verifying": "Verifying your email...",
     "verificationFailed": "Verification Failed",

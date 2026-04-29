@@ -26,9 +26,6 @@ export const profileSchema = z.object({
   goalType: z.enum([
     "MAINTAIN",
     "LOSE_WEIGHT",
-    "LOSE_FAT",
-    "GAIN_MUSCLE",
-    "RECOMP",
   ]),
 });
 
