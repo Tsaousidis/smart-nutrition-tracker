@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { saveMealSchema } from "@/lib/validators";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -102,6 +103,24 @@ export async function DELETE(req: NextRequest) {
           message: "Unauthorized",
         },
         { status: 401 }
+      );
+    }
+
+    // Rate limit for delete operations (20 deletes per 15 min)
+    const ip = getClientIp(req);
+    const rate = await checkRateLimit({
+      key: `meal-delete:${session.user.email}:${ip}`,
+      limit: 20,
+      windowMs: 15 * 60 * 1000,
+    });
+    if (!rate.allowed) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "RATE_LIMITED",
+          message: "Too many delete requests. Please try again later.",
+        },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
       );
     }
 

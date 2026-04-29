@@ -73,15 +73,14 @@ export async function POST(req: NextRequest) {
       where: { email },
     });
 
+    // Prevent account enumeration - always return success message
+    // If user exists, they won't receive an email (existing flow handles resend)
     if (existingUser) {
-      return NextResponse.json(
-        {
-          ok: false,
-          code: "USER_EXISTS",
-          message: "User already exists",
-        },
-        { status: 409 }
-      );
+      return NextResponse.json({
+        ok: true,
+        code: "EMAIL_SENT",
+        message: "If this email is not registered, an account will be created. If already registered, a password reset email can be requested.",
+      });
     }
 
     const hashedPassword = await hash(password, 12);
