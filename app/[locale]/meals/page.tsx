@@ -59,12 +59,12 @@ export default function MealsPage() {
   const { csrfToken } = useCsrfToken();
 
   const mealTitleOptions = [
-    { value: t.raw("mealTitleBreakfast"), label: t("mealTitleBreakfast") },
-    { value: t.raw("mealTitleMidMorning"), label: t("mealTitleMidMorning") },
-    { value: t.raw("mealTitleLunch"), label: t("mealTitleLunch") },
-    { value: t.raw("mealTitleAfternoon"), label: t("mealTitleAfternoon") },
-    { value: t.raw("mealTitleDinner"), label: t("mealTitleDinner") },
-    { value: t.raw("mealTitleSnack"), label: t("mealTitleSnack") },
+    { value: t("mealTitleBreakfast"), label: t("mealTitleBreakfast") },
+    { value: t("mealTitleMidMorning"), label: t("mealTitleMidMorning") },
+    { value: t("mealTitleLunch"), label: t("mealTitleLunch") },
+    { value: t("mealTitleAfternoon"), label: t("mealTitleAfternoon") },
+    { value: t("mealTitleDinner"), label: t("mealTitleDinner") },
+    { value: t("mealTitleSnack"), label: t("mealTitleSnack") },
   ];
   const [title, setTitle] = useState("");
   const [selectedTitle, setSelectedTitle] = useState("");
@@ -170,8 +170,12 @@ export default function MealsPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to parse meal");
       setParsedMeal(data.data);
-      if (autoSave && title) {
+      // Only set for auto-save if title is provided (trimmed)
+      if (autoSave && title.trim()) {
         setParsedMealForAutoSave(data.data);
+      } else if (!title.trim()) {
+        // Clear auto-save data if no title
+        setParsedMealForAutoSave(null);
       }
     } catch (err) {
       console.error(err);
