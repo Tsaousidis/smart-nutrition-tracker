@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { azureOpenAI } from "@/lib/azure-openai";
+import { parseWithGemini } from "@/lib/ai-fallback";
 import { mealParseInputSchema, parsedMealSchema } from "@/lib/validators";
 import { sanitizeMealInput } from "@/lib/sanitize";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
@@ -58,10 +59,10 @@ function isRetryableError(message: string): boolean {
 
 async function parseMealWithRetry(mealText: string, locale: "en" | "el") {
   let lastError: unknown;
-  const shouldUseGreek =
-    locale === "el" || /[\u0370-\u03FF]/.test(mealText);
+  const shouldUseGreek = locale === "el" || /[\u0370-\u03FF]/.test(mealText);
   const targetLanguage = shouldUseGreek ? "Greek" : "English";
 
+  // First try Azure OpenAI
   for (let attempt = 1; attempt <= MAX_RETRIES + 1; attempt++) {
     try {
       const response = await azureOpenAI.chat.completions.create({
@@ -139,16 +140,20 @@ Return this exact JSON shape:
       lastError = error;
       const errorMessage = getErrorMessage(error);
 
+      // Check if it's a quota error - if so, don't retry Azure, go directly to fallback
       if (isQuotaError(errorMessage)) {
-        throw new Error(
-          "The Azure OpenAI quota appears to be exhausted. Please try again later or tomorrow."
-        );
+        console.warn("Azure quota exhausted, switching to Gemini fallback...");
+        break;
       }
 
-      const shouldRetry =
-        isRetryableError(errorMessage) && attempt <= MAX_RETRIES;
+      const shouldRetry = isRetryableError(errorMessage) && attempt <= MAX_RETRIES;
 
       if (!shouldRetry) {
+        // Check if we should try fallback
+        if (isRetryableError(errorMessage)) {
+          console.warn("Azure error, switching to Gemini fallback...");
+          break;
+        }
         throw error;
       }
 
@@ -156,7 +161,20 @@ Return this exact JSON shape:
     }
   }
 
-  throw lastError ?? new Error("Unknown Azure OpenAI parsing error");
+  // Fallback to Gemini if Azure failed
+  console.log("Attempting Gemini fallback...");
+  try {
+    const geminiResult = await parseWithGemini(mealText, locale);
+    return geminiResult;
+  } catch (fallbackError) {
+    console.error("Gemini fallback also failed:", fallbackError);
+    // If original error was quota-related, keep that message
+    const originalMessage = getErrorMessage(lastError);
+    if (isQuotaError(originalMessage)) {
+      throw new Error("All AI services (Azure and Gemini) are currently unavailable due to quota exhaustion. Please try again later.");
+    }
+    throw lastError;
+  }
 }
 
 export async function POST(req: NextRequest) {

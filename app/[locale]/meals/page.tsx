@@ -420,6 +420,7 @@ export default function MealsPage() {
                 }`}
                 role="switch"
                 aria-checked={autoSave}
+                aria-label={autoSave ? t("autoSaveEnabled") : t("autoSaveDisabled")}
               >
                 <span
                   className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
@@ -520,14 +521,14 @@ export default function MealsPage() {
         )}
 
         {saveError && (
-          <div className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
-            <p className="font-medium">{t("saveError")}</p>
+          <div className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4 text-red-800" role="alert" aria-live="polite">
+            <p className="font-medium">✗</p>
             <p>{saveError}</p>
           </div>
         )}
 
         {saveSuccess && (
-          <div className="mt-6 rounded-lg border border-green-300 bg-green-50 p-4 text-green-800">
+          <div className="mt-6 rounded-lg border border-green-300 bg-green-50 p-4 text-green-800" role="status" aria-live="polite">
             <p className="font-medium">✓</p>
             <p>{saveSuccess}</p>
             <p className="mt-3 text-sm leading-relaxed">

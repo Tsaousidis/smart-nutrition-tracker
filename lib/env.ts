@@ -10,6 +10,16 @@ export function validateEnv() {
   ];
   const requiredInProduction = ["RESEND_API_KEY", "NEXT_PUBLIC_APP_URL"];
 
+  // Gemini fallback keys (optional - used if Azure fails)
+  const geminiKeys = [
+    "GEMINI_API_KEY1",
+    "GEMINI_API_KEY2",
+    "GEMINI_API_KEY3",
+    "GEMINI_API_KEY4",
+    "GEMINI_API_KEY5",
+    "GEMINI_API_KEY6",
+  ];
+
   const missing: string[] = [];
 
   for (const variable of requiredVars) {
