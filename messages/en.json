@@ -237,6 +237,8 @@
     "autoSaveTooltip": "When enabled, the meal will be saved automatically after AI analysis without requiring you to click Save.",
     "autoSaveTooltipTitle": "What does auto-save do?",
     "autoSaveSuccess": "Meal saved automatically!",
+    "autoSaveEnabled": "Auto-save enabled",
+    "autoSaveDisabled": "Auto-save disabled",
     "saveSuccessHistoryHint": "If you logged something by mistake, don't worry, go to <link>History</link> to delete it.",
     "incompleteItemFields": "Fill in every field for each item (name, quantity, unit, calories, protein, carbs, and fat) before saving.",
     "noItems": "You must have at least one meal item before saving.",
