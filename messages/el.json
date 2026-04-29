@@ -323,6 +323,12 @@
     "changing": "Αλλαγή...",
     "accountSettings": "Ρυθμίσεις Λογαριασμού"
   },
+  "Error": {
+    "title": "Κάτι πήγε στραβά",
+    "message": "Προέκυψε ένα απροσδόκητο σφάλμα. Παρακαλώ δοκίμασε ξανά.",
+    "tryAgain": "Δοκίμασε Ξανά",
+    "goToDashboard": "Πήγαινε στο Dashboard"
+  },
   "VerifyEmail": {
     "verifying": "Επαλήθευση του email σου...",
     "verificationFailed": "Αποτυχία Επαλήθευσης",

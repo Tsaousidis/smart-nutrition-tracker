@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { useCsrfToken } from "@/lib/useCsrfToken";
 import { calculateMacroTargets } from "@/lib/calculations";
 import { Link } from "@/i18n/navigation";
@@ -26,6 +27,7 @@ const defaultFormData: ProfileFormData = {
 
 export default function ProfileForm() {
   const t = useTranslations("Onboarding");
+  const locale = useLocale();
   const { csrfToken } = useCsrfToken();
 
   const [formData, setFormData] = useState<ProfileFormData>(defaultFormData);
@@ -119,7 +121,7 @@ export default function ProfileForm() {
       setDeleteSuccess(true);
       // Redirect to login after successful deletion
       setTimeout(() => {
-        window.location.href = "/login";
+        window.location.href = `/${locale}/login`;
       }, 2000);
     } catch (err) {
       console.error(err);
@@ -183,9 +185,9 @@ export default function ProfileForm() {
 
   useEffect(() => {
     if (saveSuccess && redirectIn === 0) {
-      window.location.href = "/dashboard";
+      window.location.href = `/${locale}/dashboard`;
     }
-  }, [redirectIn, saveSuccess]);
+  }, [redirectIn, saveSuccess, locale]);
 
   const calculatedTargets = useMemo(() => {
     if (!formData.sex || !formData.activityLevel || !formData.goalType) {
