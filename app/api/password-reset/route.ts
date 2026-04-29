@@ -13,7 +13,7 @@ const messages = {
 export async function POST(request: Request) {
   try {
     const ip = getClientIp(request);
-    const rate = checkRateLimit({
+    const rate = await checkRateLimit({
       key: `password-reset:${ip}`,
       limit: 8,
       windowMs: 15 * 60 * 1000,

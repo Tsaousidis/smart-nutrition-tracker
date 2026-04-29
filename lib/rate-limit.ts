@@ -1,3 +1,31 @@
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+// Create Redis client from environment variables
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+// Create rate limiter instances for different purposes
+const authRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "10s"), // 5 requests per 10 seconds for auth
+  prefix: "ratelimit:auth",
+});
+
+const apiRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(30, "1m"), // 30 requests per minute for general API
+  prefix: "ratelimit:api",
+});
+
+const parseRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, "1m"), // 10 requests per minute for meal parsing
+  prefix: "ratelimit:parse",
+});
+
 type RateLimitOptions = {
   key: string;
   limit: number;
@@ -9,25 +37,6 @@ type RateLimitResult = {
   retryAfterSeconds: number;
   remaining: number;
 };
-
-type Bucket = {
-  count: number;
-  resetAt: number;
-};
-
-const buckets = new Map<string, Bucket>();
-
-function nowMs() {
-  return Date.now();
-}
-
-function cleanupExpiredBuckets(currentTime: number) {
-  for (const [key, bucket] of buckets.entries()) {
-    if (bucket.resetAt <= currentTime) {
-      buckets.delete(key);
-    }
-  }
-}
 
 export function getClientIp(request: Request): string {
   const xForwardedFor = request.headers.get("x-forwarded-for");
@@ -45,38 +54,58 @@ export function getClientIp(request: Request): string {
   return "unknown";
 }
 
-export function checkRateLimit(options: RateLimitOptions): RateLimitResult {
-  const currentTime = nowMs();
-  cleanupExpiredBuckets(currentTime);
+export async function checkRateLimit(options: RateLimitOptions): Promise<RateLimitResult> {
+  // Determine which rate limiter to use based on the key prefix
+  let limiter: Ratelimit;
+  
+  if (options.key.startsWith("auth:")) {
+    limiter = authRatelimit;
+  } else if (options.key.startsWith("parse:")) {
+    limiter = parseRatelimit;
+  } else {
+    limiter = apiRatelimit;
+  }
 
-  const current = buckets.get(options.key);
-
-  if (!current || current.resetAt <= currentTime) {
-    buckets.set(options.key, {
-      count: 1,
-      resetAt: currentTime + options.windowMs,
-    });
+  try {
+    const result = await limiter.limit(options.key);
+    
+    return {
+      allowed: result.success,
+      retryAfterSeconds: Math.ceil((result.reset - Date.now()) / 1000),
+      remaining: result.remaining,
+    };
+  } catch (error) {
+    // If Redis fails, allow the request (fail-open for availability)
+    console.error("Rate limit error:", error);
     return {
       allowed: true,
-      retryAfterSeconds: Math.ceil(options.windowMs / 1000),
-      remaining: Math.max(0, options.limit - 1),
+      retryAfterSeconds: 0,
+      remaining: options.limit,
     };
   }
+}
 
-  if (current.count >= options.limit) {
-    return {
-      allowed: false,
-      retryAfterSeconds: Math.max(1, Math.ceil((current.resetAt - currentTime) / 1000)),
-      remaining: 0,
-    };
-  }
+// Helper functions for specific rate limit scenarios
+export async function checkAuthRateLimit(ip: string): Promise<RateLimitResult> {
+  return checkRateLimit({
+    key: `auth:${ip}`,
+    limit: 5,
+    windowMs: 10000,
+  });
+}
 
-  current.count += 1;
-  buckets.set(options.key, current);
+export async function checkApiRateLimit(ip: string): Promise<RateLimitResult> {
+  return checkRateLimit({
+    key: `api:${ip}`,
+    limit: 30,
+    windowMs: 60000,
+  });
+}
 
-  return {
-    allowed: true,
-    retryAfterSeconds: Math.max(1, Math.ceil((current.resetAt - currentTime) / 1000)),
-    remaining: Math.max(0, options.limit - current.count),
-  };
+export async function checkParseRateLimit(userId: string): Promise<RateLimitResult> {
+  return checkRateLimit({
+    key: `parse:${userId}`,
+    limit: 10,
+    windowMs: 60000,
+  });
 }

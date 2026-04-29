@@ -175,7 +175,7 @@ export async function POST(req: NextRequest) {
     }
 
     const ip = getClientIp(req);
-    const rate = checkRateLimit({
+    const rate = await checkRateLimit({
       key: `meal-parse:${session.user.email}:${ip}`,
       limit: 30,
       windowMs: 15 * 60 * 1000,
