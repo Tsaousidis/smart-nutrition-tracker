@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 type MacroData = {
   carbs: number;
@@ -20,9 +20,9 @@ export default function MacroDonutChart({ data, title }: Props) {
   const t = useTranslations("Dashboard");
 
   const chartData = [
-    { name: t("carbs"), value: data.carbs },
-    { name: t("protein"), value: data.protein },
-    { name: t("fat"), value: data.fat },
+    { name: t("carbs"), value: data.carbs, color: COLORS[0] },
+    { name: t("protein"), value: data.protein, color: COLORS[1] },
+    { name: t("fat"), value: data.fat, color: COLORS[2] },
   ];
 
   const total = data.carbs + data.protein + data.fat;
@@ -57,7 +57,7 @@ export default function MacroDonutChart({ data, title }: Props) {
               labelLine={false}
             >
               {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
           </PieChart>
@@ -65,9 +65,23 @@ export default function MacroDonutChart({ data, title }: Props) {
       </div>
 
       {total > 0 && (
-        <div className="mt-2 text-center text-sm text-slate-500">
-          {t("last7Days")}
-        </div>
+        <>
+          <div className="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
+            {chartData.map((item) => (
+              <div key={item.name} className="flex items-center gap-2">
+                <span
+                  className="h-3 w-3 shrink-0 rounded-full"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="text-ink-muted">{item.name}:</span>
+                <span className="font-medium text-ink">{Math.round(item.value)}g</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-2 text-center text-xs text-slate-400">
+            {t("last7Days")}
+          </div>
+        </>
       )}
     </div>
   );
