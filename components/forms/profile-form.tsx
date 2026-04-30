@@ -137,7 +137,10 @@ export default function ProfileForm() {
 
     async function loadProfile() {
       try {
-        const res = await fetch("/api/profile");
+        const res = await fetch("/api/profile", {
+          headers: { "x-csrf-token": csrfToken },
+          credentials: "include",
+        });
         const data = await res.json();
         if (cancelled) return;
         if (res.ok && data.ok && data.data?.profile) {
