@@ -206,3 +206,74 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    const body = await req.json();
+    const { autoSave } = body;
+
+    if (typeof autoSave !== "boolean") {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "VALIDATION_ERROR",
+          message: "autoSave must be a boolean",
+        },
+        { status: 400 }
+      );
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: { profile: true },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "USER_NOT_FOUND",
+          message: "User not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    // Update autoSave preference
+    const updatedProfile = await prisma.profile.update({
+      where: { userId: user.id },
+      data: { autoSave },
+    });
+
+    return NextResponse.json({
+      ok: true,
+      code: "SUCCESS",
+      message: "Auto-save preference updated",
+      data: { autoSave: updatedProfile.autoSave },
+    });
+  } catch (error) {
+    console.error("Profile PATCH route error:", error);
+
+    return NextResponse.json(
+      {
+        ok: false,
+        code: "INTERNAL_ERROR",
+        message: "Something went wrong while updating auto-save preference",
+      },
+      { status: 500 }
+    );
+  }
+}

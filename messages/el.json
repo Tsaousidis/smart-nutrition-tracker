@@ -77,6 +77,7 @@
     "belowProtein": "Σου λείπουν {value}g πρωτεΐνης σήμερα",
     "aboveProtein": "Έχεις ξεπεράσει τον στόχο πρωτεΐνης σήμερα κατά {value}g",
     "remainingCalories": "Σου απομένουν {value} kcal για σήμερα",
+    "overCaloriesRemaining": "Έχεις ξεπεράσει τον στόχο θερμίδων κατά {value} kcal σήμερα",
     "aboveCalories": "Έχεις ξεπεράσει τον στόχο θερμίδων κατά {value} kcal",
     "onTrack": "Είσαι εντός στόχων με τη διατροφή σου σήμερα",
     "mealCount": "Έχεις {count} γεύματα σήμερα - στόχευε σε 3-4",
