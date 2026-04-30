@@ -64,10 +64,9 @@ export default function NavbarClient({
           <Image
             src="/flags/gb.webp"
             alt=""
-            width={24}
-            height={16}
-            className="pointer-events-none h-4 w-auto max-w-[26px] object-contain"
-            style={{ height: "auto" }}
+            width={26}
+            height={20}
+            className="pointer-events-none object-contain"
             aria-hidden
             unoptimized
           />
@@ -87,10 +86,9 @@ export default function NavbarClient({
           <Image
             src="/flags/gr.webp"
             alt=""
-            width={24}
-            height={16}
-            className="pointer-events-none h-4 w-auto max-w-[26px] object-contain"
-            style={{ height: "auto" }}
+            width={26}
+            height={20}
+            className="pointer-events-none object-contain"
             aria-hidden
             unoptimized
           />

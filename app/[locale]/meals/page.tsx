@@ -91,7 +91,10 @@ export default function MealsPage() {
   useEffect(() => {
     async function loadAutoSavePreference() {
       try {
-        const res = await fetch("/api/profile", { credentials: "include" });
+        const res = await fetch("/api/profile", {
+          headers: { "x-csrf-token": csrfToken },
+          credentials: "include",
+        });
         const data = await res.json();
         if (data.ok && data.data?.profile?.autoSave !== undefined) {
           setAutoSave(data.data.profile.autoSave);
@@ -434,7 +437,10 @@ export default function MealsPage() {
                   try {
                     await fetch("/api/profile", {
                       method: "PATCH",
-                      headers: { "Content-Type": "application/json" },
+                      headers: {
+                        "Content-Type": "application/json",
+                        "x-csrf-token": csrfToken,
+                      },
                       credentials: "include",
                       body: JSON.stringify({ autoSave: newValue }),
                     });
