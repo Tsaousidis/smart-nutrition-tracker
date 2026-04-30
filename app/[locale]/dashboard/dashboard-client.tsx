@@ -253,7 +253,7 @@ export default function DashboardClient() {
     <main className="min-h-screen bg-canvas px-6 py-10">
       <div className="mx-auto max-w-[1152px]">
         <div className="mb-8 rounded-xl border border-border bg-surface p-6 ambient-shadow md:p-8">
-          <div className="flex items-start justify-between">
+          <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:justify-between sm:text-left">
             <div>
               <h1 className="font-display text-3xl font-semibold text-brand">{t("title")}</h1>
               <p className="mt-2 text-sm text-ink-muted">{t("subtitle")}</p>
