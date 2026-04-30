@@ -68,6 +68,7 @@ type DashboardResponse = {
       protein: number;
       fat: number;
     };
+    mealTypeCount?: number;
     weeklyTotals?: {
       calories: number;
       protein: number;
@@ -132,7 +133,7 @@ export default function DashboardClient() {
         totals: dashboardData.totals,
         targets: dashboardData.targets,
         remaining: dashboardData.remaining,
-        mealCount: dashboardData.meals?.length || 0,
+        mealCount: dashboardData.mealTypeCount || dashboardData.meals?.length || 0,
         weeklyStats: dashboardData.weeklyStats,
       },
       {

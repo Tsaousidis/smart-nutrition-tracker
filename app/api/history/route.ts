@@ -11,6 +11,8 @@ type HistoryDay = {
     fat: number;
   };
   mealCount: number;
+  uniqueMealTypeCount: number;
+  uniqueMealTypes?: Set<string>;
   meals: Array<{
     id: string;
     title: string | null;
@@ -186,11 +188,18 @@ export async function GET(req: NextRequest) {
               fat: 0,
             },
             mealCount: 0,
+            uniqueMealTypeCount: 0,
+            uniqueMealTypes: new Set<string>(),
             meals: [],
           };
         }
 
+        // Add meal title to set for unique meal type counting
+        if (meal.title && acc[dayKey].uniqueMealTypes) {
+          acc[dayKey].uniqueMealTypes!.add(meal.title.toLowerCase());
+        }
         acc[dayKey].mealCount += 1;
+        acc[dayKey].uniqueMealTypeCount = acc[dayKey].uniqueMealTypes?.size || 0;
         acc[dayKey].meals.push({
           id: meal.id,
           title: meal.title,
@@ -229,6 +238,7 @@ export async function GET(req: NextRequest) {
             fat: 0,
           },
           mealCount: 0,
+          uniqueMealTypeCount: 0,
           meals: [],
         }
       );

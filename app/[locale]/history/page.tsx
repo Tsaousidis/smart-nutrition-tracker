@@ -32,6 +32,7 @@ type HistoryDay = {
     fat: number;
   };
   mealCount: number;
+  uniqueMealTypeCount: number;
   meals: HistoryMeal[];
 };
 
@@ -261,7 +262,7 @@ export default function HistoryPage() {
                 <div>
                   <h2 className="font-display text-xl font-semibold text-brand">{formatDateForDisplay(selectedDay.date)}</h2>
                   <p className="text-sm text-ink-muted">
-                    {selectedDay.mealCount} {selectedDay.mealCount === 1 ? t("meals") : t("mealsPlural")}
+                    {selectedDay.uniqueMealTypeCount} {selectedDay.uniqueMealTypeCount === 1 ? t("meals") : t("mealsPlural")}
                   </p>
                 </div>
 

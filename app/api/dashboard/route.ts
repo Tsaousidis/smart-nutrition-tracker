@@ -94,7 +94,14 @@ export async function GET(request: Request) {
     let totalCarbs = 0;
     let totalFat = 0;
 
+    // Count unique meal types (e.g., if user logged 2 lunches, count as 1 meal type)
+    const uniqueMealTypes = new Set<string>();
+
     for (const meal of meals) {
+      // Add meal title to set (normalized to handle case variations)
+      if (meal.title) {
+        uniqueMealTypes.add(meal.title.toLowerCase());
+      }
       for (const item of meal.items) {
         totalCalories += item.calories;
         totalProtein += item.protein;
@@ -102,6 +109,9 @@ export async function GET(request: Request) {
         totalFat += item.fat;
       }
     }
+
+    // Calculate meal count based on unique meal types
+    const mealTypeCount = uniqueMealTypes.size || meals.length;
 
     const targets = {
       dailyCalories: user.goal?.dailyCalories ?? 0,
@@ -267,6 +277,7 @@ export async function GET(request: Request) {
           mealDate: meal.mealDate,
           items: meal.items,
         })),
+        mealTypeCount: mealTypeCount,
         chartData,
         weeklyStats: {
           avgDailyProtein: Math.round(avgDailyProtein * 10) / 10,
