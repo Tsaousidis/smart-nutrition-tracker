@@ -77,6 +77,7 @@
     "belowProtein": "You are {value}g below your protein target today",
     "aboveProtein": "You exceeded your protein target by {value}g today",
     "remainingCalories": "You still have {value} kcal remaining today",
+    "overCaloriesRemaining": "You are {value} kcal over your calorie target today",
     "aboveCalories": "You exceeded your calorie target by {value} kcal",
     "onTrack": "You're on track with your nutrition today",
     "mealCount": "You have {count} meals today - aim for 3-4",

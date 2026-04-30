@@ -139,6 +139,7 @@ export default function DashboardClient() {
         belowProtein: (value) => t("belowProtein", { value }),
         aboveProtein: (value) => t("aboveProtein", { value }),
         remainingCalories: (value) => t("remainingCalories", { value }),
+        overCaloriesRemaining: (value) => t("overCaloriesRemaining", { value }),
         aboveCalories: (value) => t("aboveCalories", { value }),
         onTrack: t("onTrack"),
         mealCount: (count) => t("mealCount", { count }),

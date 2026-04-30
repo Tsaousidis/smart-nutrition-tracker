@@ -87,6 +87,22 @@ export default function MealsPage() {
   const mealDateInputRef = useRef<HTMLInputElement | null>(null);
   const [parsedMealForAutoSave, setParsedMealForAutoSave] = useState<ParsedMealData | null>(null);
 
+  // Load autoSave preference from server on mount
+  useEffect(() => {
+    async function loadAutoSavePreference() {
+      try {
+        const res = await fetch("/api/profile", { credentials: "include" });
+        const data = await res.json();
+        if (data.ok && data.data?.profile?.autoSave !== undefined) {
+          setAutoSave(data.data.profile.autoSave);
+        }
+      } catch (err) {
+        console.error("Failed to load auto-save preference:", err);
+      }
+    }
+    loadAutoSavePreference();
+  }, []);
+
   // Auto-save effect
   useEffect(() => {
     const doAutoSave = async () => {
@@ -288,13 +304,11 @@ export default function MealsPage() {
       setSaveSuccess(t("saveSuccess"));
       setParsedMeal(null);
       
-      // Clear form after successful save when autoSave is enabled
-      if (autoSave) {
-        setMealText("");
-        setTitle("");
-        setSelectedTitle("");
-        setParsedMealForAutoSave(null);
-      }
+      // Clear form after successful save (always, not just for auto-save)
+      setMealText("");
+      setTitle("");
+      setSelectedTitle("");
+      setParsedMealForAutoSave(null);
     } catch (err) {
       console.error(err);
       setSaveError(err instanceof Error ? err.message : "Unknown save error");
@@ -414,7 +428,20 @@ export default function MealsPage() {
               </label>
               <button
                 type="button"
-                onClick={() => setAutoSave(!autoSave)}
+                onClick={async () => {
+                  const newValue = !autoSave;
+                  setAutoSave(newValue);
+                  try {
+                    await fetch("/api/profile", {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      credentials: "include",
+                      body: JSON.stringify({ autoSave: newValue }),
+                    });
+                  } catch (err) {
+                    console.error("Failed to save auto-save preference:", err);
+                  }
+                }}
                 className={`relative h-6 w-11 rounded-full transition-colors ${
                   autoSave ? "bg-emerald-500" : "bg-slate-300"
                 }`}

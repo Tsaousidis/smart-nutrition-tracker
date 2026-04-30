@@ -31,6 +31,7 @@ type InsightsTranslations = {
   belowProtein: (value: number) => string;
   aboveProtein: (value: number) => string;
   remainingCalories: (value: number) => string;
+  overCaloriesRemaining: (value: number) => string;
   aboveCalories: (value: number) => string;
   onTrack: string;
   mealCount: (count: number) => string;
@@ -88,6 +89,9 @@ export function generateInsights(
     insights.push(translations.remainingCalories(Math.round(calorieRange.min - data.totals.calories)));
   } else if (data.totals.calories > calorieRange.max + 200) {
     insights.push(translations.aboveCalories(Math.round(data.totals.calories - calorieRange.max)));
+  } else if (data.totals.calories > data.targets.dailyCalories) {
+    // Over target but within ±10% - use the new "over" message
+    insights.push(translations.overCaloriesRemaining(Math.round(data.totals.calories - data.targets.dailyCalories)));
   }
 
   // Balanced day (only if no other insights)
