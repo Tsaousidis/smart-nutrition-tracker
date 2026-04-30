@@ -175,7 +175,7 @@ export default function DashboardClient() {
           )
         : 0;
 
-    const todayMeals = dashboardData.meals?.length ?? 0;
+    const todayMeals = dashboardData.mealTypeCount || dashboardData.meals?.length || 0;
     const chartData = dashboardData.chartData ?? [];
     const last7 = chartData.slice(-7);
     const todayIdx = chartData.length - 1;
@@ -383,7 +383,7 @@ export default function DashboardClient() {
                   </span>
                 </div>
                 <div className="mt-3 flex justify-center gap-1">
-                  {[...Array(4)].map((_, idx) => (
+                  {[...Array(5)].map((_, idx) => (
                     <div
                       key={idx}
                       className={`h-2 w-6 rounded-full ${
