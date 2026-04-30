@@ -216,7 +216,6 @@ export default function DashboardClient() {
     const projectedOutcome = weeklyTargetCalories > 0 ? Math.round((projectedWeeklyCalories / weeklyTargetCalories) * 100) : 0;
 
     const topInsights = insights.slice(0, 3);
-    const motivationLine = t("projectedWeeklyOutcome", { value: projectedOutcome });
 
     let nextAction = t("reviewWeeklyPlan");
     let nextActionHref = "/history";
@@ -241,7 +240,6 @@ export default function DashboardClient() {
       bestStreak,
       projectedOutcome,
       topInsights,
-      motivationLine,
       nextAction,
       nextActionHref,
       last7,
@@ -394,12 +392,6 @@ export default function DashboardClient() {
                 </div>
               </div>
             </section>
-
-            {metrics.todayMeals > 0 && (
-              <section className="rounded-xl border border-border bg-emerald-soft/70 px-5 py-3 text-sm text-ink ambient-shadow">
-                {metrics.motivationLine}
-              </section>
-            )}
 
             {/* Responsive grid για macro progress και insights */}
             <section className="grid gap-x-6 gap-y-6 grid-cols-1 lg:grid-cols-3 min-w-0 items-stretch">
