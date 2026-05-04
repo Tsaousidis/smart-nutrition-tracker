@@ -1,118 +1,159 @@
 # 🥗 Nutrition Tracker
 
-**Your personal nutrition ally**
+**A full-stack nutrition tracking web app built with modern Next.js and AI technologies.**
 
-Nutrition Tracker is a modern web application that helps you take control of your nutrition. It logs your meals, calculates nutritional values, and provides valuable insights to improve your eating habits.
-
----
-
-## 🎯 What This App Does
-
-### 📊 Personal Dashboard
-
-At a glance, you see:
-- Calories consumed today
-- Protein, carbs, and fat intake
-- Your progress toward daily goals
-- Visual charts showing macro distribution
-
-### 🍽️ Meal Logging
-
-Log each meal with:
-- Name and meal type (breakfast, lunch, dinner, snack)
-- Individual foods with nutritional breakdown
-- Calories, protein, carbs, fat per food item
-- Quantity and unit of measurement
-
-**🤖 AI-Powered Meal Analysis**
-
-Simply type what you ate (e.g., "2 eggs, 1 slice of bread, coffee with milk") and the AI automatically analyzes the nutritional values!
-
-### 👤 Personal Profile
-
-Set your basic data:
-- Age, gender, height, weight
-- Activity level (sedentary to very active)
-- Nutrition goal (maintain weight, lose weight, lose fat, build muscle)
-
-**🎯 Automatic Goal Calculation**
-
-The app automatically calculates your daily calorie and macro targets based on your profile!
-
-### 📈 History & Progress
-
-- View meals you've logged in the past
-- Track your trends over time
-- Identify patterns in your eating habits
-- Filter meals by date
-
-### 💡 Smart Insights
-
-The app analyzes your eating habits and provides:
-- Personalized nutrition insights
-- Data-driven recommendations
-- Weekly analysis and trends
+Nutrition Tracker is a professionally engineered project that combines secure user authentication, multilingual support, AI-powered meal parsing, configurable nutrition goals, historical analytics, and a responsive design system.
 
 ---
 
-## 🔐 Security & Privacy
+## 🚀 Project Overview
 
-- Secure email and password login
-- Email verification for account confirmation
-- Password reset capability
-- Delete your account anytime
-- Password encryption
+This app is designed to help users log meals, estimate nutrition intake automatically, and track progress day-by-day and week-by-week.
 
----
-
-## 🌍 Multilingual Support
-
-The app is available in:
-- 🇬🇧 English
-- 🇬🇷 Greek
-
-Change language anytime from settings.
+Key capabilities include:
+- AI-powered meal analysis in English and Greek
+- Full biometric profile and nutrition target calculation
+- Secure authentication, email verification, password reset, and account deletion
+- Daily dashboard, meal history, and weekly insights
+- Responsive mobile-first user interface with charts
+- Custom security and localization middleware
 
 ---
 
-## 📱 Designed for Everyone
+## 🧩 Core Features
 
-- **Mobile-first**: Works perfectly on phone and tablet
-- **Responsive**: Adapts to any screen size
-- **Modern UI**: Clean, contemporary design with a pleasant user experience
+### 📊 Dashboard & Insights
+- Daily calories, protein, carbs, and fat summary
+- Progress tracking against personalized goals
+- Macro distribution charts and weekly trends
+- Contextual nutrition insights based on logged data
 
----
+### 🍽️ Meal Logging & AI Parsing
+- Manual meal entry with individual food items
+- AI-powered meal parsing that extracts food names, quantities, and nutrition values
+- Edit parsed meal items before saving
+- Support for Greek and English meal descriptions
 
-## ❓ Frequently Asked Questions
+### 👤 User Account Management
+- Email/password authentication with NextAuth
+- Email verification flow with transactional email
+- Profile onboarding and goal calculation
+- Password change with current password validation
+- Secure account deletion and sign-out
 
-**How do I start?**
-1. Create an account with your email
-2. Verify your email
-3. Complete your profile (age, weight, goal)
-4. Start logging your meals!
-
-**Is it free?**
-Yes, the app is completely free for all users.
-
-**Do I need special knowledge?**
-No! The app is designed to be simple and easy to use for everyone.
-
----
-
-## 📬 Contact
-
-Have questions or suggestions? Want to reach out?
-
-📧 **Email**: Contact details are available in the app
+### 📅 History & Tracking
+- Browse meal history with date filtering
+- Compare trends across the last 7 days
+- Store and review past meals and nutrition totals
 
 ---
 
-## 📄 Terms of Use
+## 🛠 Technologies & Tools
 
-By using the app, you agree to the terms of use and privacy policy.
+This repo uses:
 
-> ⚠️ **Note**: This app provides nutrition information for personal tracking. It is not medical advice. For personalized nutrition guidance, consult a professional dietitian.
+- **Next.js 16** with the App Router
+- **React 19** and **TypeScript** for type-safe UI
+- **Tailwind CSS v4** and **PostCSS** for styling
+- **Prisma 7.7** with **PostgreSQL** via `pg`
+- **NextAuth v5** with credentials authentication and JWT session strategy
+- **next-intl** for locale-based routing and translation
+- **Recharts** for dashboard charts
+- **OpenAI** and **Google Gemini** generative AI for nutrition parsing
+- **Resend** for transactional email delivery
+- **Upstash Rate Limit** for AI endpoint protection
+- **Zod** and `@hookform/resolvers` for validation
+- **bcryptjs** for secure password hashing
+- **date-fns** for date utilities
+- **ESLint** for code quality
 
 ---
 
-**🥗 Nutrition Tracker** — Your nutrition ally every day!
+## 🔒 Security & Implementation Details
+
+### Authentication & session handling
+- Custom NextAuth configuration in `auth.config.ts`
+- Route-level authorization and protected page redirection
+- JWT session strategy with session enrichment in `auth.ts`
+- Sign-out forced after account deletion to prevent stale auth loops
+
+### CSRF protection
+- Custom CSRF token system via `lib/csrf.ts`
+- CSRF endpoint under `/api/csrf`
+- Token stored in a secure cookie and validated on state-changing API requests
+- Client-side CSRF fetches include `credentials: include`
+
+### Validation & sanitization
+- Input validation with Zod schemas in `lib/validators.ts`
+- Request sanitization using `lib/sanitize.ts`
+- Strong API error handling for invalid JSON and payload issues
+
+### Email & verification
+- Email verification workflow with `/api/verify-email`
+- Password reset request and confirmation endpoints
+- Transactional emails powered by Resend
+
+---
+
+## 🤖 AI & Meal Parsing
+
+### AI pipeline
+- Primary AI engine: **Azure OpenAI** via `lib/azure-openai.ts`
+- Fallback engine: **Google Gemini** via `lib/gemini.ts`
+- Locale-aware prompt handling for Greek (`el`) and English (`en`)
+- Multi-key Gemini key rotation and fallback handling
+- Retry logic for transient AI errors and quota exhaustion
+
+### Meal parsing endpoint
+- `/api/meals/parse` performs AI parsing and schema validation
+- Rate limiting with Upstash to prevent abuse
+- Sanitizes user meal text before sending it to AI
+- Returns validated JSON with meal items and macros
+
+---
+
+## 🌍 Localization & Hidden Techniques
+
+This project includes deep multilingual support and several advanced hidden techniques:
+
+- Route-based locale segments under `app/[locale]/...`
+- English and Greek translation files at `messages/en.json` and `messages/el.json`
+- Locale-aware middleware in `proxy.ts` that redirects `/` to `/en` and enforces `/en` or `/el` routes
+- Custom auth middleware combined with `next-intl` for locale routing and protected pages
+- Language switcher in the UI with dynamic translation loading
+- Secure locale handling for both navigation and API responses
+
+Hidden or non-obvious implementations:
+- Custom CSRF validation for all state-changing API routes
+- Account deletion flow that signs out a deleted user and redirects cleanly
+- Automatic goal calculation from profile data using `lib/calculations.ts`
+- Nutrition insights generation in `lib/insights.ts`
+- Health check endpoint `/api/health/db`
+- Custom `types/next-auth.d.ts` extensions for typed session/user data
+
+---
+
+## 📁 Project Structure
+
+Important folders and files:
+
+- `app/` – Next.js App Router pages and locale routes
+- `app/api/` – server API routes for auth, profile, meals, history, account management
+- `components/` – reusable UI components, forms, charts, dashboard widgets
+- `lib/` – shared backend utilities, AI clients, validators, CSRF, email, env, rate limiting
+- `messages/` – translation JSON files for `en` and `el`
+- `prisma/` – Prisma schema and database migrations
+- `types/` – custom TypeScript type definitions
+
+---
+
+## ✅ Why this project stands out
+
+This repository is not just a simple nutrition tracker. It is a complete full-stack solution that integrates AI, multilingual UX, security best practices, modern styling, and analytics.
+
+It demonstrates:
+- professional architecture with Next.js App Router
+- secure auth and CSRF protection
+- intelligent AI fallback handling
+- advanced locale routing and translation strategy
+- reusable component design and responsive layout
