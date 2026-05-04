@@ -178,6 +178,8 @@ Return this exact JSON shape:
 }
 
 export async function POST(req: NextRequest) {
+  let requestLocale: "en" | "el" = "en";
+
   try {
     const session = await auth();
 
@@ -209,7 +211,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let requestLocale: "en" | "el" = "en";
     let body: unknown;
     try {
       body = await req.json();
