@@ -54,16 +54,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        return token;
+      }
+
+      if (token.id) {
+        const existingUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+        });
+
+        if (!existingUser) {
+          // Invalidate JWT if the user was deleted from the database
+          return { ...token, id: undefined };
+        }
       }
 
       return token;
     },
     async session({ session, token }) {
+      if (!token.id) {
+        return null;
+      }
+
       if (session.user) {
         session.user.id = token.id as string;
       }
 
       return session;
     },
-  },
+  }
 });
