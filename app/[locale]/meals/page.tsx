@@ -173,6 +173,9 @@ export default function MealsPage() {
       if (!selectedTitle) {
         throw new Error(t("selectMealTitle"));
       }
+      if (!mealText.trim()) {
+        throw new Error(t("emptyMealText"));
+      }
       if (!csrfToken) {
         throw new Error("Security error: CSRF token not available");
       }
