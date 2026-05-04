@@ -209,6 +209,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let requestLocale: "en" | "el" = "en";
     let body: unknown;
     try {
       body = await req.json();
@@ -238,6 +239,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { mealText, locale = "en" } = parsedInput.data;
+    requestLocale = locale;
     // Sanitize meal input to prevent XSS
     const sanitizedText = sanitizeMealInput(mealText);
 
@@ -302,7 +304,7 @@ export async function POST(req: NextRequest) {
       errorMessage.includes("Azure OpenAI response")
     ) {
       // Return a user-friendly message about not understanding the food
-      const isGreek = locale === "el";
+      const isGreek = requestLocale === "el";
       return NextResponse.json(
         {
           ok: false,
