@@ -245,7 +245,9 @@
     "noItems": "You must have at least one meal item before saving.",
     "mealDate": "Meal Date",
     "invalidDateFormat": "Invalid date format. Use DD/MM/YYYY",
-    "mealTitleOther": "Other"
+    "mealTitleOther": "Other",
+    "emptyMealText": "Describe what you ate, like you would tell your friend",
+    "aiParseError": "I couldn't understand what you ate. Try describing your food more clearly, like '2 eggs and toast' or 'chicken salad with olive oil'."
   },
   "Signup": {
     "title": "Create Account",

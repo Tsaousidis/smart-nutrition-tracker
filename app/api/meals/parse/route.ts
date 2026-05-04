@@ -241,7 +241,47 @@ export async function POST(req: NextRequest) {
     // Sanitize meal input to prevent XSS
     const sanitizedText = sanitizeMealInput(mealText);
 
-    const parsedMeal = await parseMealWithRetry(sanitizedText, locale);
+    let parsedMeal;
+    try {
+      parsedMeal = await parseMealWithRetry(sanitizedText, locale);
+    } catch (parseError) {
+      console.error("Meal parse error:", parseError);
+      const errorMessage = getErrorMessage(parseError);
+
+      // Check for specific parsing errors that indicate AI couldn't understand the input
+      if (
+        errorMessage.includes("did not match expected schema") ||
+        errorMessage.includes("Failed to parse") ||
+        errorMessage.includes("empty response") ||
+        errorMessage.includes("Azure OpenAI response")
+      ) {
+        // Return a user-friendly message about not understanding the food
+        const isGreek = locale === "el";
+        return NextResponse.json(
+          {
+            ok: false,
+            code: "PARSING_ERROR",
+            message: isGreek
+              ? "Δεν κατάλαβα τι έφαγες. Δοκίμασε να περιγράψεις το φαγητό σου πιο ξεκάθαρα, π.χ. '2 αυγά και ψωμί' ή 'σαλάτα κοτόπουλο με ελαιόλαδο'."
+              : "I couldn't understand what you ate. Try describing your food more clearly, like '2 eggs and toast' or 'chicken salad with olive oil'.",
+          },
+          { status: 400 }
+        );
+      }
+
+      if (isQuotaError(errorMessage)) {
+        return NextResponse.json(
+          {
+            ok: false,
+            code: "QUOTA_EXCEEDED",
+            message: "The daily Gemini quota/credits appear to be exhausted. Please try again later or tomorrow.",
+          },
+          { status: 429 }
+        );
+      }
+
+      throw parseError;
+    }
 
     return NextResponse.json({
       ok: true,
@@ -253,6 +293,27 @@ export async function POST(req: NextRequest) {
     console.error("Meal parse route error:", error);
 
     const errorMessage = getErrorMessage(error);
+
+    // Check for specific parsing errors that indicate AI couldn't understand the input
+    if (
+      errorMessage.includes("did not match expected schema") ||
+      errorMessage.includes("Failed to parse") ||
+      errorMessage.includes("empty response") ||
+      errorMessage.includes("Azure OpenAI response")
+    ) {
+      // Return a user-friendly message about not understanding the food
+      const isGreek = locale === "el";
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "PARSING_ERROR",
+          message: isGreek
+            ? "Δεν κατάλαβα τι έφαγες. Δοκίμασε να περιγράψεις το φαγητό σου πιο ξεκάθαρα, π.χ. '2 αυγά και ψωμί' ή 'σαλάτα κοτόπουλο με ελαιόλαδο'."
+            : "I couldn't understand what you ate. Try describing your food more clearly, like '2 eggs and toast' or 'chicken salad with olive oil'.",
+        },
+        { status: 400 }
+      );
+    }
 
     if (isQuotaError(errorMessage)) {
       return NextResponse.json(

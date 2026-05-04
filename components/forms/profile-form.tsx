@@ -71,10 +71,20 @@ export default function ProfileForm() {
       return;
     }
 
+    if (!csrfToken) {
+      setPasswordError("Security error: CSRF token not available");
+      setPasswordLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/account/password", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+        },
+        credentials: "include",
         body: JSON.stringify({ currentPassword, newPassword }),
       });
 
@@ -105,10 +115,20 @@ export default function ProfileForm() {
     setDeleteLoading(true);
     setDeleteError(null);
 
+    if (!csrfToken) {
+      setDeleteError("Security error: CSRF token not available");
+      setDeleteLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/account/delete", {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+        },
+        credentials: "include",
         body: JSON.stringify({ password: deletePassword }),
       });
 
