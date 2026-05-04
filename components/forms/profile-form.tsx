@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
 import { useCsrfToken } from "@/lib/useCsrfToken";
@@ -104,7 +105,12 @@ export default function ProfileForm() {
       }, 3000);
     } catch (err) {
       console.error(err);
-      setPasswordError(err instanceof Error ? err.message : "Something went wrong");
+      const errorMessage = err instanceof Error ? err.message : "Something went wrong";
+      if (errorMessage === "Incorrect current password") {
+        setPasswordError(t("incorrectCurrentPassword"));
+      } else {
+        setPasswordError(errorMessage);
+      }
     } finally {
       setPasswordLoading(false);
     }
@@ -138,6 +144,7 @@ export default function ProfileForm() {
         throw new Error(data.message);
       }
 
+      await signOut({ redirect: false });
       setDeleteSuccess(true);
       // Redirect to login after successful deletion
       setTimeout(() => {
