@@ -20,6 +20,12 @@ Key capabilities include:
 
 ---
 
+## 📷 Demo
+
+![App Demo](./public/nutrella-app.webp)
+
+---
+
 ## 🧩 Core Features
 
 ### 📊 Dashboard & Insights
